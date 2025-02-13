@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
 const Navbar = () => {
@@ -104,13 +105,13 @@ const Navbar = () => {
           </ul>
           {/* Sign Up Button */}
           <div className="button-container ml-4">
-            <a
-              href="login.html"
-              className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition"
-            >
-              Sign Up Now
-            </a>
-          </div>
+  <Link
+    to="/login"
+    className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition"
+  >
+    Sign Up Now
+  </Link>
+</div>
         </div>
         {/* Mobile Navigation Toggle */}
         <div className="lg:hidden">
