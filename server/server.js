@@ -1,19 +1,49 @@
-// server.js
+// server/server.js
 const express = require('express');
-const dotenv = require('dotenv');
+const session = require('express-session');
 const connectDB = require('./config/db');
-const authRoutes = require('./routes/authRoutes');
+const passport = require('passport');
+const dotenv = require('dotenv');
+const cors = require('cors'); 
+const errorHandler = require('./middleware/errorHandler');
 
 dotenv.config();
 connectDB();
 
 const app = express();
-
-// Middleware to parse JSON bodies
+// CORS middleware
+app.use(cors({
+  origin: 'http://localhost:5173', // Your frontend URL
+  credentials: true
+}));
+// Body parser middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// API routes
-app.use('/api/auth', authRoutes);
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Passport initialization
+require('./config/passport')(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Routes
+app.use('/auth', require('./routes/authRoutes'));
+
+// Error handling
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

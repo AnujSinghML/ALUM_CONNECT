@@ -1,54 +1,74 @@
-import React from 'react';
+// 
+// client/routes/Login.jsx
+import axios from 'axios';
+import React, { useState } from 'react';
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Login = () => {
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md w-full space-y-8 p-6 bg-white rounded-lg shadow-md">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6">
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Email address"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Password"
-              />
-            </div>
-          </div>
+  const [formData, setFormData] = useState({ role: 'user', email: '', password: '' });
+  const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Initialize navigate
 
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Sign in
-            </button>
-          </div>
-        </form>
-      </div>
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  
+  // Create an axios instance with the base URL
+  const api = axios.create({
+    baseURL: 'http://localhost:5000',
+    withCredentials: true // This is important for cookies/sessions
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.post('/auth/login', formData);
+      console.log(res.data);
+      // Redirect to dashboard after successful login
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Login failed');
+    }
+  };
+
+  return (
+    <div style={{ maxWidth: '400px', margin: 'auto', padding: '1rem' }}>
+      <Typography variant="h5">Login</Typography>
+      <form onSubmit={handleSubmit}>
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Role</InputLabel>
+          <Select name="role" value={formData.role} label="Role" onChange={handleChange}>
+            <MenuItem value="user">User</MenuItem>
+            <MenuItem value="admin">Admin</MenuItem>
+          </Select>
+        </FormControl>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Email"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Password"
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+        {error && <Typography color="error">{error}</Typography>}
+        <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: '1rem' }}>
+          Login
+        </Button>
+      </form>
+      <Typography variant="body2" style={{ marginTop: '1rem' }}>
+        Forgot password? Please contact your college admin or alumni cell.
+      </Typography>
     </div>
   );
 };
