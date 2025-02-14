@@ -14,7 +14,7 @@ const Login = () => {
   
   // Create an axios instance with the base URL
   const api = axios.create({
-    baseURL: 'http://localhost:5000',
+    baseURL: 'http://localhost:3000',
     withCredentials: true // This is important for cookies/sessions
   });
 
