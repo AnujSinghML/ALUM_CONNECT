@@ -84,62 +84,61 @@ const Navbar = () => {
 
       {/* Mobile Navigation Menu */}
       {isOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100">
-          <div className="px-4 pt-2 pb-4 space-y-2">
-            <li>
-              <Link to="/" className="block text-blue-600 hover:text-blue-800">
-                Home
-              </Link>
-            </li>
-            <li>
-              <button
-                onClick={() => setMobileAbout(!mobileAbout)}
-                className="w-full flex justify-between items-center text-blue-600 hover:text-blue-800 focus:outline-none"
-              >
-                <span>About</span>
-                <ChevronDown className={`transition-transform ${mobileAbout ? 'rotate-180' : ''}`} size={20} />
-              </button>
-              {mobileAbout && (
-                <div className="mt-2 p-4 bg-gray-50 border border-gray-200 rounded">
-                  <h2 className="text-xl font-semibold text-gray-800">About DevNexus</h2>
-                  <p className="mt-4 text-sm text-gray-600">
-                    We are DevNexus, a passionate team of dedicated developers, focused on bridging the gap between alumni and their alma mater.
-                  </p>
-                </div>
-              )}
-            </li>
-            <li>
-              <button
-                onClick={() => setMobileContact(!mobileContact)}
-                className="w-full flex justify-between items-center text-blue-600 hover:text-blue-800 focus:outline-none"
-              >
-                <span>Contact</span>
-                <ChevronDown className={`transition-transform ${mobileContact ? 'rotate-180' : ''}`} size={20} />
-              </button>
-              {mobileContact && (
-                <div className="mt-2 p-4 bg-gray-50 border border-gray-200 rounded">
-                  <h2 className="text-xl font-semibold text-gray-800">Get in Touch</h2>
-                  <p className="mt-4 text-sm text-gray-600">
-                    Contact us at <br />
-                    Email: contact@devnexus.com
-                  </p>
-                </div>
-              )}
-            </li>
-            <li>
-              {/* Sign Up Button */}
-              <div className="button-container ml-4">
-                <Link
-                  to="/login"
-                  className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition"
-                >
-                  Sign Up Now
-                </Link>
-              </div>
-            </li>
-          </div>
-        </div>
-      )}
+  <div className="lg:hidden bg-white border-t border-gray-100 absolute w-full">
+    <div className="px-4 py-4 space-y-4"> {/* Increased spacing */}
+      <ul className="space-y-4"> {/* Added ul wrapper and proper spacing */}
+        <li>
+          <Link to="/" className="block text-gray-700 hover:text-blue-600 text-lg">
+            Home
+          </Link>
+        </li>
+        <li>
+          <button
+            onClick={() => setMobileAbout(!mobileAbout)}
+            className="w-full flex justify-between items-center text-gray-700 hover:text-blue-600 text-lg focus:outline-none"
+          >
+            <span>About</span>
+            <ChevronDown className={`transition-transform ${mobileAbout ? 'rotate-180' : ''}`} size={20} />
+          </button>
+          {mobileAbout && (
+            <div className="mt-3 p-4 bg-gray-50 rounded-lg">
+              <h2 className="text-lg font-semibold text-gray-800">About DevNexus</h2>
+              <p className="mt-2 text-gray-600">
+                We are DevNexus, a passionate team of dedicated developers, focused on bridging the gap between alumni and their alma mater.
+              </p>
+            </div>
+          )}
+        </li>
+        <li>
+          <button
+            onClick={() => setMobileContact(!mobileContact)}
+            className="w-full flex justify-between items-center text-gray-700 hover:text-blue-600 text-lg focus:outline-none"
+          >
+            <span>Contact</span>
+            <ChevronDown className={`transition-transform ${mobileContact ? 'rotate-180' : ''}`} size={20} />
+          </button>
+          {mobileContact && (
+            <div className="mt-3 p-4 bg-gray-50 rounded-lg">
+              <h2 className="text-lg font-semibold text-gray-800">Get in Touch</h2>
+              <p className="mt-2 text-gray-600">
+                Contact us at <br />
+                Email: contact@devnexus.com
+              </p>
+            </div>
+          )}
+        </li>
+        <li className="pt-2"> {/* Added top padding for separation */}
+          <Link
+            to="/login"
+            className="block w-full text-center px-4 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-colors"
+          >
+            Sign Up Now
+          </Link>
+        </li>
+      </ul>
+    </div>
+  </div>
+)}
     </nav>
   );
 };
