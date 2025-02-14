@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 
 // Routes
 import Login from './routes/Login';
+
 import Dashboard from './routes/Dashboard';
 
 // Landing page component
