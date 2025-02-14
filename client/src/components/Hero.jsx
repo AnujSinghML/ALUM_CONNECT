@@ -24,7 +24,7 @@ const Hero = () => {
         {/* Hero Content */}
         <section className="flex flex-col items-center text-center py-20">
       {/* Logo Positioned Above */}
-      <img src="src/img/connect_logo_black .png" alt="Alum Connect Logo" className="w-40 mb-6" />
+      <img src="src/img/connect_logo_black.png" alt="Alum Connect Logo" className="w-40 mb-6" />
 
       {/* Heading */}
       <h1 className="text-5xl font-bold text-gray-900">
