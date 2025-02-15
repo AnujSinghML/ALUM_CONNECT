@@ -18,7 +18,7 @@ import Profile from './routes/Profile';
 // Landing page component
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <div className="pt-20">
         <Hero />
