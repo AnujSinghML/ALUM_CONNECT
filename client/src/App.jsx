@@ -1,4 +1,3 @@
-// client/App.jsx
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -10,8 +9,11 @@ import Footer from './components/Footer';
 
 // Routes
 import Login from './routes/Login';
-
-import Dashboard from './routes/Dashboard';
+import Announcement from './routes/Announcement';
+import Network from './routes/Network';
+import Discussion from './routes/Discussion';
+import Donation from './routes/Donation';
+import Profile from './routes/Profile';
 
 // Landing page component
 const LandingPage = () => {
@@ -31,9 +33,16 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        
+        {/* Main routes */}
+        <Route path="/announcements" element={<Announcement />} />
+        <Route path="/network" element={<Network />} />
+        <Route path="/discussion" element={<Discussion />} />
+        <Route path="/donation" element={<Donation />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
