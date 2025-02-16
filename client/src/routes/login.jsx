@@ -49,8 +49,8 @@ const Login = () => {
       // If your backend is running on port 3000 for example, use that.
       const res = await axios.post('http://localhost:3000/auth/login', formData, { withCredentials: true });
       console.log(res.data);
-      // Redirect on successful login just like your bad UI code.
-      navigate('/dashboard');
+      // Redirect on successful login just like anuj's old UI code.
+      navigate('/announcements');
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
     } finally {
