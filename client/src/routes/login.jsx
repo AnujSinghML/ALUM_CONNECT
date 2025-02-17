@@ -27,7 +27,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 };
 
 const Login = () => {
-  const [formData, setFormData] = useState({ role: 'user', email: '', password: '' });
+  const [formData, setFormData] = useState({ role: 'admin', email: '', password: '' });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -85,8 +85,8 @@ const Login = () => {
                 onChange={handleChange}
                 className="block w-full rounded-lg border border-gray-300 px-4 py-2.5 pr-8 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
               >
-                <option value="user">Alumni</option>
-                <option value="user">Student</option>
+                <option value="alumni">Alumni</option>
+                <option value="student">Student</option>
                 <option value="admin">Admin</option>
               </select>
               <UserCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />

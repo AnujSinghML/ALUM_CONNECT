@@ -17,9 +17,23 @@ const UserSchema = new mongoose.Schema({
     }
   },
   password: { type: String, required: true, minlength: 8 },
-  role: { type: String, enum: ['student', 'admin' , 'alumni' ], default: 'student' },
+  role: { type: String, enum: ['student', 'admin', 'alumni'], default: 'student' },
   isActive: { type: Boolean, default: true },
   lastLogin: { type: Date },
+  // New fields:
+  dob: { type: Date },
+  branch: { type: String },
+  currentCompany: { type: String, default: null},
+  currentCompanyRole: { type: String, default: null },
+  location: { type: String },
+  batch: { type: String },
+  homeTown: { type: String },
+  socialLinks: {  // Changed from socialMedia to socialLinks
+    linkedin: { type: String, default: null },
+    instagram: { type: String, default: null },
+    github: { type: String, default: null },
+    x: { type: String, default: null }  // Changed from twitter to x to match your data
+  }
 }, { timestamps: true });
 
 // Hash password before saving
