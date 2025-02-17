@@ -20,7 +20,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <div className="pt-20">
+      <div className="pt-5">
         <Hero />
         <Services />
       </div>

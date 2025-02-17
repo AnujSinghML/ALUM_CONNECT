@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, Bell, MessageSquare } from 'lucide-react';
+import IIITNLogo from "../../img/IIITN_logo.svg";
 
 const Navbar = () => {
   return (
@@ -7,7 +8,7 @@ const Navbar = () => {
       {/* Left side - Logo and College Name */}
       <div className="flex items-center space-x-3">
         {/* Placeholder for logo - can be replaced with actual logo later */}
-        <div className="w-8 h-8 bg-blue-600 rounded-full"></div>
+        <img src={IIITNLogo} alt="IIIT-Nagpur Logo" className="w-8 h-8" />
         <span className="text-blue-600 font-semibold text-lg">IIIT-Nagpur</span>
       </div>
 
