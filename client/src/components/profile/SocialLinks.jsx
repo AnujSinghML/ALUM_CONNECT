@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { FaLinkedin, FaInstagram, FaGithub, FaTwitter } from 'react-icons/fa';
 

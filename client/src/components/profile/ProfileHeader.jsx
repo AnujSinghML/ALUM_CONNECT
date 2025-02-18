@@ -1,8 +1,10 @@
+/* eslint-disable react/prop-types */
+// eslint-disable react/prop-types 
 import React, { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import LogoutButton from './LogoutButton';
 import ProfileEditModal from './ProfileEditModal';
-import axios from 'axios';
+import axios from 'axios'; 
 
 const ProfileHeader = ({ profile, onProfileUpdate }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
