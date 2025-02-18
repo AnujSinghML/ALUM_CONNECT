@@ -39,6 +39,7 @@ app.use(passport.session());
 
 // Routes
 app.use('/auth', require('./routes/authRoutes'));
+app.use('/api/profile', require('./routes/profileRoutes'));
 
 // Error handling
 app.use(errorHandler);

@@ -34,8 +34,8 @@ router.get('/profile', (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  // Map socialLinks to socialMedia if needed
-  const socialMedia = req.user.socialMedia || req.user.socialLinks || {};
+  // Map socialLinks to socialLinks if needed
+  const socialLinks = req.user.socialLinks || req.user.socialLinks || {};
   
   // Return the complete profile data
   res.json({
@@ -50,11 +50,11 @@ router.get('/profile', (req, res) => {
     location: req.user.location,
     batch: req.user.batch,
     homeTown: req.user.homeTown,
-    socialMedia: {
-      linkedin: socialMedia.linkedin,
-      instagram: socialMedia.instagram,
-      github: socialMedia.github,
-      twitter: socialMedia.x || socialMedia.twitter  // Handle both x and twitter
+    socialLinks: {
+      linkedin: socialLinks.linkedin,
+      instagram: socialLinks.instagram,
+      github: socialLinks.github,
+      x: socialLinks.x || socialLinks.x  // Handle both x and x
     },
     isActive: req.user.isActive,
     lastLogin: req.user.lastLogin

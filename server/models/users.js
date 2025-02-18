@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema({
   location: { type: String },
   batch: { type: String },
   homeTown: { type: String },
-  socialLinks: {  // Changed from socialMedia to socialLinks
+  socialLinks: {  // Changed from socialLinks to socialLinks
     linkedin: { type: String, default: null },
     instagram: { type: String, default: null },
     github: { type: String, default: null },

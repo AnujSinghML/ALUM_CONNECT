@@ -26,7 +26,7 @@ const users = [
   {
     name: 'Vashu Prashar',
     email: 'bt22csd021@iiitn.ac.in',
-    password: 'vashu123!',
+    password: 'vashu123!', //updated to vashuvashu through frontend
     role: 'student',
     dob: new Date('2004-08-16'),
     branch: 'Computer Science - Data Science',
