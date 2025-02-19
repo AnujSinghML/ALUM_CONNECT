@@ -37,7 +37,7 @@ const Services = () => {
     {
       title: "Donations",
       description:
-        "Support your alma mater through our secure, government-backed donation portal with tax exemptions. You can also raise funds for startups or find investors, empowering future innovators.",
+        "Show your support your through our secure donation portal for government backed tax exemptions. You can also raise funds for startups or find investors, empowering future innovators.",
       icon: <Gift className="w-6 h-6" />,
     },
   ];

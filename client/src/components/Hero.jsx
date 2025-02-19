@@ -27,7 +27,7 @@ const Hero = () => {
             Welcome to <span className="text-blue-600 block mt-2">AlumConnect</span>
           </h1>
           <p className="text-gray-600 mt-6 text-lg max-w-2xl mx-auto leading-relaxed">
-            Connect with your alma mater, build lasting relationships, and contribute to the future of education.
+            Connect with your alma mater, build lasting relationships and contribute to the future of education.
           </p>
         </section>
 

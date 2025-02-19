@@ -158,7 +158,7 @@ const Navbar = () => {
               to="/login"
               className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition"
             >
-              Sign Up Now
+              Sign In
             </Link>
           </div>
         </div>

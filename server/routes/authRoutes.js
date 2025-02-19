@@ -54,7 +54,7 @@ router.get('/profile', (req, res) => {
       linkedin: socialLinks.linkedin,
       instagram: socialLinks.instagram,
       github: socialLinks.github,
-      x: socialLinks.x || socialLinks.x  // Handle both x and x
+      x: socialLinks.x || socialLinks.twitter  // Handle both x and x
     },
     isActive: req.user.isActive,
     lastLogin: req.user.lastLogin
