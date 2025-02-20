@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Layout from '../components/common/Layout';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
+import Layout from '../components/common/Layout';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import SocialLinks from '../components/profile/SocialLinks';
 import ProfileSections from '../components/profile/ProfileSections';
 import ActivitySection from '../components/profile/ActivitySection';
+import { Mail, MapPin, Calendar, Phone, User, Clock } from 'lucide-react';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -19,14 +19,13 @@ const Profile = () => {
       const response = await axios.get('http://localhost:3000/auth/profile', { 
         withCredentials: true 
       });
-      console.log("Received profile data:", response.data);
       setProfile(response.data);
       setLoading(false);
     } catch (err) {
       console.error("Error loading profile:", err);
       setError('Failed to load profile');
       setLoading(false);
-      if (err.response && err.response.status === 401) {
+      if (err.response?.status === 401) {
         navigate('/login');
       }
     }
@@ -45,18 +44,12 @@ const Profile = () => {
       );
 
       if (response.data.success) {
-        // Update the profile state with the new data
         setProfile(prevProfile => ({
           ...prevProfile,
           ...response.data.data
         }));
-
-        // Show success message if you have a toast/notification system
-        console.log('Profile updated successfully');
       }
     } catch (err) {
-      console.error('Error updating profile:', err);
-      // Handle error (show error message)
       setError(err.response?.data?.message || 'Failed to update profile');
     }
   };
@@ -64,8 +57,14 @@ const Profile = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+        <div className="flex justify-center items-center min-h-screen bg-gray-50">
+          <div className="space-y-6 text-center">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 animate-spin rounded-full border-4 border-blue-200"></div>
+              <div className="absolute inset-0 animate-spin rounded-full border-t-4 border-blue-600" style={{ animationDirection: 'reverse' }}></div>
+            </div>
+            <p className="text-gray-600 font-medium">Loading your profile...</p>
+          </div>
         </div>
       </Layout>
     );
@@ -74,14 +73,24 @@ const Profile = () => {
   if (error) {
     return (
       <Layout>
-        <div className="p-6 text-center">
-          <div className="text-red-500 mb-4">{error}</div>
-          <button 
-            onClick={() => navigate('/login')}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          >
-            Return to Login
-          </button>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+          <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full backdrop-blur-sm bg-white/90">
+            <div className="text-red-500 mb-6 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-center mb-4">Error Loading Profile</h3>
+            <p className="text-gray-600 text-center mb-8">{error}</p>
+            <button 
+              onClick={() => navigate('/login')}
+              className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Return to Login
+            </button>
+          </div>
         </div>
       </Layout>
     );
@@ -89,18 +98,131 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          {/* Header background */}
-          <div className="h-32 bg-gradient-to-r from-blue-500 to-blue-700"></div>
-          <div className="px-6 py-4 md:px-8 md:py-6 -mt-16">
-            <ProfileHeader 
-              profile={profile} 
-              onProfileUpdate={handleProfileUpdate}
-            />
-            {profile.socialLinks && <SocialLinks socialLinks={profile.socialLinks} />}
-            <ProfileSections profile={profile} />
-            <ActivitySection lastLogin={profile.lastLogin} />
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto space-y-8">
+          {/* Profile Card */}
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
+            {/* Header background with modern gradient */}
+            <div className="relative h-64 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 overflow-hidden">
+              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)]" style={{ backgroundSize: '24px 24px' }}></div>
+            </div>
+
+            {/* Profile Content */}
+            <div className="relative px-8 py-10 -mt-27">
+              <div className="relative z-10">
+                <ProfileHeader 
+                  profile={profile} 
+                  onProfileUpdate={handleProfileUpdate}
+                />
+                
+                {/* Contact Information */}
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {profile.email && (
+                    <div className="flex items-center space-x-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200">
+                      <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Mail className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Email</p>
+                        <p className="text-sm font-semibold text-gray-900">{profile.email}</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {profile.location && (
+                    <div className="flex items-center space-x-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200">
+                      <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <MapPin className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Location</p>
+                        <p className="text-sm font-semibold text-gray-900">{profile.location}</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {profile.phone && (
+                    <div className="flex items-center space-x-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200">
+                      <div className="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        <Phone className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Phone</p>
+                        <p className="text-sm font-semibold text-gray-900">{profile.phone}</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {profile.joinDate && (
+                    <div className="flex items-center space-x-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200">
+                      <div className="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                        <Calendar className="w-5 h-5 text-orange-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Joined</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {new Date(profile.joinDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Social Links with modern cards */}
+                <div className="mt-8">
+                  {profile.socialLinks && (
+                    <div className="bg-gray-50 rounded-2xl p-6">
+                      <h3 className="text-lg font-semibold mb-4 flex items-center space-x-2">
+                        <User className="w-5 h-5 text-blue-600" />
+                        <span>Social Profiles</span>
+                      </h3>
+                      <SocialLinks socialLinks={profile.socialLinks} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Profile Sections with modern design */}
+                <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm">
+                  <ProfileSections profile={profile} />
+                </div>
+
+                {/* Activity Section with timeline */}
+                <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-semibold flex items-center space-x-2">
+                      <Clock className="w-5 h-5 text-blue-600" />
+                      <span>Recent Activity</span>
+                    </h3>
+                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                      View All
+                    </button>
+                  </div>
+                  <ActivitySection lastLogin={profile.lastLogin} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions Footer */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="text-sm text-gray-600 flex items-center space-x-2">
+              <Clock className="w-4 h-4" />
+              <span>Last updated: {new Date(profile.updatedAt).toLocaleDateString()}</span>
+            </div>
+            <div className="flex space-x-4">
+              <button 
+                onClick={() => navigate('/settings')}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
+              >
+                Settings
+              </button>
+              <button 
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 transform hover:-translate-y-1"
+              >
+                Back to Top
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -40,7 +40,7 @@ const ProfileHeader = ({ profile, onProfileUpdate }) => {
           </div>
           <div className="md:ml-4 mt-4 md:mt-0 text-center md:text-left">
             <h1 className="text-2xl font-bold text-white">{profile.name}</h1>
-            <p className="text-gray-600">{profile.email}</p>
+            <p className="text-white">{profile.email}</p>
             {profile.role && (
               <span className="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">
                 {profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
