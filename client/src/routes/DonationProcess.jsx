@@ -1,4 +1,6 @@
+//make a donation button
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const DonationProcess = () => {
   const [step, setStep] = useState(1);
@@ -17,9 +19,18 @@ const DonationProcess = () => {
     // Will be integrated with backend later
     console.log('Form submitted:', formData);
   };
-
+  const navigate = useNavigate();
   return (
     <div className="max-w-3xl mx-auto p-6">
+         
+       {/* New Back to Home Button */}
+       <button
+          type="button"
+          onClick={() => navigate('/donation')}
+          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 mt-4 hover:bg-gray-100"
+        >
+          Back
+        </button>
       <div className="bg-white rounded-lg shadow-md p-6">
         {/* Bank Account Info */}
         <div className="mb-8 p-4 bg-blue-50 rounded-lg">

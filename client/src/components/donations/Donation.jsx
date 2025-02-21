@@ -26,9 +26,9 @@ const Donation = () => {
             All donations are eligible for tax exemption under Section 80G of the Income Tax Act.
           </p>
           <ul className="space-y-2 text-gray-600">
-            <li>✓ Instant donation receipt</li>
-            <li>✓ Tax exemption certificate</li>
-            <li>✓ Documentation support</li>
+            <li>✓ College Backed Donation Receipt</li>
+            <li>✓ Tax Exemption Certificate</li>
+            <li>✓ Documentation Support</li>
           </ul>
         </div>
 

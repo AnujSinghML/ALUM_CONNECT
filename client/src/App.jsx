@@ -19,6 +19,8 @@ import Profile from './routes/Profile';
 // New Donation-related routes
 import DonationProcess from './routes/DonationProcess';
 import CreateFundingRequest from './routes/CreateFundingRequest';
+import FundingOpportunities from './routes/FundingOpportunities';
+
 
 // Landing page component
 const LandingPage = () => {
@@ -48,6 +50,7 @@ const App = () => {
         <Route path="/donation" element={<ProtectedRoute><Donations /></ProtectedRoute>} />
         <Route path="/donation/process" element={<ProtectedRoute><DonationProcess /></ProtectedRoute>} />
         <Route path="/donation/create-funding-request" element={<ProtectedRoute><CreateFundingRequest /></ProtectedRoute>} />
+        <Route path="/donation/opportunities" element={<ProtectedRoute><FundingOpportunities /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
