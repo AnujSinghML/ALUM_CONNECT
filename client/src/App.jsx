@@ -16,6 +16,9 @@ import Discussion from './routes/Discussion';
 import Donations from './routes/Donations';
 import Profile from './routes/Profile';
 
+// New Donation-related routes
+import DonationProcess from './routes/DonationProcess';
+import CreateFundingRequest from './routes/CreateFundingRequest';
 
 // Landing page component
 const LandingPage = () => {
@@ -35,16 +38,18 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-  <Route path="/" element={<LandingPage />} />
-  <Route path="/login" element={<Login />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
 
-  {/* Secure Routes */}
-  <Route path="/announcements" element={<ProtectedRoute><Announcement /></ProtectedRoute>} />
-  <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
-  <Route path="/discussion" element={<ProtectedRoute><Discussion /></ProtectedRoute>} />
-  <Route path="/donation" element={<ProtectedRoute><Donations /></ProtectedRoute>} />
-  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-</Routes>
+        {/* Secure Routes */}
+        <Route path="/announcements" element={<ProtectedRoute><Announcement /></ProtectedRoute>} />
+        <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
+        <Route path="/discussion" element={<ProtectedRoute><Discussion /></ProtectedRoute>} />
+        <Route path="/donation" element={<ProtectedRoute><Donations /></ProtectedRoute>} />
+        <Route path="/donation/process" element={<ProtectedRoute><DonationProcess /></ProtectedRoute>} />
+        <Route path="/donation/create-funding-request" element={<ProtectedRoute><CreateFundingRequest /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      </Routes>
     </BrowserRouter>
   );
 };

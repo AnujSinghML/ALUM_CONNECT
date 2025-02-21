@@ -1,138 +1,46 @@
 // src/components/donations/Donation.jsx
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Donation = () => {
-  const [donationData, setDonationData] = useState({
-    amount: '',
-    name: '',
-    email: '',
-    graduationYear: '',
-    pan: '',
-    purpose: 'general'
-  });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('/api/donations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(donationData),
-      });
-      
-      if (response.ok) {
-        // Handle successful donation initiation
-        const paymentData = await response.json();
-        // Handle payment flow
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+  const navigate = useNavigate();
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white rounded-lg shadow-md">
-      <div className="p-6">
-        <h2 className="text-2xl font-bold mb-2">Make a Donation</h2>
-        <p className="text-gray-600 mb-6">Support your alma mater and receive tax benefits under 80G</p>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount (₹)
-            </label>
-            <input
-              type="number"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter amount"
-              value={donationData.amount}
-              onChange={(e) => setDonationData({...donationData, amount: e.target.value})}
-              required
-              min="100"
-            />
-          </div>
+    <div className="h-full bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Support Your Alma Mater</h2>
+      
+      <div className="space-y-6">
+        {/* Giving Back Section */}
+        <div className="bg-blue-50 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-blue-800 mb-2">Give Back to Your College</h3>
+          <p className="text-gray-700">
+            Your contribution helps build a stronger future for the next generation of students.
+            Support the institution that helped shape your career.
+          </p>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your full name"
-              value={donationData.name}
-              onChange={(e) => setDonationData({...donationData, name: e.target.value})}
-              required
-            />
-          </div>
+        {/* Tax Benefits Section */}
+        <div className="bg-green-50 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-green-800 mb-2">Tax Benefits</h3>
+          <p className="text-gray-700 mb-3">
+            All donations are eligible for tax exemption under Section 80G of the Income Tax Act.
+          </p>
+          <ul className="space-y-2 text-gray-600">
+            <li>✓ Instant donation receipt</li>
+            <li>✓ Tax exemption certificate</li>
+            <li>✓ Documentation support</li>
+          </ul>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your email"
-              value={donationData.email}
-              onChange={(e) => setDonationData({...donationData, email: e.target.value})}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Graduation Year
-            </label>
-            <input
-              type="number"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Year of graduation"
-              value={donationData.graduationYear}
-              onChange={(e) => setDonationData({...donationData, graduationYear: e.target.value})}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              PAN Number
-            </label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter PAN for tax exemption"
-              value={donationData.pan}
-              onChange={(e) => setDonationData({...donationData, pan: e.target.value})}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Purpose of Donation
-            </label>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={donationData.purpose}
-              onChange={(e) => setDonationData({...donationData, purpose: e.target.value})}
-            >
-              <option value="general">General Fund</option>
-              <option value="scholarship">Scholarship Fund</option>
-              <option value="infrastructure">Infrastructure Development</option>
-              <option value="research">Research Programs</option>
-            </select>
-          </div>
-
+        {/* CTA Button */}
+        <div className="mt-8">
           <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            onClick={() => navigate('/donation/process')}
+            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md"
           >
-            Proceed to Pay
+            Make a Donation
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
