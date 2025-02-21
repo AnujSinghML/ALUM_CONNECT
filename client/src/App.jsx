@@ -9,11 +9,13 @@ import Footer from './components/Footer';
 
 // Routes
 import Login from './routes/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 import Announcement from './routes/Announcement';
 import Network from './routes/Network';
 import Discussion from './routes/Discussion';
 import Donations from './routes/Donations';
 import Profile from './routes/Profile';
+
 
 // Landing page component
 const LandingPage = () => {
@@ -33,17 +35,16 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        
-        {/* Main routes */}
-        <Route path="/announcements" element={<Announcement />} />
-        <Route path="/network" element={<Network />} />
-        <Route path="/discussion" element={<Discussion />} />
-        <Route path="/donation" element={<Donations />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
+  <Route path="/" element={<LandingPage />} />
+  <Route path="/login" element={<Login />} />
+
+  {/* Secure Routes */}
+  <Route path="/announcements" element={<ProtectedRoute><Announcement /></ProtectedRoute>} />
+  <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
+  <Route path="/discussion" element={<ProtectedRoute><Discussion /></ProtectedRoute>} />
+  <Route path="/donation" element={<ProtectedRoute><Donations /></ProtectedRoute>} />
+  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+</Routes>
     </BrowserRouter>
   );
 };
