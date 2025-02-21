@@ -98,12 +98,12 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Profile Card */}
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
             {/* Header background with modern gradient */}
-            <div className="relative h-64 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 overflow-hidden">
+            <div className="relative h-35 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 overflow-hidden">
               <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)]" style={{ backgroundSize: '24px 24px' }}></div>
             </div>
 
@@ -186,44 +186,13 @@ const Profile = () => {
                   <ProfileSections profile={profile} />
                 </div>
 
-                {/* Activity Section with timeline */}
-                <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold flex items-center space-x-2">
-                      <Clock className="w-5 h-5 text-blue-600" />
-                      <span>Recent Activity</span>
-                    </h3>
-                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                      View All
-                    </button>
-                  </div>
-                  <ActivitySection lastLogin={profile.lastLogin} />
-                </div>
+                
+                
               </div>
             </div>
           </div>
 
-          {/* Quick Actions Footer */}
-          <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-600 flex items-center space-x-2">
-              <Clock className="w-4 h-4" />
-              <span>Last updated: {new Date(profile.updatedAt).toLocaleDateString()}</span>
-            </div>
-            <div className="flex space-x-4">
-              <button 
-                onClick={() => navigate('/settings')}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
-              >
-                Settings
-              </button>
-              <button 
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 transform hover:-translate-y-1"
-              >
-                Back to Top
-              </button>
-            </div>
-          </div>
+          
         </div>
       </div>
     </Layout>
