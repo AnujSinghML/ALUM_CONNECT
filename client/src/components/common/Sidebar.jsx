@@ -15,7 +15,7 @@ const Sidebar = () => {
     { path: '/announcements', icon: Megaphone, label: 'Announcements' },
     { path: '/network', icon: Network, label: 'Network Hub' },
     { path: '/discussion', icon: MessageCircle, label: 'Discussion' },
-    { path: '/donation', icon: Heart, label: 'Donation' },
+    { path: '/donation', icon: Heart, label: 'Donations' },
     { path: '/profile', icon: User, label: 'Profile' },
   ];
 

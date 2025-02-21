@@ -12,7 +12,7 @@ import Login from './routes/Login';
 import Announcement from './routes/Announcement';
 import Network from './routes/Network';
 import Discussion from './routes/Discussion';
-import Donation from './routes/Donation';
+import Donations from './routes/Donations';
 import Profile from './routes/Profile';
 
 // Landing page component
@@ -41,7 +41,7 @@ const App = () => {
         <Route path="/announcements" element={<Announcement />} />
         <Route path="/network" element={<Network />} />
         <Route path="/discussion" element={<Discussion />} />
-        <Route path="/donation" element={<Donation />} />
+        <Route path="/donation" element={<Donations />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
