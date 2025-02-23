@@ -1,6 +1,8 @@
 //make a donation button
-import React, { useState } from 'react';
+//client\src\routes\DonationProcess.jsx
+import React, { useState , useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const DonationProcess = () => {
   const [step, setStep] = useState(1);
@@ -8,18 +10,42 @@ const DonationProcess = () => {
     name: '',
     batch: '',
     email: '',
-    phone: '',
     amount: '',
     purpose: '',
     comments: ''
   });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Will be integrated with backend later
-    console.log('Form submitted:', formData);
-  };
   const navigate = useNavigate();
+ 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Submitting donation with:", formData);
+    setError('');
+    setSuccess('');
+    
+    try {
+      const response = await axios.post('http://localhost:3000/api/donations', formData);
+      console.log("API response:", response);
+      setSuccess('Donation submitted successfully! You will receive a confirmation email.');
+      setFormData({
+        name: '',
+        batch: '',
+        email: '',
+        amount: '',
+        purpose: '',
+        comments: ''
+      });
+    } catch (err) {
+      console.log("Submission error:", err.response?.data);
+      setError(err.response?.data?.message || 'Error submitting donation');
+    }
+  };
+  
+  
+ 
   return (
     <div className="max-w-3xl mx-auto p-6">
          
@@ -69,6 +95,20 @@ const DonationProcess = () => {
               required
             />
           </div>
+          <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Email
+  </label>
+  <input
+    type="email"
+    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+    value={formData.email}
+    onChange={(e) =>
+      setFormData({ ...formData, email: e.target.value })
+    }
+    required
+  />
+</div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -133,6 +173,13 @@ const DonationProcess = () => {
             Submit Details
           </button>
         </form>
+
+{success && (
+  <p className="mt-4 text-green-600 text-center">{success}</p>
+)}
+{error && (
+  <p className="mt-4 text-red-600 text-center">{error}</p>
+)}
 
         <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
           <p className="text-sm text-yellow-800">

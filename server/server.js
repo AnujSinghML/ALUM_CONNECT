@@ -1,4 +1,3 @@
-// server/server.js
 const express = require('express');
 const session = require('express-session');
 const connectDB = require('./config/db');
@@ -11,16 +10,18 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
 // CORS middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Your frontend URL
+  origin: 'http://localhost:5173',
   credentials: true
 }));
+
 // Body parser middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session middleware
+// Session middleware MUST come before passport.initialize
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
@@ -32,15 +33,19 @@ app.use(session({
   }
 }));
 
-// Passport initialization
-require('./config/passport')(passport);
+// Initialize passport and restore authentication state from session
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Configure Passport
+require('./config/passport')(passport);
 
 // Routes
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/api/profile', require('./routes/profileRoutes'));
-app.use('/api/announcements', require('./routes/announcementRoutes'))
+app.use('/api/announcements', require('./routes/announcementRoutes'));
+app.use('/api/donations', require('./routes/donationRoutes'));
+app.use('/api/opportunities', require('./routes/opportunityRoutes'));
 
 // Error handling
 app.use(errorHandler);

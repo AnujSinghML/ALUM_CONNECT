@@ -1,14 +1,15 @@
 // src/components/donations/Funding.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const FundingCard = ({ title, description, amount, author, tags }) => (
+const FundingCard = ({ title, description, amount, authorName, tags }) => (
   <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
     <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
     <p className="text-gray-600 text-sm mb-3 line-clamp-2">{description}</p>
     <div className="flex justify-between items-center mb-3">
       <span className="text-blue-600 font-medium">₹{amount}</span>
-      <span className="text-gray-500 text-sm">{author}</span>
+      <span className="text-gray-500 text-sm">{authorName}</span>
     </div>
     <div className="flex flex-wrap gap-2">
       {tags.map((tag, index) => (
@@ -23,38 +24,43 @@ const FundingCard = ({ title, description, amount, author, tags }) => (
   </div>
 );
 
-// Hardcoded data - will come from DB later
-const fundingRequests = [
-  {
-    title: "AI-Based Healthcare Solution",
-    description: "Developing an AI system for early disease detection and diagnosis using machine learning algorithms and medical imaging data.",
-    amount: "15,00,000",
-    author: "Batch 2022",
-    tags: ["Healthcare", "AI", "Technology"]
-  },
-  {
-    title: "Smart Campus Initiative",
-    description: "IoT-based smart infrastructure for college campus including smart lighting, energy management, and security systems.",
-    amount: "25,00,000",
-    author: "Batch 2021",
-    tags: ["IoT", "Infrastructure"]
-  },
-  {
-    title: "Renewable Energy Project",
-    description: "Solar and wind energy implementation project for sustainable campus development.",
-    amount: "20,00,000",
-    author: "Batch 2023",
-    tags: ["Energy", "Sustainability"]
-  },
-  // Add more items here for the full view
-];
-
 const Funding = ({ preview = false }) => {
   const navigate = useNavigate();
+
+  const [opportunities, setOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchOpportunities = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/opportunities');
+        setOpportunities(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Error loading opportunities');
+        setLoading(false);
+      }
+    };
+
+    fetchOpportunities();
+  }, []);
+
+  // Display loading state
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Display error state
+  if (error) {
+    return <div className="text-red-600">{error}</div>;
+  }
+
+
   
   // Show only 2 items in preview mode
-  const displayedRequests = preview ? fundingRequests.slice(0, 2) : fundingRequests;
-
+  const displayedRequests = preview ? opportunities.slice(0, 2) : opportunities;
+ 
   return (
     <div className="h-full bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">

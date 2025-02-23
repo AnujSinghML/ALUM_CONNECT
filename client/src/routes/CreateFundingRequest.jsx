@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+//client\src\routes\CreateFundingRequest.jsx
+import React, { useState , useEffect} from 'react';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const CreateFundingRequest = () => {
   const [requestData, setRequestData] = useState({
@@ -7,16 +9,67 @@ const CreateFundingRequest = () => {
     description: '',
     amount: '',
     category: '',
-    details: ''
+    details: '',
+    authorEmail: '',
+    tags: [],
+    status: 'pending'  // Add this default value
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Will be integrated with backend later
-    console.log('Request submitted:', requestData);
-  };
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/auth/profile', { withCredentials: true });
+
+        if (response.data.email) {
+          setRequestData(prevData => ({
+            ...prevData,
+            authorEmail: response.data.email
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+  
+    fetchUserData();
+  }, []);
+  
+  
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+  
+    console.log('Starting form submission');
+    console.log('Form data:', requestData);
+  
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/opportunities/createOpportunity', 
+        requestData,
+        { 
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      console.log('Submission successful:', response.data);
+      setSuccess('Funding request submitted successfully!');
+      navigate('/donation/opportunities');
+    } catch (err) {
+      console.error('Submission error:', err.response?.data || err);
+      setError(err.response?.data?.message || 'Error submitting request');
+    }
+  };
+  
 
   return (
     
@@ -71,7 +124,30 @@ const CreateFundingRequest = () => {
               required
             />
           </div>
+  {/* Added email field */}
+  <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Your Email
+  </label>
+  <input
+    type="email"
+    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100"
+    value={requestData.authorEmail || ''}
+    readOnly
+  />
+</div>
 
+
+
+      
+      {error && (
+        <div className="text-red-600 mb-4">{error}</div>
+      )}
+      {success && (
+        <div className="text-green-600 mb-4">{success}</div>
+      )}
+
+      
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Category
