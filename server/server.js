@@ -48,6 +48,7 @@ app.use('/api/announcements', require('./routes/announcementRoutes'));
 app.use('/api/donations', require('./routes/donationRoutes'));
 app.use('/api/opportunities', require('./routes/opportunityRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
+app.use('/api/alumni', require('./routes/alumniRoutes'));
 
 // Error handling
 app.use(errorHandler);

@@ -15,6 +15,7 @@ import Network from './routes/Network';
 import Discussion from './routes/Discussion';
 import Donations from './routes/Donations';
 import Profile from './routes/Profile';
+import AllAlumni from './routes/AllAlumni';
 
 // Donation-related routes
 import DonationProcess from './routes/DonationProcess';
@@ -49,7 +50,7 @@ const App = () => {
         {/* Secure Routes */}
         <Route path="/announcements" element={<ProtectedRoute><Announcement /></ProtectedRoute>} />
         <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
-        {/* New nested routes for network */}
+        <Route path="/network/all-people" element={<ProtectedRoute><AllAlumni /></ProtectedRoute>} />
         <Route path="/network/all-jobs" element={<ProtectedRoute><AllJobs /></ProtectedRoute>} />
         <Route path="/network/create-job" element={<ProtectedRoute><CreateJobOpportunity /></ProtectedRoute>} />
         <Route path="/discussion" element={<ProtectedRoute><Discussion /></ProtectedRoute>} />
