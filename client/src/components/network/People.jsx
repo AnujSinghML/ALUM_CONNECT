@@ -38,12 +38,12 @@ const People = () => {
           <ProfileCard key={profile._id} profile={profile} />
         ))}
       </div>
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-end mt-6">
         <button
           onClick={() => navigate('/network/all-people')}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
-          View All
+          View All →
         </button>
       </div>
     </div>
