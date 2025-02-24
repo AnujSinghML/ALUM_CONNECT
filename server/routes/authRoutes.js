@@ -1,43 +1,44 @@
-// server/routes/authRoutes.js
-const express = require('express');
-const passport = require('passport');
+const express = require("express");
+const passport = require("passport");
 const router = express.Router();
 
-// POST /auth/login
-router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-  if (err) return next(err);
-  if (!user) return res.status(400).json({ error: info.message });
-  req.logIn(user, (err) => {
+// ✅ POST /auth/login
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
-    
-    // Role validation: compare the role sent in the request with the role in the database.
-    if (req.body.role && req.body.role !== user.role) {
-      return res.status(403).json({ error: 'Unauthorized role' });
-    }
-    
-    return res.json({
-      message: 'Logged in successfully',
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role
+    if (!user) return res.status(400).json({ error: info.message });
+
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+
+      // ✅ Role validation
+      if (req.body.role && req.body.role !== user.role) {
+        return res.status(403).json({ error: "Unauthorized role" });
       }
+
+      return res.json({
+        message: "Logged in successfully",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
     });
-  });
-})(req, res, next);
-});  
-// GET /auth/profile
-router.get('/profile', (req, res) => {
+  })(req, res, next);
+});
+
+// ✅ GET /auth/profile
+router.get("/profile", (req, res) => {
   if (!req.user) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: "Unauthorized" });
   }
-  
-  // Map socialLinks to socialLinks if needed
-  const socialLinks = req.user.socialLinks || req.user.socialLinks || {};
-  
-  // Return the complete profile data
+
+  // ✅ Handle social links properly
+  const socialLinks = req.user.socialLinks || {};
+
+  // ✅ Return complete profile
   res.json({
     id: req.user.id,
     name: req.user.name,
@@ -51,22 +52,30 @@ router.get('/profile', (req, res) => {
     batch: req.user.batch,
     homeTown: req.user.homeTown,
     socialLinks: {
-      linkedin: socialLinks.linkedin,
-      instagram: socialLinks.instagram,
-      github: socialLinks.github,
-      x: socialLinks.x || socialLinks.twitter  // Handle both x and x
+      linkedin: socialLinks.linkedin || null,
+      instagram: socialLinks.instagram || null,
+      github: socialLinks.github || null,
+      x: socialLinks.x || socialLinks.twitter || null,
     },
     isActive: req.user.isActive,
-    lastLogin: req.user.lastLogin
+    lastLogin: req.user.lastLogin,
   });
 });
 
-// POST /auth/logout
-router.post('/logout', (req, res, next) => {
-  req.logout((err) => {
-    if (err) return next(err);
-    res.json({ message: 'Logged out successfully' });
-  });
+// ✅ POST /auth/logout
+router.post("/logout", (req, res, next) => {
+  try {
+    req.logout((err) => {
+      if (err) return next(err);
+      req.session.destroy((err) => {
+        if (err) return next(err);
+        res.clearCookie("connect.sid"); // ✅ Clear session cookie
+        return res.json({ message: "Logged out successfully" });
+      });
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
