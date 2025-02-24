@@ -4,9 +4,13 @@ import Layout from '../components/common/Layout';
 import ProfileCard from '../components/network/ProfileCard';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Pagination from '../components/common/Pagination'; // Import the pagination component
 
 const AllAlumni = () => {
   const [alumni, setAlumni] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -17,22 +21,25 @@ const AllAlumni = () => {
   const [location, setLocation] = useState('');
 
   const navigate = useNavigate();
+  const limit = 10; // Number of profiles per page
 
-  const fetchAlumni = async () => {
+  const fetchAlumni = async (pageNum = 1) => {
     setLoading(true);
     try {
-      // Build query string based on filter values
       const params = new URLSearchParams();
       if (batch) params.append('batch', batch);
       if (branch) params.append('branch', branch);
       if (currentCompany) params.append('currentCompany', currentCompany);
       if (location) params.append('location', location);
+      params.append('page', pageNum);
+      params.append('limit', limit);
 
-      const url = params.toString()
-        ? `http://localhost:3000/api/alumni?${params.toString()}`
-        : 'http://localhost:3000/api/alumni';
+      const url = `http://localhost:3000/api/alumni?${params.toString()}`;
       const response = await axios.get(url);
-      setAlumni(response.data);
+      setAlumni(response.data.data);
+      setTotal(response.data.total);
+      setPage(response.data.page);
+      setPages(response.data.pages);
       setLoading(false);
     } catch (err) {
       setError('Error fetching alumni profiles');
@@ -46,7 +53,7 @@ const AllAlumni = () => {
 
   const handleFilterSubmit = (e) => {
     e.preventDefault();
-    fetchAlumni();
+    fetchAlumni(1);
   };
 
   const handleClearFilters = () => {
@@ -54,7 +61,12 @@ const AllAlumni = () => {
     setBranch('');
     setCurrentCompany('');
     setLocation('');
-    fetchAlumni();
+    fetchAlumni(1);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > pages) return;
+    fetchAlumni(newPage);
   };
 
   if (loading) return <div>Loading alumni profiles...</div>;
@@ -76,7 +88,6 @@ const AllAlumni = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">All Alumni</h1>
           <p className="text-gray-600 mb-4">Explore all our distinguished alumni profiles.</p>
-          
           {/* Filter Form */}
           <form onSubmit={handleFilterSubmit} className="flex flex-wrap gap-4 mb-6">
             <div>
@@ -142,6 +153,9 @@ const AllAlumni = () => {
             <ProfileCard key={profile._id} profile={profile} />
           ))}
         </div>
+        
+        {/* Pagination Controls */}
+        <Pagination currentPage={page} totalPages={pages} onPageChange={handlePageChange} />
       </div>
     </Layout>
   );
