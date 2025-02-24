@@ -14,7 +14,11 @@ const People = () => {
     const fetchAlumni = async () => {
       try {
         const response = await axios.get('http://localhost:3000/api/alumni');
-        setAlumni(response.data);
+        // If response.data is an object with a 'data' property, use that.
+        const alumniData = Array.isArray(response.data)
+          ? response.data
+          : response.data.data;
+        setAlumni(alumniData);
         setLoading(false);
       } catch (err) {
         setError('Error fetching alumni profiles');
@@ -43,7 +47,7 @@ const People = () => {
           onClick={() => navigate('/network/all-people')}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
-          View All →
+          View All
         </button>
       </div>
     </div>
