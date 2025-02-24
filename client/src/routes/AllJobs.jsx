@@ -55,6 +55,7 @@ const AllJobs = () => {
       if (employmentType) queryParams.append('employmentType', employmentType);
       if (location) queryParams.append('location', location);
       if (tag) queryParams.append('tag', tag);
+      if (keyword) queryParams.append('keyword', keyword);
   
       // Build URL: if no filters, don't add "?"
       const url = queryParams.toString() 
@@ -80,6 +81,8 @@ const AllJobs = () => {
     e.preventDefault();
     fetchFilteredJobs();
   };
+  const [keyword, setKeyword] = useState('');
+
 
   return (
     <Layout>
@@ -103,37 +106,61 @@ const AllJobs = () => {
         </div>
 
         {/* Filter Form */}
-        <form onSubmit={handleFilterSubmit} className="mb-6 flex flex-wrap gap-4">
-          <select
-            value={employmentType}
-            onChange={(e) => setEmploymentType(e.target.value)}
-            className="px-3 py-2 border rounded"
-          >
-            <option value="">All Types</option>
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-            <option value="contract">Contract</option>
-            <option value="internship">Internship</option>
-            <option value="freelance">Freelance</option>
-          </select>
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Location"
-            className="px-3 py-2 border rounded"
-          />
-          <input
-            type="text"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
-            placeholder="Tag"
-            className="px-3 py-2 border rounded"
-          />
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-            Filter
-          </button>
-        </form>
+      
+<form onSubmit={handleFilterSubmit} className="mb-6 flex flex-wrap gap-4">
+  <select
+    value={employmentType}
+    onChange={(e) => setEmploymentType(e.target.value)}
+    className="px-3 py-2 border rounded"
+  >
+    <option value="">All Types</option>
+    <option value="full-time">Full-time</option>
+    <option value="part-time">Part-time</option>
+    <option value="contract">Contract</option>
+    <option value="internship">Internship</option>
+    <option value="freelance">Freelance</option>
+  </select>
+  <input
+    type="text"
+    value={location}
+    onChange={(e) => setLocation(e.target.value)}
+    placeholder="Location"
+    className="px-3 py-2 border rounded"
+  />
+  <input
+    type="text"
+    value={tag}
+    onChange={(e) => setTag(e.target.value)}
+    placeholder="Tag"
+    className="px-3 py-2 border rounded"
+  />
+  <input
+    type="text"
+    value={keyword}
+    onChange={(e) => setKeyword(e.target.value)}
+    placeholder="Search keyword"
+    className="px-3 py-2 border rounded"
+  />
+  <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+    Filter
+  </button>
+  {/* Clear All Filters Button */}
+  <button
+    type="button"
+    onClick={() => {
+      setEmploymentType('');
+      setLocation('');
+      setTag('');
+      setKeyword('');
+      // Optionally, fetch unfiltered jobs immediately:
+      fetchFilteredJobs();
+    }}
+    className="bg-gray-500 text-white px-4 py-2 rounded"
+  >
+    Clear All Filters
+  </button>
+</form>
+
 
         {loading ? (
           <div>Loading...</div>

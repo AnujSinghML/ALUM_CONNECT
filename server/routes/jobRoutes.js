@@ -78,21 +78,43 @@ router.post('/createJob', isAuthenticated, async (req, res) => {
   }
 });
 // Filter jobs by criteria
+// router.get('/filter', async (req, res) => {
+//     try {
+//       const { employmentType, location, tag } = req.query;
+//       const filter = {};
+      
+//       if (employmentType) filter.employmentType = employmentType;
+//       if (location) filter.location = { $regex: location, $options: 'i' };
+//       if (tag) filter.tags = { $in: [tag] };
+      
+//       const jobs = await Job.find(filter).sort({ createdAt: -1 });
+//       res.json(jobs);
+//     } catch (error) {
+//       res.status(500).json({ message: error.message });
+//     }
+//   });
 router.get('/filter', async (req, res) => {
     try {
-      const { employmentType, location, tag } = req.query;
+      const { employmentType, location, tag, keyword } = req.query;
       const filter = {};
-      
-      if (employmentType) filter.employmentType = employmentType;
+  
+      if (employmentType) filter.employmentType = { $regex: employmentType, $options: 'i' };
       if (location) filter.location = { $regex: location, $options: 'i' };
       if (tag) filter.tags = { $in: [tag] };
-      
+      if (keyword) {
+        filter.$or = [
+          { title: { $regex: keyword, $options: 'i' } },
+          { description: { $regex: keyword, $options: 'i' } }
+        ];
+      }
+  
       const jobs = await Job.find(filter).sort({ createdAt: -1 });
       res.json(jobs);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   });
+  
 // Get job by ID
 router.get('/:jobId', async (req, res) => {
   try {
