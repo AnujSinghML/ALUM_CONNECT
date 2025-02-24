@@ -78,42 +78,48 @@ router.post('/createJob', isAuthenticated, async (req, res) => {
   }
 });
 // Filter jobs by criteria
-// router.get('/filter', async (req, res) => {
-//     try {
-//       const { employmentType, location, tag } = req.query;
-//       const filter = {};
-      
-//       if (employmentType) filter.employmentType = employmentType;
-//       if (location) filter.location = { $regex: location, $options: 'i' };
-//       if (tag) filter.tags = { $in: [tag] };
-      
-//       const jobs = await Job.find(filter).sort({ createdAt: -1 });
-//       res.json(jobs);
-//     } catch (error) {
-//       res.status(500).json({ message: error.message });
-//     }
-//   });
+// server/routes/jobRoutes.js
 router.get('/filter', async (req, res) => {
-    try {
-      const { employmentType, location, tag, keyword } = req.query;
-      const filter = {};
-  
-      if (employmentType) filter.employmentType = { $regex: employmentType, $options: 'i' };
-      if (location) filter.location = { $regex: location, $options: 'i' };
-      if (tag) filter.tags = { $in: [tag] };
-      if (keyword) {
-        filter.$or = [
-          { title: { $regex: keyword, $options: 'i' } },
-          { description: { $regex: keyword, $options: 'i' } }
-        ];
-      }
-  
-      const jobs = await Job.find(filter).sort({ createdAt: -1 });
-      res.json(jobs);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+  try {
+    const { employmentType, location, tag, keyword } = req.query;
+    const filter = {};
+
+    if (employmentType) {
+      filter.employmentType = { $regex: employmentType, $options: 'i' };
     }
-  });
+    if (location) {
+      filter.location = { $regex: location, $options: 'i' };
+    }
+    if (tag) {
+      filter.tags = { $in: [tag] };
+    }
+    if (keyword) {
+      filter.$or = [
+        { title: { $regex: keyword, $options: 'i' } },
+        { description: { $regex: keyword, $options: 'i' } }
+      ];
+    }
+
+    const jobs = await Job.find(filter).sort({ createdAt: -1 });
+    
+    // Attach author details (like authorName) to each job:
+    const jobsWithAuthors = await Promise.all(
+      jobs.map(async (job) => {
+        const author = await User.findOne({ email: job.authorEmail });
+        return {
+          ...job.toObject(),
+          authorName: author ? author.name : 'Unknown Author',
+          companyName: author ? author.companyName : 'Unknown Company'
+        };
+      })
+    );
+
+    res.json(jobsWithAuthors);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
   
 // Get job by ID
 router.get('/:jobId', async (req, res) => {
@@ -135,22 +141,8 @@ router.get('/:jobId', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-// Filter jobs by criteria
-router.get('/filter', async (req, res) => {
-  try {
-    const { employmentType, location, tag } = req.query;
-    const filter = {};
-    
-    if (employmentType) filter.employmentType = employmentType;
-    if (location) filter.location = { $regex: location, $options: 'i' };
-    if (tag) filter.tags = { $in: [tag] };
-    
-    const jobs = await Job.find(filter).sort({ createdAt: -1 });
-    res.json(jobs);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+
+
 
 // Get jobs by author email
 router.get('/author/:email', async (req, res) => {
