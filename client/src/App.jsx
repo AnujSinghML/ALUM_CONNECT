@@ -16,11 +16,14 @@ import Discussion from './routes/Discussion';
 import Donations from './routes/Donations';
 import Profile from './routes/Profile';
 
-// New Donation-related routes
+// Donation-related routes
 import DonationProcess from './routes/DonationProcess';
 import CreateFundingRequest from './routes/CreateFundingRequest';
 import FundingOpportunities from './routes/FundingOpportunities';
 
+// New Job-related routes
+import AllJobs from './routes/AllJobs';
+import CreateJobOpportunity from './routes/CreateJobOpportunity';
 
 // Landing page component
 const LandingPage = () => {
@@ -46,6 +49,9 @@ const App = () => {
         {/* Secure Routes */}
         <Route path="/announcements" element={<ProtectedRoute><Announcement /></ProtectedRoute>} />
         <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
+        {/* New nested routes for network */}
+        <Route path="/network/all-jobs" element={<ProtectedRoute><AllJobs /></ProtectedRoute>} />
+        <Route path="/network/create-job" element={<ProtectedRoute><CreateJobOpportunity /></ProtectedRoute>} />
         <Route path="/discussion" element={<ProtectedRoute><Discussion /></ProtectedRoute>} />
         <Route path="/donation" element={<ProtectedRoute><Donations /></ProtectedRoute>} />
         <Route path="/donation/process" element={<ProtectedRoute><DonationProcess /></ProtectedRoute>} />

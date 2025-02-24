@@ -1,15 +1,20 @@
+// client/src/routes/Network.jsx
 import React from 'react';
 import Layout from '../components/common/Layout';
+import People from '../components/network/People';
+import Jobs from '../components/network/Jobs';
 
-const ComponentName = () => {
+const Network = () => {
   return (
     <Layout>
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Connect and Connect</h1>
-        {/* Component content here */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* People component – content coming soon */}
+        <People />
+        {/* Jobs component in preview mode */}
+        <Jobs preview={true} />
       </div>
     </Layout>
   );
 };
 
-export default ComponentName;
+export default Network;

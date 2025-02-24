@@ -1,3 +1,4 @@
+// server\server.js
 const express = require('express');
 const session = require('express-session');
 const connectDB = require('./config/db');
@@ -46,6 +47,7 @@ app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/announcements', require('./routes/announcementRoutes'));
 app.use('/api/donations', require('./routes/donationRoutes'));
 app.use('/api/opportunities', require('./routes/opportunityRoutes'));
+app.use('/api/jobs', require('./routes/jobRoutes'));
 
 // Error handling
 app.use(errorHandler);
