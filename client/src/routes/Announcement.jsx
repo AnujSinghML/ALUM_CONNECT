@@ -1,7 +1,8 @@
+// client/src/routes/Announcement.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/common/Layout';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Calendar, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Announcement = () => {
@@ -14,6 +15,7 @@ const Announcement = () => {
     const fetchAnnouncements = async () => {
       try {
         const response = await axios.get('http://localhost:3000/api/announcements');
+        console.log("API Response:", response.data);
 
         if (!response.data || !Array.isArray(response.data)) {
           throw new Error('Invalid response from server');
@@ -23,8 +25,11 @@ const Announcement = () => {
         const eventAnnouncements = response.data.filter(item => item.type === 'event');
         const achievementItems = response.data.filter(item => item.type === 'achievement');
         
-        setAnnouncements(eventAnnouncements.slice(0, 5)); // Show only 5 events
-        setAchievements(achievementItems.slice(0, 5)); // Show only 5 achievements
+        console.log("Events:", eventAnnouncements);
+        console.log("Achievements:", achievementItems);
+        
+        setAnnouncements(eventAnnouncements.slice(0, 6)); // Show only 6 events
+        setAchievements(achievementItems.slice(0, 6)); // Show only 6 achievements
       } catch (err) {
         console.error('Error fetching announcements:', err.message);
         setError('Failed to load announcements');
@@ -59,7 +64,7 @@ const Announcement = () => {
         <div className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Latest Events</h2>
-            <Link to="/all-events" className="flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 transition-colors">
+            <Link to="/announcements/all-events" className="flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 transition-colors">
               View all events <ArrowRight size={18} />
             </Link>
           </div>
@@ -88,7 +93,15 @@ const Announcement = () => {
                       </span>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-3">{announcement.title}</h3>
-                    <p className="text-gray-600 font-normal leading-relaxed">{announcement.description}</p>
+                    <p className="text-gray-600 font-normal leading-relaxed mb-4">{announcement.description}</p>
+                    <div className="flex items-center text-gray-500 text-sm">
+                      <Calendar size={16} className="mr-2" />
+                      <span>29 Nov, 03:30pm</span>
+                    </div>
+                    <div className="flex items-center text-gray-500 text-sm mt-2">
+                      <MapPin size={16} className="mr-2" />
+                      <span>{announcement.name || "Campus Location"}</span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -100,7 +113,7 @@ const Announcement = () => {
         <div>
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Recent Achievements</h2>
-            <Link to="/all-achievements" className="flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700 transition-colors">
+            <Link to="/announcements/all-achievements" className="flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700 transition-colors">
               View all achievements <ArrowRight size={18} />
             </Link>
           </div>
@@ -122,7 +135,7 @@ const Announcement = () => {
                       />
                     ) : (
                       <div className="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center text-purple-500 font-bold text-2xl">
-                        {achievement.name.charAt(0)}
+                        {achievement.name?.charAt(0) || "A"}
                       </div>
                     )}
                     <div>

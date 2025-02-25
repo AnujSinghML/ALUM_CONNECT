@@ -16,6 +16,8 @@ import Discussion from './routes/Discussion';
 import Donations from './routes/Donations';
 import Profile from './routes/Profile';
 import AllAlumni from './routes/AllAlumni';
+import AllAchievements from './routes/AllAchievements';
+import AllEvents from './routes/AllEvents';
 
 // Donation-related routes
 import DonationProcess from './routes/DonationProcess';
@@ -59,6 +61,8 @@ const App = () => {
         <Route path="/donation/create-funding-request" element={<ProtectedRoute><CreateFundingRequest /></ProtectedRoute>} />
         <Route path="/donation/opportunities" element={<ProtectedRoute><FundingOpportunities /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/announcements/all-events" element={<AllEvents />} />
+        <Route path="/announcements/all-achievements" element={<AllAchievements />} />
       </Routes>
     </BrowserRouter>
   );
