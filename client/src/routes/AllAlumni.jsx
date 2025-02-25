@@ -23,17 +23,25 @@ const AllAlumni = () => {
   const navigate = useNavigate();
   const limit = 10; // Number of profiles per page
 
-  const fetchAlumni = async (pageNum = 1) => {
+  const fetchAlumni = async (pageNum = 1, filters = {}) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (batch) params.append('batch', batch);
-      if (branch) params.append('branch', branch);
-      if (currentCompany) params.append('currentCompany', currentCompany);
-      if (location) params.append('location', location);
+      // Use provided filters if present, otherwise fall back to state values
+      const effectiveBatch = filters.batch !== undefined ? filters.batch : batch;
+      const effectiveBranch = filters.branch !== undefined ? filters.branch : branch;
+      const effectiveCurrentCompany = filters.currentCompany !== undefined ? filters.currentCompany : currentCompany;
+      const effectiveLocation = filters.location !== undefined ? filters.location : location;
+      
+      if (effectiveBatch) params.append('batch', effectiveBatch);
+      if (effectiveBranch) params.append('branch', effectiveBranch);
+      if (effectiveCurrentCompany) params.append('currentCompany', effectiveCurrentCompany);
+      if (effectiveLocation) params.append('location', effectiveLocation);
+      
+      // Add pagination parameters
       params.append('page', pageNum);
       params.append('limit', limit);
-
+      
       const url = `http://localhost:3000/api/alumni?${params.toString()}`;
       const response = await axios.get(url);
       setAlumni(response.data.data);
@@ -46,6 +54,7 @@ const AllAlumni = () => {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchAlumni();
@@ -56,13 +65,22 @@ const AllAlumni = () => {
     fetchAlumni(1);
   };
 
-  const handleClearFilters = () => {
-    setBatch('');
-    setBranch('');
-    setCurrentCompany('');
-    setLocation('');
-    fetchAlumni(1);
-  };
+ const handleClearFilters = () => {
+  // Immediately update state (optional)
+  setBatch('');
+  setBranch('');
+  setCurrentCompany('');
+  setLocation('');
+  // Call fetchAlumni with empty filters
+  fetchAlumni(1, {
+    batch: '',
+    branch: '',
+    currentCompany: '',
+    location: ''
+  });
+};
+
+  
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > pages) return;
