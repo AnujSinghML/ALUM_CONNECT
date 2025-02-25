@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/common/Layout';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Announcement = () => {
   const [announcements, setAnnouncements] = useState([]);
+  const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,7 +19,12 @@ const Announcement = () => {
           throw new Error('Invalid response from server');
         }
 
-        setAnnouncements(response.data);
+        // Separate announcements and achievements
+        const eventAnnouncements = response.data.filter(item => item.type === 'event');
+        const achievementItems = response.data.filter(item => item.type === 'achievement');
+        
+        setAnnouncements(eventAnnouncements.slice(0, 5)); // Show only 5 events
+        setAchievements(achievementItems.slice(0, 5)); // Show only 5 achievements
       } catch (err) {
         console.error('Error fetching announcements:', err.message);
         setError('Failed to load announcements');
@@ -28,53 +36,110 @@ const Announcement = () => {
     fetchAnnouncements();
   }, []);
 
-  if (loading) return <p>Loading announcements...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading) return (
+    <Layout>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-pulse font-medium text-blue-600">Loading content...</div>
+      </div>
+    </Layout>
+  );
+  
+  if (error) return (
+    <Layout>
+      <div className="bg-red-50 text-red-500 p-4 rounded-xl text-center font-medium">
+        {error}
+      </div>
+    </Layout>
+  );
 
   return (
     <Layout>
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Announcements</h1>
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        {/* Announcements Section */}
+        <div className="mb-16">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-gray-900">Latest Events</h2>
+            <Link to="/all-events" className="flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 transition-colors">
+              View all events <ArrowRight size={18} />
+            </Link>
+          </div>
 
-        {announcements.length === 0 ? (
-          <p>No announcements available.</p>
-        ) : (
-          <div className="space-y-6">
-            {announcements.map((announcement) => (
-              <div key={announcement._id} className="p-4 border rounded-lg shadow-md">
-                {announcement.type === 'event' && (
-                  <div>
-                    {announcement.imageUrl && (
+          {announcements.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm p-8 text-center text-gray-500">
+              No events available at the moment.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {announcements.map((announcement) => (
+                <div key={announcement._id} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 group">
+                  {announcement.imageUrl && (
+                    <div className="h-52 overflow-hidden">
                       <img
                         src={announcement.imageUrl}
                         alt={announcement.title}
-                        className="w-full h-48 object-cover rounded-lg mb-4"
+                        className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
                       />
-                    )}
-                    <h2 className="text-xl font-semibold text-gray-900">{announcement.title}</h2>
-                    <p className="text-gray-700">{announcement.description}</p>
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <div className="mb-3">
+                      <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
+                        Event
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{announcement.title}</h3>
+                    <p className="text-gray-600 font-normal leading-relaxed">{announcement.description}</p>
                   </div>
-                )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* Achievements Section */}
+        <div>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-gray-900">Recent Achievements</h2>
+            <Link to="/all-achievements" className="flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700 transition-colors">
+              View all achievements <ArrowRight size={18} />
+            </Link>
+          </div>
 
-                {announcement.type === 'achievement' && (
-                  <div className="flex items-center space-x-4">
-                    {announcement.imageUrl && (
+          {achievements.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm p-8 text-center text-gray-500">
+              No achievements to display.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {achievements.map((achievement) => (
+                <div key={achievement._id} className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-all duration-300 border border-gray-50">
+                  <div className="flex items-center gap-5">
+                    {achievement.imageUrl ? (
                       <img
-                        src={announcement.imageUrl}
-                        alt={announcement.name}
-                        className="w-16 h-16 rounded-full object-cover"
+                        src={achievement.imageUrl}
+                        alt={achievement.name}
+                        className="w-20 h-20 rounded-full object-cover border-2 border-purple-100"
                       />
+                    ) : (
+                      <div className="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center text-purple-500 font-bold text-2xl">
+                        {achievement.name.charAt(0)}
+                      </div>
                     )}
                     <div>
-                      <h2 className="text-lg font-semibold text-gray-900">{announcement.name}</h2>
-                      <p className="text-gray-700">{announcement.description}</p>
+                      <div className="mb-2">
+                        <span className="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-xs font-medium">
+                          Achievement
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">{achievement.name}</h3>
+                      <p className="text-gray-600 font-normal leading-relaxed">{achievement.description}</p>
                     </div>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </Layout>
   );
