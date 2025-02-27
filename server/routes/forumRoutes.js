@@ -3,22 +3,30 @@ const router = express.Router();
 const ForumPost = require("../models/ForumPost");
 const { isAuthenticated } = require("../middleware/isAuthenticated");
 
-// ✅ GET all posts
+// ✅ GET all posts (including votes)
 router.get("/posts", async (req, res) => {
   try {
     const posts = await ForumPost.find().sort({ createdAt: -1 });
-    res.json(posts);
+
+    // Include vote counts in the response
+    const postsWithVotes = posts.map(post => ({
+      ...post.toObject(),
+      voteCount: post.votes.filter(vote => vote.voteType === "upvote").length -
+                 post.votes.filter(vote => vote.voteType === "downvote").length
+    }));
+
+    res.json(postsWithVotes);
   } catch (error) {
     console.error("❌ Error fetching posts:", error);
-    res.status(500).json({ message: "Error fetching posts", error: error.message });
+    res.status(500).json({ message: "Error fetching posts" });
   }
 });
 
-// Create a new post
+// ✅ Create a new post (Requires Authentication)
 router.post("/posts", isAuthenticated, async (req, res) => {
   try {
     const { title, content } = req.body;
-    const user = req.user; // User should be set by isAuthenticated middleware
+    const user = req.user; // User should be set by `isAuthenticated`
 
     console.log("🔍 Incoming Data:", req.body);
     console.log("👤 Authenticated User:", user);
@@ -32,6 +40,7 @@ router.post("/posts", isAuthenticated, async (req, res) => {
       content,
       author: user.name,
       authorId: user.id,
+      votes: [], // Initialize votes as an empty array
     });
 
     await newPost.save();
@@ -44,5 +53,43 @@ router.post("/posts", isAuthenticated, async (req, res) => {
   }
 });
 
+router.post("/posts/:postId/vote", isAuthenticated, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { voteType } = req.body;
+    const userId = req.user._id; // Ensure req.user is set by authentication middleware
+
+    if (!["upvote", "downvote"].includes(voteType)) {
+      return res.status(400).json({ message: "Invalid vote type" });
+    }
+
+    const post = await ForumPost.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // ✅ Find if the user already voted
+    const existingVoteIndex = post.votes.findIndex(vote => vote.userId.equals(userId));
+
+    if (existingVoteIndex !== -1) {
+      // ✅ If user already voted, update or remove their vote
+      if (post.votes[existingVoteIndex].voteType === voteType) {
+        post.votes.splice(existingVoteIndex, 1); // Remove vote if same type
+      } else {
+        post.votes[existingVoteIndex].voteType = voteType; // Update vote
+      }
+    } else {
+      // ✅ If user hasn't voted, add new vote
+      post.votes.push({ userId, voteType });
+    }
+
+    await post.save();
+
+    res.json({ message: "Vote updated successfully", voteCount: post.voteCount });
+  } catch (error) {
+    console.error("Vote error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;
