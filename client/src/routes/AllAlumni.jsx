@@ -42,7 +42,7 @@ const AllAlumni = () => {
       params.append('page', pageNum);
       params.append('limit', limit);
       
-      const url = `http://localhost:3000/api/alumni?${params.toString()}`;
+      const url = `${import.meta.env.VITE_API_BASE_URL}/api/alumni?${params.toString()}`;
       const response = await axios.get(url);
       setAlumni(response.data.data);
       setTotal(response.data.total);

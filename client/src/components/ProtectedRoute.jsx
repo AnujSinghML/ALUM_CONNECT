@@ -6,7 +6,8 @@ const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/auth/profile', { withCredentials: true })
+    // axios.get('${import.meta.env.VITE_API_BASE_URL}/auth/profile', { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/profile`, { withCredentials: true })
       .then(() => setIsAuthenticated(true))
       .catch(() => setIsAuthenticated(false));
   }, []);

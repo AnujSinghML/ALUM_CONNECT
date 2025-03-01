@@ -12,7 +12,7 @@ const ProfileHeader = ({ profile, onProfileUpdate }) => {
   const handleEditSubmit = async (formData) => {
     try {
       const response = await axios.patch(
-        'http://localhost:3000/api/profile/update',
+        '${import.meta.env.VITE_API_BASE_URL}/api/profile/update',
         formData,
         { withCredentials: true }
       );

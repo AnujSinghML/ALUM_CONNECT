@@ -13,7 +13,7 @@ const People = () => {
   useEffect(() => {
     const fetchAlumni = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/alumni');
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alumni`);
         // If response.data is an object with a 'data' property, use that.
         const alumniData = Array.isArray(response.data)
           ? response.data
