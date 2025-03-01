@@ -31,7 +31,7 @@ const Discussion = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/auth/me", { withCredentials: true });
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/me`, { withCredentials: true });
         setUser(response.data);
       } catch (error) {
         console.error("❌ Error fetching user:", error);
@@ -45,7 +45,7 @@ const Discussion = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/forum/posts");
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/forum/posts`);
         const fetchedPosts = response.data;
         
         // Get stored votes from localStorage
@@ -94,7 +94,7 @@ const Discussion = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/forum/posts",
+        `${import.meta.env.VITE_API_BASE_URL}/api/forum/posts`,
         {
           title,
           content,
@@ -173,7 +173,7 @@ const Discussion = () => {
     
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/forum/posts/${postId}/vote`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/forum/posts/${postId}/vote`,
         { voteType },
         {
           withCredentials: true,

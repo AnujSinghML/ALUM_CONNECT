@@ -23,7 +23,7 @@ const CreateFundingRequest = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/auth/profile', { withCredentials: true });
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/profile`, { withCredentials: true });
 
         if (response.data.email) {
           setRequestData(prevData => ({
@@ -52,7 +52,7 @@ const CreateFundingRequest = () => {
   
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/opportunities/createOpportunity', 
+        `${import.meta.env.VITE_API_BASE_URL}/api/opportunities/createOpportunity`, 
         requestData,
         { 
           withCredentials: true,

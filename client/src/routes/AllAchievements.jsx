@@ -13,7 +13,7 @@ const AllAchievements = () => {
     const fetchAchievements = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:3000/api/announcements');
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/announcements`);
         console.log("API Response:", response.data);
         
         // Filter ONLY achievements

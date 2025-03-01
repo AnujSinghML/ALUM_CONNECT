@@ -34,7 +34,7 @@ const Funding = ({ preview = false }) => {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/opportunities');
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/opportunities`);
         setOpportunities(response.data);
         setLoading(false);
       } catch (err) {

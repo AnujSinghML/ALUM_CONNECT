@@ -237,7 +237,11 @@ const Login = () => {
     setError(null);
     
     try {
-      const res = await axios.post('http://localhost:3000/auth/login', formData, { withCredentials: true });
+      // const res = await axios.post('http://localhost:3000/auth/login', formData, { withCredentials: true });
+      // const res = await axios.post('${import.meta.env.VITE_API_BASE_URL}/auth/login', formData, { withCredentials: true });
+      // const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, formData, { withCredentials: true });
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, formData, { withCredentials: true });
+      // console.log('API Base URL:', import.meta.env.VITE_API_BASE_URL);
       console.log(res.data);
       navigate('/announcements');
     } catch (err) {

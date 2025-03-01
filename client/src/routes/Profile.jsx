@@ -16,7 +16,7 @@ const Profile = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/auth/profile', { 
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/profile`, { 
         withCredentials: true 
       });
       setProfile(response.data);
@@ -38,7 +38,7 @@ const Profile = () => {
   const handleProfileUpdate = async (updatedData) => {
     try {
       const response = await axios.patch(
-        'http://localhost:3000/api/profile/update',
+        `${import.meta.env.VITE_API_BASE_URL}/api/profile/update`,
         updatedData,
         { withCredentials: true }
       );
