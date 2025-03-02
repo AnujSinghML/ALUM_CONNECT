@@ -15,7 +15,7 @@ const app = express();
 // CORS middleware
 app.use(cors({
   // origin: 'http://localhost:5173',
-  origin: 'process.env.VITE_API_BASE_URL',
+  origin: process.env.VITE_API_BASE_URL,
   credentials: true
 }));
 
