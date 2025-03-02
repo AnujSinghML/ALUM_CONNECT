@@ -7,15 +7,24 @@ const CreatePostForm = ({ user, setPosts }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCreatePost = async () => {
-    if (!user) return alert("You must be logged in to create a post.");
-    if (!title.trim() || !content.trim()) return alert("Title and content cannot be empty.");
+    if (!user) {
+      return alert("You must be logged in to create a post.");
+    }
+    
+    if (!title.trim() || !content.trim()) {
+      return alert("Title and content cannot be empty.");
+    }
 
     setIsSubmitting(true);
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_backend_URL}/api/forum/posts`,
-        { title, content, authorId: user.id },
+        { 
+          title, 
+          content, 
+          authorId: user.id 
+        },
         { withCredentials: true }
       );
 
@@ -31,16 +40,43 @@ const CreatePostForm = ({ user, setPosts }) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow mb-6 border">
-      <h2 className="text-lg font-semibold mb-3">Create a New Post</h2>
-      <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)}
-        className="border p-2 w-full mb-2 rounded" />
-      <textarea placeholder="Write your post..." value={content} onChange={(e) => setContent(e.target.value)}
-        className="border p-2 w-full rounded h-24"></textarea>
-      <button onClick={handleCreatePost} disabled={isSubmitting}
-        className="bg-blue-500 text-white px-4 py-2 mt-2 rounded">
-        {isSubmitting ? "Posting..." : "Post"}
-      </button>
+    <div className="bg-white p-6 rounded-lg shadow-md mb-8 border border-gray-200">
+      <h2 className="text-xl font-bold mb-4 text-gray-800">Create a New Post</h2>
+      
+      <div className="space-y-4">
+        <div>
+          <input 
+            type="text" 
+            placeholder="Title" 
+            value={title} 
+            onChange={(e) => setTitle(e.target.value)}
+            className="border border-gray-300 p-3 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+          />
+        </div>
+        
+        <div>
+          <textarea 
+            placeholder="Write your post..." 
+            value={content} 
+            onChange={(e) => setContent(e.target.value)}
+            className="border border-gray-300 p-3 w-full rounded-md h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          ></textarea>
+        </div>
+        
+        <div>
+          <button 
+            onClick={handleCreatePost} 
+            disabled={isSubmitting}
+            className={`px-5 py-3 rounded-md font-medium transition-colors duration-200 ${
+              isSubmitting 
+                ? "bg-blue-400 text-white cursor-not-allowed" 
+                : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            }`}
+          >
+            {isSubmitting ? "Posting..." : "Create Post"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

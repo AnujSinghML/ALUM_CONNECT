@@ -22,6 +22,36 @@ router.get("/posts", async (req, res) => {
   }
 });
 
+// ✅ Get a post with replies
+router.get("/posts/:postId", async (req, res) => {
+  try {
+    const post = await ForumPost.findById(req.params.postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.json(post);
+  } catch (error) {
+    console.error("❌ Error fetching post:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/posts/:postId/replies", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await ForumPost.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.json(post.replies); // Send replies to frontend
+  } catch (error) {
+    console.error("❌ Error fetching replies:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 // ✅ Create a new post (Requires Authentication)
 router.post("/posts", isAuthenticated, async (req, res) => {
   try {
@@ -91,5 +121,38 @@ router.post("/posts/:postId/vote", isAuthenticated, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+router.post("/posts/:postId/replies", isAuthenticated, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { content } = req.body;
+    const user = req.user; // Make sure req.user exists (authentication middleware)
+
+    if (!content || !user) {
+      return res.status(400).json({ message: "Reply content is required" });
+    }
+
+    const post = await ForumPost.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const reply = {
+      userId: user._id,
+      username: user.name,
+      content,
+      createdAt: new Date(),
+    };
+
+    post.replies.push(reply); // Ensure your schema supports `replies`
+    await post.save();
+
+    res.status(201).json(post.replies);
+  } catch (error) {
+    console.error("❌ Error saving reply:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 
 module.exports = router;

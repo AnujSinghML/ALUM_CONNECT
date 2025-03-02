@@ -9,10 +9,19 @@ const forumPostSchema = new mongoose.Schema({
   votes: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-      voteType: { type: String, enum: ["upvote", "downvote"] } // Only "upvote" or "downvote"
-    }
-  ]
+      voteType: { type: String, enum: ["upvote", "downvote"] },
+    },
+  ],
+  replies: [
+    {
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      username: String,
+      content: String,
+      createdAt: { type: Date, default: Date.now },
+    },
+  ],
 });
+
 
 // ✅ Virtual field to calculate total votes
 forumPostSchema.virtual("voteCount").get(function () {
