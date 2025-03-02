@@ -26,7 +26,7 @@ const AdminAnnouncements = ({ user }) => {
     data.append('image', formData.image);
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/announcements/add`, data, {
+      await axios.post(`${import.meta.env.VITE_backend_URL}/api/announcements/add`, data, {
         headers: { Authorization: token }
       });
 

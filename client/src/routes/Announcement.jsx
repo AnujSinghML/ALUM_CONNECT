@@ -14,7 +14,7 @@ const Announcement = () => {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/announcements`);
+        const response = await axios.get(`${import.meta.env.VITE_backend_URL}/api/announcements`);
         console.log("API Response:", response.data);
 
         if (!response.data || !Array.isArray(response.data)) {

@@ -27,7 +27,7 @@ const DonationProcess = () => {
     setSuccess('');
     
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/donations`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_backend_URL}/api/donations`, formData);
       console.log("API response:", response);
       setSuccess('Donation submitted successfully! You will receive a confirmation email.');
       setFormData({

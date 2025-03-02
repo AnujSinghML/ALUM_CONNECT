@@ -7,7 +7,7 @@ const LogoutButton = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {}, { withCredentials: true });
+      await axios.post(`${import.meta.env.VITE_backend_URL}/auth/logout`, {}, { withCredentials: true });
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
