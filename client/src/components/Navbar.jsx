@@ -124,8 +124,47 @@ const Navbar = () => {
                     Instagram
                   </a>
                   <br />
-                  Contact: +91 9987337572
+                  Contact: +91 998-733-7572
                 </p>
+                <p className="mt-4 text-sm text-gray-600">
+                  <strong>Nayan Mandal</strong>
+                  <br />
+                  <a
+                    href="https://www.linkedin.com/in/9keystrokes/"
+                    className="text-blue-500 hover:underline"
+                  >
+                    LinkedIn
+                  </a>
+                  <br />
+                  <a
+                    href="https://www.instagram.com/9keystrokes/"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Instagram
+                  </a>
+                  <br />
+                  Contact: +91 936-966-67968
+                </p>
+                <p className="mt-4 text-sm text-gray-600">
+                  <strong>Vashu Parashar</strong>
+                  <br />
+                  <a
+                    href="https://www.linkedin.com/in/vasuparashar18/"
+                    className="text-blue-500 hover:underline"
+                  >
+                    LinkedIn
+                  </a>
+                  <br />
+                  <a
+                    href="https://www.instagram.com/whovasu/"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Instagram
+                  </a>
+                  <br />
+                  Contact: +91 846-893-8745
+                </p>
+                
                 <p className="mt-4 text-sm text-gray-600">
                   For general inquiries, or to learn more about contributing to the alumni
                   community, please contact us at:
@@ -272,8 +311,47 @@ const Navbar = () => {
                         Instagram
                       </a>
                       <br />
-                      Contact: +91 9987337572
+                      Contact: +91 998-733-7572
                     </p>
+                    <p className="mt-4 text-sm text-gray-600">
+                      <strong>Nayan Mandal</strong>
+                      <br />
+                      <a
+                        href="https://www.linkedin.com/in/9keystrokes/"
+                        className="text-blue-500 hover:underline"
+                      >
+                        LinkedIn
+                      </a>
+                      <br />
+                      <a
+                        href="https://www.instagram.com/9keystrokes/"
+                        className="text-blue-500 hover:underline"
+                      >
+                        Instagram
+                      </a>
+                      <br />
+                      Contact: +91 936-966-67968
+                    </p>
+                    <p className="mt-4 text-sm text-gray-600">
+                      <strong>Vashu Parashar</strong>
+                      <br />
+                      <a
+                        href="https://www.linkedin.com/in/vasuparashar18/"
+                        className="text-blue-500 hover:underline"
+                      >
+                        LinkedIn
+                      </a>
+                      <br />
+                      <a
+                        href="https://www.instagram.com/whovasu/"
+                        className="text-blue-500 hover:underline"
+                      >
+                        Instagram
+                      </a>
+                      <br />
+                      Contact: +91 846-893-8745
+                    </p>
+                
                     <p className="mt-2 text-sm text-gray-600">
                       For general inquiries, or to learn more about contributing to the alumni community, please contact us at:
                       <br />
