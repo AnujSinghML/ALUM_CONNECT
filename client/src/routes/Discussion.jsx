@@ -31,7 +31,8 @@ const Discussion = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_backend_URL}/auth/me`, { withCredentials: true });
+        // const response = await axios.get(`${import.meta.env.VITE_backend_URL}/auth/me`, { withCredentials: true });
+        const response = await axios.get(`${import.meta.env.VITE_backend_URL}/auth/profile`, { withCredentials: true });
         setUser(response.data);
       } catch (error) {
         console.error("❌ Error fetching user:", error);

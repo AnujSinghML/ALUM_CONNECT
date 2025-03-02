@@ -63,19 +63,19 @@ router.get("/profile", (req, res) => {
   });
 });
 
-// ✅ GET /auth/me → Fetch logged-in user
-router.get("/me", (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+// // ✅ GET /auth/me → Fetch logged-in user
+// router.get("/me", (req, res) => {
+//   if (!req.user) {
+//     return res.status(401).json({ error: "Unauthorized" });
+//   }
 
-  res.json({
-    id: req.user.id,
-    name: req.user.name,
-    email: req.user.email,
-    role: req.user.role,
-  });
-});
+//   res.json({
+//     id: req.user.id,
+//     name: req.user.name,
+//     email: req.user.email,
+//     role: req.user.role,
+//   });
+// });
 
 // ✅ POST /auth/logout
 router.post("/logout", (req, res, next) => {
