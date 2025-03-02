@@ -1,5 +1,4 @@
 // server\middleware\isAuthenticated.js
-// server/middleware/isAuthenticated.js
 module.exports = {
     isAuthenticated: function(req, res, next) {
       if (req.isAuthenticated()) {
