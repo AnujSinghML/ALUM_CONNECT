@@ -35,8 +35,8 @@ const AllJobs = () => {
 
       // Build URL: if no filters, use base URL without "?"
       const url = queryParams.toString()
-        ? `${import.meta.env.VITE_API_BASE_URL}/api/jobs/filter?${queryParams.toString()}`
-        : `${import.meta.env.VITE_API_BASE_URL}/api/jobs/filter`;
+        ? `${import.meta.env.VITE_backend_URL}/api/jobs/filter?${queryParams.toString()}`
+        : `${import.meta.env.VITE_backend_URL}/api/jobs/filter`;
 
       const response = await axios.get(url);
       setJobs(response.data);

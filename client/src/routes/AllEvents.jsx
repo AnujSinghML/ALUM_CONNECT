@@ -14,7 +14,7 @@ const AllEvents = () => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/announcements`);
+        const response = await axios.get(`${import.meta.env.VITE_backend_URL}/api/announcements`);
         console.log("API Response:", response.data);
         
         // Filter ONLY events

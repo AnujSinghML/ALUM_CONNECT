@@ -25,7 +25,7 @@ const CreateJobOpportunity = () => {
     // Fetch user data to populate authorEmail automatically
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/profile`, { withCredentials: true });
+        const response = await axios.get(`${import.meta.env.VITE_backend_URL}/auth/profile`, { withCredentials: true });
         if (response.data.email) {
           setJobData(prevData => ({
             ...prevData,
@@ -47,7 +47,7 @@ const CreateJobOpportunity = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/jobs/createJob`, 
+        `${import.meta.env.VITE_backend_URL}/api/jobs/createJob`, 
         jobData,
         { 
           withCredentials: true,
