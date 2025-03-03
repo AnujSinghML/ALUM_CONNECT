@@ -18,6 +18,7 @@ import Profile from './routes/Profile';
 import AllAlumni from './routes/AllAlumni';
 import AllAchievements from './routes/AllAchievements';
 import AllEvents from './routes/AllEvents';
+import CreateAchievement from './routes/CreateAchievement';
 
 // Donation-related routes
 import DonationProcess from './routes/DonationProcess';
@@ -63,6 +64,7 @@ const App = () => {
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/announcements/all-events" element={<AllEvents />} />
         <Route path="/announcements/all-achievements" element={<AllAchievements />} />
+        <Route path="/create-achievement" element={<ProtectedRoute><CreateAchievement /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

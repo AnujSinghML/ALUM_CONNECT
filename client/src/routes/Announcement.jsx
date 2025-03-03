@@ -1,8 +1,7 @@
-// client/src/routes/Announcement.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/common/Layout';
-import { ArrowRight, Calendar, MapPin } from 'lucide-react';
+import { ArrowRight, Calendar, MapPin, PlusCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Announcement = () => {
@@ -21,15 +20,14 @@ const Announcement = () => {
           throw new Error('Invalid response from server');
         }
 
-        // Separate announcements and achievements
         const eventAnnouncements = response.data.filter(item => item.type === 'event');
         const achievementItems = response.data.filter(item => item.type === 'achievement');
-        
+
         console.log("Events:", eventAnnouncements);
         console.log("Achievements:", achievementItems);
-        
-        setAnnouncements(eventAnnouncements.slice(0, 6)); // Show only 6 events
-        setAchievements(achievementItems.slice(0, 6)); // Show only 6 achievements
+
+        setAnnouncements(eventAnnouncements.slice(0, 6));
+        setAchievements(achievementItems.slice(0, 6));
       } catch (err) {
         console.error('Error fetching announcements:', err.message);
         setError('Failed to load announcements');
@@ -113,9 +111,14 @@ const Announcement = () => {
         <div>
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Recent Achievements</h2>
-            <Link to="/announcements/all-achievements" className="flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700 transition-colors">
-              View all achievements <ArrowRight size={18} />
-            </Link>
+            <div className="flex gap-4">
+              <Link to="/create-achievement" className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-md">
+                <PlusCircle size={18} /> Create Achievement
+              </Link>
+              <Link to="/announcements/all-achievements" className="flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700 transition-colors">
+                View all achievements <ArrowRight size={18} />
+              </Link>
+            </div>
           </div>
 
           {achievements.length === 0 ? (
@@ -159,3 +162,4 @@ const Announcement = () => {
 };
 
 export default Announcement;
+
