@@ -24,11 +24,11 @@ const users = [
     }
   },
   {
-    name: 'Vashu Prashar',
+    name: 'Vasu Parashar',
     email: 'bt22csd021@iiitn.ac.in',
-    password: 'vashu123!', 
+    password: 'vasu123', 
     role: 'student',
-    dob: new Date('2004-08-16'),
+    dob: new Date('2004-08-18'),
     branch: 'Computer Science - Data Science',
     currentCompany: null,
     currentCompanyRole: '',

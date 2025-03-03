@@ -113,7 +113,7 @@ const Announcement = () => {
             <h2 className="text-3xl font-bold text-gray-900">Recent Achievements</h2>
             <div className="flex gap-4">
               <Link to="/create-achievement" className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-md">
-                <PlusCircle size={18} /> Create Achievement
+                <PlusCircle size={18} /> Add Achievement
               </Link>
               <Link to="/announcements/all-achievements" className="flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700 transition-colors">
                 View all achievements <ArrowRight size={18} />
