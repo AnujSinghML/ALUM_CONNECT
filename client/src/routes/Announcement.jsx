@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/common/Layout';
 import { ArrowRight, Calendar, MapPin, PlusCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Announcement = () => {
+  const navigate = useNavigate();
   const [announcements, setAnnouncements] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAlumni, setIsAlumni] = useState(false); // Add state for alumni status
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
@@ -36,7 +38,20 @@ const Announcement = () => {
       }
     };
 
+    const fetchUserRole = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_backend_URL}/auth/profile`,
+          { withCredentials: true }
+        );
+        setIsAlumni(response.data.role === "alumni"); // Set alumni status based on user role
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
     fetchAnnouncements();
+    fetchUserRole(); // Fetch user role on component mount
   }, []);
 
   if (loading) return (
@@ -112,9 +127,12 @@ const Announcement = () => {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Recent Achievements</h2>
             <div className="flex gap-4">
-              <Link to="/create-achievement" className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-md">
-                <PlusCircle size={18} /> Add Achievement
-              </Link>
+              {/* Show "Add Achievement" button only to alumni */}
+              {isAlumni && (
+                <Link to="/create-achievement" className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-md">
+                  <PlusCircle size={18} /> Add Achievement
+                </Link>
+              )}
               <Link to="/announcements/all-achievements" className="flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700 transition-colors">
                 View all achievements <ArrowRight size={18} />
               </Link>
@@ -162,4 +180,3 @@ const Announcement = () => {
 };
 
 export default Announcement;
-

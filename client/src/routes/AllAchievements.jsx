@@ -12,7 +12,7 @@ const AllAchievements = () => {
   // LocalStorage se user fetch karo
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
-  console.log("Logged in user:", user); // Debug: Dekho user ka data aur role
+  // console.log("Logged in user:", user); // Debug: Dekho user ka data aur role
 
   useEffect(() => {
     const fetchAchievements = async () => {
