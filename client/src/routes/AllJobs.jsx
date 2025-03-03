@@ -16,6 +16,27 @@ const AllJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Get current user on component mount
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        console.log("Fetching current user...");
+    
+        const response = await axios.get(`${import.meta.env.VITE_backend_URL}/auth/profile`, {
+          withCredentials: true // ✅ This ensures the session cookie is sent
+        });
+    
+        console.log("Fetched User Data:", response.data);
+        setCurrentUser(response.data);
+      } catch (err) {
+        console.error('Error fetching current user:', err);
+      }
+    };
+    
+    fetchCurrentUser();
+  }, []);
 
   // Modified fetch function accepts an optional filters object
   const fetchFilteredJobs = async (pageNum = 1, filters = {}) => {
@@ -32,11 +53,12 @@ const AllJobs = () => {
       if (effectiveLocation) queryParams.append('location', effectiveLocation);
       if (effectiveTag) queryParams.append('tag', effectiveTag);
       if (effectiveKeyword) queryParams.append('keyword', effectiveKeyword);
+      
+      // Always filter for active jobs only
+      queryParams.append('status', 'active');
 
-      // Build URL: if no filters, use base URL without "?"
-      const url = queryParams.toString()
-        ? `${import.meta.env.VITE_backend_URL}/api/jobs/filter?${queryParams.toString()}`
-        : `${import.meta.env.VITE_backend_URL}/api/jobs/filter`;
+      // Build URL with query parameters
+      const url = `${import.meta.env.VITE_backend_URL}/api/jobs/filter?${queryParams.toString()}`;
 
       const response = await axios.get(url);
       setJobs(response.data);
@@ -71,6 +93,23 @@ const AllJobs = () => {
       keyword: ''
     });
   };
+
+  // Function to handle job status change
+  const handleStatusChange = async (jobId, newStatus) => {
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_backend_URL}/api/jobs/${jobId}/status`, 
+        { status: newStatus },
+        { withCredentials: true }  // ✅ Ensure session cookies are sent
+      );
+  
+      fetchFilteredJobs(); // Refresh the job list
+    } catch (err) {
+      alert('Error updating job status');
+      console.error('Error:', err);
+    }
+  };
+  
 
   return (
     <Layout>
@@ -145,10 +184,19 @@ const AllJobs = () => {
           <div>Loading...</div>
         ) : error ? (
           <div className="text-red-600">{error}</div>
+        ) : jobs.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-lg text-gray-600">No jobs found matching your criteria.</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {jobs.map((job, index) => (
-              <JobCard key={index} {...job} />
+              <JobCard 
+                key={job.jobId}
+                {...job}
+                currentUserEmail={currentUser?.email}
+                onStatusChange={handleStatusChange}
+              />
             ))}
           </div>
         )}

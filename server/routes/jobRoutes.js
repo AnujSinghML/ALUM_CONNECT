@@ -4,6 +4,7 @@ const router = express.Router();
 const Job = require('../models/job');
 const User = require('../models/users');
 const { isAuthenticated } = require('../middleware/isAuthenticated');
+const { isAlumni } = require("../middleware/authMiddleware");
 
 // Get all jobs
 router.get('/', async (req, res) => {
@@ -30,7 +31,7 @@ router.get('/', async (req, res) => {
 });
 
 // Create new job
-router.post('/createJob', isAuthenticated, async (req, res) => {
+router.post("/createJob", isAuthenticated, isAlumni, async (req, res) => {
   try {
     console.log('Request reached createJob');
     console.log('Is authenticated:', req.isAuthenticated());
@@ -78,10 +79,11 @@ router.post('/createJob', isAuthenticated, async (req, res) => {
   }
 });
 // Filter jobs by criteria
-// server/routes/jobRoutes.js
+// server/routes/jobRoutes.js - updated filter endpoint
+
 router.get('/filter', async (req, res) => {
   try {
-    const { employmentType, location, tag, keyword } = req.query;
+    const { employmentType, location, tag, keyword, status } = req.query;
     const filter = {};
 
     if (employmentType) {
@@ -99,10 +101,14 @@ router.get('/filter', async (req, res) => {
         { description: { $regex: keyword, $options: 'i' } }
       ];
     }
+    // Add status filter if provided
+    if (status) {
+      filter.status = status;
+    }
 
     const jobs = await Job.find(filter).sort({ createdAt: -1 });
     
-    // Attach author details (like authorName) to each job:
+    // Attach author details to each job
     const jobsWithAuthors = await Promise.all(
       jobs.map(async (job) => {
         const author = await User.findOne({ email: job.authorEmail });
@@ -119,8 +125,6 @@ router.get('/filter', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-  
 // Get job by ID
 router.get('/:jobId', async (req, res) => {
   try {

@@ -8,7 +8,7 @@ const Network = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* People component – content coming soon */}
+        {/* People component*/}
         <People />
         {/* Jobs component in preview mode */}
         <Jobs preview={true} />

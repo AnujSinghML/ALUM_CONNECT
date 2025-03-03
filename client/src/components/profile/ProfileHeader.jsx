@@ -12,10 +12,11 @@ const ProfileHeader = ({ profile, onProfileUpdate }) => {
   const handleEditSubmit = async (formData) => {
     try {
       const response = await axios.patch(
-        '${import.meta.env.VITE_backend_URL}/api/profile/update',
+        `${import.meta.env.VITE_backend_URL}/api/profile/update`, // ✅ Correct interpolation
         formData,
         { withCredentials: true }
       );
+      
 
       if (response.data) {
         onProfileUpdate(response.data);
