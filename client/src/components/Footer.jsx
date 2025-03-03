@@ -27,9 +27,9 @@ const Footer = () => (
         <div>
           <h3 className="text-white text-lg font-semibold mb-4">Follow Us</h3>
           <div className="flex space-x-4">
-            <a href="#" className="text-gray-300 hover:text-white">Facebook</a>
-            <a href="#" className="text-gray-300 hover:text-white">x</a>
-            <a href="#" className="text-gray-300 hover:text-white">LinkedIn</a>
+            <a href="#" className="text-white-300 hover:text-white">Facebook</a>
+            <a href="#" className="text-white-300 hover:text-white">x</a>
+            <a href="#" className="text-white-300 hover:text-white">LinkedIn</a>
           </div>
         </div>
       </div>
@@ -37,6 +37,25 @@ const Footer = () => (
         <p className="text-center text-gray-400">&copy; 2024 AlumConnect. All rights reserved.</p>
       </div>
     </div>
+    {/* Global styles to override default link styling */}
+    {/* <style jsx global>{`
+      footer a {
+        color: inherit;
+        text-decoration: none;
+      }
+      footer a:visited {
+        color: inherit;
+      }
+    `}</style> */}
+    <style jsx global>{`
+      footer a {
+        color: white;
+        text-decoration: none;
+      }
+      footer a:visited {
+        color: white;
+      }
+    `}</style>
   </footer>
 );
 
