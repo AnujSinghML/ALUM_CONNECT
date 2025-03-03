@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const { cloudinary } = require('../utils/cloudinary');
 const Announcement = require('../models/Announcement');
+const { isAlumni } = require('../middleware/authMiddleware');
 
 // 1️⃣ Corrected Multer Storage Configuration
 const storage = multer.memoryStorage();
@@ -18,7 +19,7 @@ const upload = multer({
 });
 
 // 2️⃣ Create a POST route to handle achievement creation
-router.post('/add', upload.single('image'), async (req, res) => {
+router.post('/add', isAlumni, upload.single('image'), async (req, res) => {
   try {
     const { type, title, description, name } = req.body;
     console.log("🟢 Request Body:", req.body);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/common/Layout';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const AllAchievements = () => {
@@ -8,6 +8,11 @@ const AllAchievements = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // LocalStorage se user fetch karo
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  console.log("Logged in user:", user); // Debug: Dekho user ka data aur role
 
   useEffect(() => {
     const fetchAchievements = async () => {
@@ -21,10 +26,10 @@ const AllAchievements = () => {
         console.log("All Achievements:", achievementItems);
         
         setAchievements(achievementItems);
-        setLoading(false);
       } catch (err) {
         console.error('Error fetching achievements:', err);
         setError('Error fetching achievements');
+      } finally {
         setLoading(false);
       }
     };
@@ -43,7 +48,7 @@ const AllAchievements = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Back Button - Fixed to go to announcements page */}
+        {/* Back Button */}
         <div className="flex justify-start mb-4">
           <button
             type="button"
@@ -54,9 +59,17 @@ const AllAchievements = () => {
           </button>
         </div>
         
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">All Achievements</h1>
-          <p className="text-gray-600 mb-4">Celebrate the accomplishments of our community members.</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">All Achievements</h1>
+            <p className="text-gray-600 mb-4">Celebrate the accomplishments of our community members.</p>
+          </div>
+          {/* Create Achievement button sirf alumni ke liye */}
+          {user && user.role.toLowerCase() === 'alumni' && (
+            <Link to="/create-achievement" className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-md">
+              Add Achievement
+            </Link>
+          )}
         </div>
         
         {/* Achievements Grid */}
