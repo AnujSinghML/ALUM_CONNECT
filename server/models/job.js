@@ -50,7 +50,8 @@ const JobSchema = new mongoose.Schema({
   }],
   status: {
     type: String,
-    enum: ['active', 'filled', 'expired', 'pending'],
+    enum: ['active', 'filled', 'expired', 'pending'], //active == show , filled == notShow (can delete now)
+    //expired == delete from DB 
     default: 'pending'
   },
   applicationUrl: {
