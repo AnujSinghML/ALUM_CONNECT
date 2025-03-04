@@ -36,22 +36,6 @@ router.get("/posts/:postId", async (req, res) => {
   }
 });
 
-router.get("/posts/:postId/replies", async (req, res) => {
-  try {
-    const { postId } = req.params;
-    const post = await ForumPost.findById(postId);
-
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-
-    res.json(post.replies); // Send replies to frontend
-  } catch (error) {
-    console.error("❌ Error fetching replies:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
 // ✅ Create a new post (Requires Authentication)
 router.post("/posts", isAuthenticated, async (req, res) => {
   try {
@@ -142,9 +126,11 @@ router.post("/posts/:postId/replies", isAuthenticated, async (req, res) => {
       username: user.name,
       content,
       createdAt: new Date(),
+      votes: [], // Initialize empty votes array
+      postId: postId, // Add postId to the reply
     };
 
-    post.replies.push(reply); // Ensure your schema supports `replies`
+    post.replies.push(reply);
     await post.save();
 
     res.status(201).json(post.replies);
@@ -154,5 +140,79 @@ router.post("/posts/:postId/replies", isAuthenticated, async (req, res) => {
   }
 });
 
+router.post("/posts/:postId/replies/:replyId/vote", isAuthenticated, async (req, res) => {
+  try {
+    const { postId, replyId } = req.params;
+    const { voteType } = req.body;
+    const userId = req.user._id;
+
+    if (!["upvote", "downvote"].includes(voteType)) {
+      return res.status(400).json({ message: "Invalid vote type" });
+    }
+
+    const post = await ForumPost.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const reply = post.replies.id(replyId);
+    if (!reply) {
+      return res.status(404).json({ message: "Reply not found" });
+    }
+
+    // Find if the user already voted on this reply
+    const existingVoteIndex = reply.votes.findIndex(vote => vote.userId.equals(userId));
+
+    if (existingVoteIndex !== -1) {
+      // If user already voted, update or remove their vote
+      if (reply.votes[existingVoteIndex].voteType === voteType) {
+        reply.votes.splice(existingVoteIndex, 1); // Remove vote if same type
+      } else {
+        reply.votes[existingVoteIndex].voteType = voteType; // Update vote
+      }
+    } else {
+      // If user hasn't voted, add new vote
+      reply.votes.push({ userId, voteType });
+    }
+
+    await post.save();
+
+    // Calculate vote count for the specific reply
+    const voteCount = reply.voteCount;
+
+    res.json({ 
+      message: "Reply vote updated successfully", 
+      voteCount,
+      replyId
+    });
+  } catch (error) {
+    console.error("Reply vote error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Update the replies fetching route to ensure vote count is included
+router.get("/posts/:postId/replies", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await ForumPost.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Map replies to include voteCount
+    const repliesWithVotes = post.replies.map(reply => ({
+      ...reply.toObject(),
+      voteCount: reply.voteCount,
+      postId: post._id
+    }));
+
+    res.json(repliesWithVotes);
+  } catch (error) {
+    console.error("❌ Error fetching replies:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 module.exports = router;

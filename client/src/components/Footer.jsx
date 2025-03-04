@@ -28,7 +28,7 @@ const Footer = () => (
           <h3 className="text-white text-lg font-semibold mb-4">Follow Us</h3>
           <div className="flex space-x-4">
             <a href="#" className="text-white-300 hover:text-white">Facebook</a>
-            <a href="#" className="text-white-300 hover:text-white">x</a>
+            <a href="#" className="text-white-300 hover:text-white">X</a>
             <a href="#" className="text-white-300 hover:text-white">LinkedIn</a>
           </div>
         </div>
