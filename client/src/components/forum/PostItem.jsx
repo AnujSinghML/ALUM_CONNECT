@@ -64,7 +64,12 @@ const PostItem = ({ post, user, setPosts }) => {
         {isLoading ? (
           <div className="text-center py-3 text-gray-500">Loading replies...</div>
         ) : (
-          <ReplyList replies={replies} user={user} setReplies={setReplies} />
+          <ReplyList 
+            replies={replies} 
+            user={user} 
+            postId={post._id}
+            setReplies={setReplies} 
+          />
         )}
       </div>
     </div>
