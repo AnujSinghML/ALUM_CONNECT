@@ -5,16 +5,18 @@ const replySchema = new mongoose.Schema({
   username: String,
   content: String,
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date }, // Optional field for tracking edits
   votes: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       voteType: { type: String, enum: ["upvote", "downvote"] },
     },
   ]
-}, { 
+}, {
   toObject: { virtuals: true },
   toJSON: { virtuals: true }
 });
+
 
 // Add virtual for vote count to reply schema
 replySchema.virtual('voteCount').get(function() {
@@ -28,6 +30,7 @@ const forumPostSchema = new mongoose.Schema({
   author: { type: String, required: true },
   authorId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date }, // Optional field for tracking edits
   votes: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -35,10 +38,11 @@ const forumPostSchema = new mongoose.Schema({
     },
   ],
   replies: [replySchema]
-}, { 
+}, {
   toObject: { virtuals: true },
   toJSON: { virtuals: true }
 });
+
 
 // Virtual field to calculate total votes for the post
 forumPostSchema.virtual('voteCount').get(function () {
