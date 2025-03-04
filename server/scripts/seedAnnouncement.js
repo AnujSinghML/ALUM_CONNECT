@@ -1,10 +1,23 @@
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 const dotenv = require('dotenv');
 const Announcement = require('../models/Announcement');
 const { cloudinary } = require('../utils/cloudinary');
 
 dotenv.config();
 console.log("Mongo URI:", process.env.MONGO_URI); 
+
+// Function to upload local image to Cloudinary
+const uploadLocalImage = async (imagePath, folder) => {
+  const imageData = fs.readFileSync(imagePath);
+  const base64Image = imageData.toString('base64');
+  const uploadResponse = await cloudinary.uploader.upload(
+    `data:image/jpeg;base64,${base64Image}`,
+    { folder }
+  );
+  return uploadResponse;
+};
 
 const seedAnnouncements = async () => {
   try {
@@ -21,80 +34,56 @@ const seedAnnouncements = async () => {
       api_secret: process.env.CLOUDINARY_API_SECRET,
     });
 
-    // Upload event images to Cloudinary
+    // Upload event images from local folder to Cloudinary
+    // Assumption: Images are stored in the "data" folder in the project root
     const eventImageResponses = [];
-    for (let i = 0; i < 7; i++) {
-      const response = await cloudinary.uploader.upload(
-        `https://picsum.photos/800/600?random=${i}`, // Random event images
-        { folder: 'announcements/events' }
-      );
+    for (let i = 1; i <= 4; i++) {
+      const imagePath = path.join(__dirname, `../data/event${i}.jpg`);
+      const response = await uploadLocalImage(imagePath, 'announcements/events');
       eventImageResponses.push(response);
     }
 
-    // Upload achievement images to Cloudinary
+    // Upload achievement images from local folder to Cloudinary
     const achievementImageResponses = [];
-    for (let i = 0; i < 7; i++) {
-      const response = await cloudinary.uploader.upload(
-        `https://picsum.photos/200/200?random=${i}`, // Random profile images
-        { folder: 'announcements/achievements' }
-      );
+    for (let i = 1; i <= 5; i++) {
+      const imagePath = path.join(__dirname, `../data/achievement${i}.jpg`);
+      const response = await uploadLocalImage(imagePath, 'announcements/achievements');
       achievementImageResponses.push(response);
     }
 
-    // Define sample events
+    // Define sample events with provided names
     const events = [
       {
-        name: "Tech Conference",
+        name: "Abhivyakti",
         type: 'event',
-        title: 'Tech Conference 2025',
-        description: 'Join us for an amazing tech conference featuring top industry experts!',
+        title: 'Abhivyakti - Annual Cultural Fest',
+        description: 'Experience a vibrant cultural extravaganza showcasing music, dance, drama, and art!',
         imageUrl: eventImageResponses[0].secure_url,
       },
       {
-        name: "Alumni Meetup",
+        name: "Tantrafiesta",
         type: 'event',
-        title: 'Annual Alumni Meetup',
-        description: 'Connect with your batch mates and seniors at our annual alumni gathering.',
+        title: 'Tantrafiesta - Annual Tech Fest',
+        description: 'Participate in a showcase of tech innovations, hackathons, and workshops led by industry experts!',
         imageUrl: eventImageResponses[1].secure_url,
       },
       {
-        name: "Hackathon",
+        name: "E-summit",
         type: 'event',
-        title: 'Code For Change Hackathon',
-        description: '48-hour coding challenge to solve real-world problems. Exciting prizes to be won!',
+        title: 'E-summit - Digital Innovation Summit',
+        description: 'Join us for insightful talks and networking with industry leaders in digital innovation.',
         imageUrl: eventImageResponses[2].secure_url,
       },
       {
-        name: "Career Fair",
+        name: "Kshitij",
         type: 'event',
-        title: 'Campus Placement Drive',
-        description: 'Top companies will be visiting our campus for recruitment. Register now!',
+        title: 'Kshitij - Annual Sports Fest',
+        description: 'Compete and celebrate at our annual sports fest with a variety of games and events.',
         imageUrl: eventImageResponses[3].secure_url,
-      },
-      {
-        name: "Workshop",
-        type: 'event',
-        title: 'AI & Machine Learning Workshop',
-        description: 'Learn the fundamentals of AI and ML from industry professionals.',
-        imageUrl: eventImageResponses[4].secure_url,
-      },
-      {
-        name: "Cultural Fest",
-        type: 'event',
-        title: 'Annual Cultural Festival',
-        description: 'Three days of music, dance, and fun activities. Don\'t miss out!',
-        imageUrl: eventImageResponses[5].secure_url,
-      },
-      {
-        name: "Research Symposium",
-        type: 'event',
-        title: 'International Research Symposium',
-        description: 'Present your research work and get feedback from experts in your field.',
-        imageUrl: eventImageResponses[6].secure_url,
       }
     ];
 
-    // Define sample achievements
+    // Define sample achievements (unchanged)
     const achievements = [
       {
         name: "Rahul Sharma",
@@ -118,33 +107,19 @@ const seedAnnouncements = async () => {
         imageUrl: achievementImageResponses[2].secure_url,
       },
       {
-        name: "Neha Singh",
+        name: "Vasu Parashar",
         type: 'achievement',
         title: 'International Scholarship',
         description: 'Received a full scholarship to pursue PhD at MIT.',
         imageUrl: achievementImageResponses[3].secure_url,
       },
       {
-        name: "Vikram Reddy",
+        name: "Nayan Mandal",
         type: 'achievement',
         title: 'Coding Competition Winner',
         description: 'Secured first place in the International Coding Olympiad.',
         imageUrl: achievementImageResponses[4].secure_url,
       },
-      {
-        name: "Ananya Desai",
-        type: 'achievement',
-        title: 'Research Grant',
-        description: 'Received a prestigious grant for research in renewable energy.',
-        imageUrl: achievementImageResponses[5].secure_url,
-      },
-      {
-        name: "Rajesh Gupta",
-        type: 'achievement',
-        title: 'Corporate Excellence',
-        description: 'Promoted to CTO at a Fortune 500 company at the age of 35.',
-        imageUrl: achievementImageResponses[6].secure_url,
-      }
     ];
 
     // Combine events and achievements
