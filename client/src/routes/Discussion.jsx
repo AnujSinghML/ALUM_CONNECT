@@ -1,16 +1,16 @@
-// import React from 'react';
-// import Layout from '../components/common/Layout';
+// // import React from 'react';
+// // import Layout from '../components/common/Layout';
 
-// const ComponentName = () => {
-//   return (
-//     <Layout>
-//       <div className="bg-white rounded-lg shadow-sm p-6">
-//         <h1 className="text-2xl font-bold text-gray-800 mb-6">Sasta Reddit</h1>
-//         {/* Component content here */}
-//       </div>
-//     </Layout>
-//   );
-// };
+// // const ComponentName = () => {
+// //   return (
+// //     <Layout>
+// //       <div className="bg-white rounded-lg shadow-sm p-6">
+// //         <h1 className="text-2xl font-bold text-gray-800 mb-6">Sasta Reddit</h1>
+// //         {/* Component content here */}
+// //       </div>
+// //     </Layout>
+// //   );
+// // };
 
 
 import React, { useEffect, useState } from "react";
@@ -20,12 +20,15 @@ import Sidebar from "../components/common/Sidebar";
 import PostList from "../components/forum/PostList";
 import CreatePostForm from "../components/forum/CreatePostForm";
 import ErrorMessage from "../components/common/ErrorMessage";
+import SearchBar from "../components/forum/SearchBar"; // New component
 
 const Discussion = () => {
   const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]); // New state for search results
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState(""); // Track search query
 
   // Fetch current user data
   useEffect(() => {
@@ -53,6 +56,7 @@ const Discussion = () => {
           `${import.meta.env.VITE_backend_URL}/api/forum/posts`
         );
         setPosts(response.data);
+        setFilteredPosts(response.data); // Initialize filtered posts with all posts
         setErrorMessage("");
       } catch (error) {
         console.error("❌ Error fetching posts:", error);
@@ -70,6 +74,59 @@ const Discussion = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Handle search functionality
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      // If search is empty, show all posts
+      setFilteredPosts(posts);
+      return;
+    }
+    
+    // Filter posts based on search query
+    const searchResults = posts.filter(post => {
+      const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+      const contentMatch = post.content.toLowerCase().includes(query.toLowerCase());
+      const authorMatch = post.author.toLowerCase().includes(query.toLowerCase());
+      
+      // Also search in replies if they exist
+      const replyMatch = post.replies && post.replies.some(reply => 
+        reply.content.toLowerCase().includes(query.toLowerCase()) ||
+        (reply.username && reply.username.toLowerCase().includes(query.toLowerCase()))
+      );
+      
+      return titleMatch || contentMatch || authorMatch || replyMatch;
+    });
+    
+    setFilteredPosts(searchResults);
+  };
+
+  // Implement server-side search
+  const handleServerSearch = async (query) => {
+    setSearchQuery(query);
+    setIsLoading(true);
+    
+    try {
+      if (!query.trim()) {
+        setFilteredPosts(posts);
+        setIsLoading(false);
+        return;
+      }
+      
+      const response = await axios.get(
+        `${import.meta.env.VITE_backend_URL}/api/forum/search?q=${encodeURIComponent(query)}`
+      );
+      
+      setFilteredPosts(response.data);
+    } catch (error) {
+      console.error("❌ Error searching posts:", error);
+      setErrorMessage("Failed to search discussions. Please try again.");
+      setFilteredPosts(posts); // Fallback to all posts on error
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
       <Navbar />
@@ -85,6 +142,21 @@ const Discussion = () => {
                 Join the conversation and share your thoughts with the community
               </p>
             </header>
+
+            {/* Search Component */}
+            <div className="mb-6">
+              <SearchBar 
+                onSearch={handleServerSearch} 
+                placeholder="Search discussions by title, content, or author..."
+              />
+              {searchQuery && (
+                <div className="mt-2 text-sm text-gray-600">
+                  {filteredPosts.length === 0 
+                    ? `No results found for "${searchQuery}"`
+                    : `Showing ${filteredPosts.length} result${filteredPosts.length !== 1 ? 's' : ''} for "${searchQuery}"`}
+                </div>
+              )}
+            </div>
 
             {errorMessage && (
               <div className="mb-6">
@@ -107,12 +179,16 @@ const Discussion = () => {
             )}
 
             <section className="pb-8">
-              {isLoading && posts.length === 0 ? (
+              {isLoading && filteredPosts.length === 0 ? (
                 <div className="bg-white p-8 rounded-lg shadow-sm text-center">
                   <p className="text-gray-500">Loading discussions...</p>
                 </div>
               ) : (
-                <PostList posts={posts} user={user} setPosts={setPosts} />
+                <PostList 
+                  posts={filteredPosts} 
+                  user={user} 
+                  setPosts={setPosts} 
+                />
               )}
             </section>
           </div>
