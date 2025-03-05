@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { UserProvider } from './context/UserContext';
 
 // Landing page components
 import Navbar from './components/landing-page/Navbar';
@@ -46,6 +47,7 @@ const LandingPage = () => {
 
 const App = () => {
   return (
+    <UserProvider>
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
@@ -185,6 +187,7 @@ const App = () => {
         />
       </Routes>
     </BrowserRouter>
+    </UserProvider>
   );
 };
 
