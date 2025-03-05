@@ -12,6 +12,7 @@
 //   );
 // };
 
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/common/Navbar";
@@ -31,7 +32,7 @@ const Discussion = () => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_backend_URL}/auth/profile`, 
+          `${import.meta.env.VITE_backend_URL}/auth/profile`,
           { withCredentials: true }
         );
         setUser(response.data);
@@ -40,7 +41,6 @@ const Discussion = () => {
         // User might not be logged in, which is OK
       }
     };
-
     fetchUser();
   }, []);
 
@@ -61,12 +61,11 @@ const Discussion = () => {
         setIsLoading(false);
       }
     };
-
     fetchPosts();
-    
+   
     // Set up periodic refresh
     const interval = setInterval(fetchPosts, 30000); // Refresh every 30 seconds
-    
+   
     // Clean up interval on component unmount
     return () => clearInterval(interval);
   }, []);
@@ -74,10 +73,10 @@ const Discussion = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
       <Navbar />
-      
+     
       <div className="flex flex-1 pt-16 overflow-hidden">
         <Sidebar />
-        
+       
         <main className="flex-1 ml-64 overflow-auto h-full">
           <div className="p-8 max-w-5xl mx-auto">
             <header className="mb-8">
