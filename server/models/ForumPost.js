@@ -43,6 +43,14 @@ const forumPostSchema = new mongoose.Schema({
   toJSON: { virtuals: true }
 });
 
+forumPostSchema.index({ 
+  title: 'text', 
+  content: 'text', 
+  author: 'text',
+  'replies.content': 'text',
+  'replies.username': 'text'
+});
+
 
 // Virtual field to calculate total votes for the post
 forumPostSchema.virtual('voteCount').get(function () {
