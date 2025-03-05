@@ -379,4 +379,132 @@ router.delete('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPer
   }
 });
 
+// Add search route to your Express router
+router.get("/search", async (req, res) => {
+  try {
+    const { q } = req.query;
+    
+    if (!q) {
+      const posts = await ForumPost.find().sort({ createdAt: -1 });
+      return res.json(posts);
+    }
+
+    // Text search using MongoDB's $text operator (requires text indexes)
+    const textSearchResults = await ForumPost.find(
+      { $text: { $search: q } },
+      { score: { $meta: "textScore" } }
+    )
+    .sort({ score: { $meta: "textScore" } });
+
+    // Regex search for more flexible matching
+    const regexSearch = new RegExp(q, "i");
+    const regexResults = await ForumPost.find({
+      $or: [
+        { title: regexSearch },
+        { content: regexSearch },
+        { author: regexSearch },
+        { "replies.content": regexSearch },
+        { "replies.username": regexSearch }
+      ]
+    }).sort({ createdAt: -1 });
+
+    // Combine and deduplicate results
+    const combinedResults = [...textSearchResults];
+    
+    // Add regex results that aren't already in the text search results
+    regexResults.forEach(post => {
+      if (!combinedResults.some(p => p._id.toString() === post._id.toString())) {
+        combinedResults.push(post);
+      }
+    });
+
+    // Add vote counts to response
+    const postsWithVotes = combinedResults.map(post => ({
+      ...post.toObject(),
+      voteCount: post.votes.filter(vote => vote.voteType === "upvote").length -
+                post.votes.filter(vote => vote.voteType === "downvote").length
+    }));
+
+    res.json(postsWithVotes);
+  } catch (error) {
+    console.error("❌ Search error:", error);
+    res.status(500).json({ message: "Error searching posts" });
+  }
+});
+
+// You can extend the search route to support filtering by:
+router.get("/advanced-search", async (req, res) => {
+  try {
+    const { 
+      q, // basic search term
+      author, // filter by author
+      dateFrom, // filter by date range
+      dateTo,
+      hasReplies, // filter posts with/without replies
+      sortBy // sort results (newest, oldest, most voted)
+    } = req.query;
+    
+    // Build the query object
+    const query = {};
+    
+    // Add text search if provided
+    if (q) {
+      query.$or = [
+        { title: new RegExp(q, "i") },
+        { content: new RegExp(q, "i") },
+        { author: new RegExp(q, "i") },
+        { "replies.content": new RegExp(q, "i") },
+        { "replies.username": new RegExp(q, "i") }
+      ];
+    }
+    
+    // Add author filter
+    if (author) {
+      query.author = new RegExp(author, "i");
+    }
+    
+    // Add date range filter
+    if (dateFrom || dateTo) {
+      query.createdAt = {};
+      if (dateFrom) query.createdAt.$gte = new Date(dateFrom);
+      if (dateTo) query.createdAt.$lte = new Date(dateTo);
+    }
+    
+    // Add replies filter
+    if (hasReplies === "true") {
+      query["replies.0"] = { $exists: true };
+    } else if (hasReplies === "false") {
+      query["replies.0"] = { $exists: false };
+    }
+    
+    // Determine sort order
+    let sortOption = { createdAt: -1 }; // Default: newest first
+    
+    if (sortBy === "oldest") {
+      sortOption = { createdAt: 1 };
+    } else if (sortBy === "most_voted") {
+      // We'll need to sort after fetching results since voteCount is a virtual
+    }
+    
+    // Execute query
+    let results = await ForumPost.find(query).sort(sortOption);
+    
+    // Handle special sorting case
+    if (sortBy === "most_voted") {
+      results.sort((a, b) => b.voteCount - a.voteCount);
+    }
+    
+    // Format results
+    const postsWithVotes = results.map(post => ({
+      ...post.toObject(),
+      voteCount: post.voteCount
+    }));
+    
+    res.json(postsWithVotes);
+  } catch (error) {
+    console.error("❌ Advanced search error:", error);
+    res.status(500).json({ message: "Error performing advanced search" });
+  }
+});
+
 module.exports = router;
