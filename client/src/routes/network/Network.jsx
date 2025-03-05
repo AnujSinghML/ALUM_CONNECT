@@ -1,8 +1,8 @@
 // client/src/routes/Network.jsx
 import React from 'react';
-import Layout from '../components/common/Layout';
-import People from '../components/network/People';
-import Jobs from '../components/network/Jobs';
+import Layout from '../../components/common/Layout';
+import People from '../../components/network/People';
+import Jobs from '../../components/network/Jobs';
 
 const Network = () => {
   return (

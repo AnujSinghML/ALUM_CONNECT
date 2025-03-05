@@ -1,7 +1,7 @@
 // client/src/routes/AllJobs.jsx
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/common/Layout';
-import JobCard from '../components/network/JobCard';
+import Layout from '../../components/common/Layout';
+import JobCard from '../../components/network/JobCard';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 

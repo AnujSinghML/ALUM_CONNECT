@@ -1,7 +1,7 @@
 // src/routes/FundingOpportunities.jsx (all investment opportunities - view all page)
 import React from 'react';
-import Layout from '../components/common/Layout';
-import Funding from '../components/donations/Funding';
+import Layout from '../../components/common/Layout';
+import Funding from '../../components/donations/Funding';
 import { useNavigate } from "react-router-dom";
 
 const FundingOpportunities = () => {

@@ -2,33 +2,33 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Landing page components
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Services from './components/Services';
-import Footer from './components/Footer';
+import Navbar from './components/landing-page/Navbar';
+import Hero from './components/landing-page/Hero';
+import Services from './components/landing-page/Services';
+import Footer from './components/landing-page/Footer';
 
 // Routes
 import Login from './routes/Login';
 import ProtectedRoute from './components/ProtectedRoute';
-import Announcement from './routes/Announcement';
+import Announcement from './routes/announcement/Announcement';
 import AdminAnnouncements from './routes/AdminAnnouncements';
-import Network from './routes/Network';
+import Network from './routes/network/Network';
 import Discussion from './routes/Discussion';
-import Donations from './routes/Donations';
+import Donations from './routes/donation/Donations';
 import Profile from './routes/Profile';
-import AllAlumni from './routes/AllAlumni';
-import AllAchievements from './routes/AllAchievements';
-import AllEvents from './routes/AllEvents';
-import CreateAchievement from './routes/CreateAchievement';
+import AllAlumni from './routes/network/AllAlumni';
+import AllAchievements from './routes/announcement/AllAchievements';
+import AllEvents from './routes/announcement/AllEvents';
+import CreateAchievement from './routes/announcement/CreateAchievement';
 
 // Donation-related routes
-import DonationProcess from './routes/DonationProcess';
-import CreateFundingRequest from './routes/CreateFundingRequest';
-import FundingOpportunities from './routes/FundingOpportunities';
+import DonationProcess from './routes/donation/DonationProcess';
+import CreateFundingRequest from './routes/donation/CreateFundingRequest';
+import FundingOpportunities from './routes/donation/FundingOpportunities';
 
 // New Job-related routes
-import AllJobs from './routes/AllJobs';
-import CreateJobOpportunity from './routes/CreateJobOpportunity';
+import AllJobs from './routes/network/AllJobs';
+import CreateJobOpportunity from './routes/network/CreateJobOpportunity';
 
 // Landing page component
 const LandingPage = () => {

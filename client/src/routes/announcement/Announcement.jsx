@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Layout from '../components/common/Layout';
+import Layout from '../../components/common/Layout';
 import { ArrowRight, Calendar, MapPin, PlusCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 

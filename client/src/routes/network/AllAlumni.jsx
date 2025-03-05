@@ -1,10 +1,10 @@
 // client/src/routes/AllAlumni.jsx
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/common/Layout';
-import ProfileCard from '../components/network/ProfileCard';
+import Layout from '../../components/common/Layout';
+import ProfileCard from '../../components/network/ProfileCard';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Pagination from '../components/common/Pagination'; // Import the pagination component
+import Pagination from '../../components/common/Pagination'; // Import the pagination component
 
 const AllAlumni = () => {
   const [alumni, setAlumni] = useState([]);

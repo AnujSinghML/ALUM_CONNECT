@@ -1,8 +1,8 @@
 // src/routes/Donations.jsx
 import React from 'react';
-import Layout from '../components/common/Layout';
-import Donation from '../components/donations/Donation';
-import Funding from '../components/donations/Funding';
+import Layout from '../../components/common/Layout';
+import Donation from '../../components/donations/Donation';
+import Funding from '../../components/donations/Funding';
 
 const Donations = () => {
   return (
