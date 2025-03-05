@@ -43,7 +43,7 @@ const seedAnnouncements = async () => {
       eventImageResponses.push(response);
     }
 
-    // Upload achievement images from local folder to Cloudinary
+    // Upload achievement images to Cloudinary
     const achievementImageResponses = [];
     for (let i = 1; i <= 5; i++) {
       const imagePath = path.join(__dirname, `../data/achievement${i}.jpg`);
@@ -51,7 +51,7 @@ const seedAnnouncements = async () => {
       achievementImageResponses.push(response);
     }
 
-    // Define sample events with provided names
+    // Define sample events with date/time & venue
     const events = [
       {
         name: "Abhivyakti",
@@ -59,6 +59,10 @@ const seedAnnouncements = async () => {
         title: 'Abhivyakti - Annual Cultural Fest',
         description: 'Experience a vibrant cultural extravaganza showcasing music, dance, drama, and art!',
         imageUrl: eventImageResponses[0].secure_url,
+        status: 'approved',
+        // New fields:
+        eventDateTime: new Date('2025-03-10T15:30:00Z'),
+        venue: 'Amphitheatre',
       },
       {
         name: "Tantrafiesta",
@@ -66,6 +70,9 @@ const seedAnnouncements = async () => {
         title: 'Tantrafiesta - Annual Tech Fest',
         description: 'Participate in a showcase of tech innovations, hackathons, and workshops led by industry experts!',
         imageUrl: eventImageResponses[1].secure_url,
+        status: 'approved',
+        eventDateTime: new Date('2025-03-15T14:00:00Z'),
+        venue: 'Stage Area',
       },
       {
         name: "E-summit",
@@ -73,6 +80,9 @@ const seedAnnouncements = async () => {
         title: 'E-summit - Digital Innovation Summit',
         description: 'Join us for insightful talks and networking with industry leaders in digital innovation.',
         imageUrl: eventImageResponses[2].secure_url,
+        status: 'approved',
+        eventDateTime: new Date('2025-03-20T10:00:00Z'),
+        venue: 'Academic',
       },
       {
         name: "Kshitij",
@@ -80,10 +90,13 @@ const seedAnnouncements = async () => {
         title: 'Kshitij - Annual Sports Fest',
         description: 'Compete and celebrate at our annual sports fest with a variety of games and events.',
         imageUrl: eventImageResponses[3].secure_url,
+        status: 'approved',
+        eventDateTime: new Date('2025-03-25T17:00:00Z'),
+        venue: 'Amphitheatre',
       }
     ];
 
-    // Define sample achievements (unchanged)
+    // Define sample achievements
     const achievements = [
       {
         name: "Rahul Sharma",

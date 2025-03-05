@@ -46,6 +46,7 @@ require('./config/passport')(passport);
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/announcements', require('./routes/announcementRoutes'));
+app.use('/api/admin/announcements', require('./routes/adminAnnouncementRoutes'));
 app.use('/api/donations', require('./routes/donationRoutes'));
 app.use('/api/opportunities', require('./routes/opportunityRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));

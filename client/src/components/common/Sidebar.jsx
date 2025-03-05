@@ -11,12 +11,38 @@ import {
 const Sidebar = () => {
   const location = useLocation();
 
+  // 1️⃣ Fetch user from localStorage
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const role = user?.role || 'student'; // Default 'student' if no user or role
+
+  // 2️⃣ Define menu items with role-based path
   const menuItems = [
-    { path: '/announcements', icon: Megaphone, label: 'Announcements' },
-    { path: '/network', icon: Network, label: 'Network Hub' },
-    { path: '/discussion', icon: MessageCircle, label: 'Discussion' },
-    { path: '/donation', icon: Heart, label: 'Donations' },
-    { path: '/profile', icon: User, label: 'Profile' },
+    { 
+      path: role === 'admin' ? '/admin/announcements' : '/announcements', 
+      icon: Megaphone, 
+      label: 'Announcements' 
+    },
+    { 
+      path: role === 'admin' ? '/admin/network' : '/network', 
+      icon: Network, 
+      label: 'Network Hub' 
+    },
+    { 
+      path: role === 'admin' ? '/admin/discussion' : '/discussion', 
+      icon: MessageCircle, 
+      label: 'Discussion' 
+    },
+    { 
+      path: role === 'admin' ? '/admin/donation' : '/donation', 
+      icon: Heart, 
+      label: 'Donations' 
+    },
+    { 
+      path: role === 'admin' ? '/admin/profile' : '/profile', 
+      icon: User, 
+      label: 'Profile' 
+    },
   ];
 
   return (
@@ -25,14 +51,14 @@ const Sidebar = () => {
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
-          
+
           return (
             <Link
               key={item.path}
               to={item.path}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive 
-                  ? 'bg-blue-600 text-white' 
+                isActive
+                  ? 'bg-blue-600 text-white'
                   : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
               }`}
             >

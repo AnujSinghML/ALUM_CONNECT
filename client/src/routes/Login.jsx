@@ -192,7 +192,7 @@
 // export default Login;
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff, UserCircle, X } from 'lucide-react';
 
@@ -237,13 +237,23 @@ const Login = () => {
     setError(null);
     
     try {
-      // const res = await axios.post('http://localhost:3000/auth/login', formData, { withCredentials: true });
-      // const res = await axios.post('${import.meta.env.VITE_backend_URL}/auth/login', formData, { withCredentials: true });
-      // const res = await axios.post(`${import.meta.env.VITE_backend_URL}/auth/login`, formData, { withCredentials: true });
-      const res = await axios.post(`${import.meta.env.VITE_backend_URL}/auth/login`, formData, { withCredentials: true });
-      // console.log('API Base URL:', import.meta.env.VITE_backend_URL);
-      console.log(res.data);
-      navigate('/announcements');
+      const res = await axios.post(
+        `${import.meta.env.VITE_backend_URL}/auth/login`,
+        formData,
+        { withCredentials: true }
+      );
+      console.log("API Response:", res.data);
+      
+      // Store user data in localStorage
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      
+      // Redirect based on user role
+      const role = res.data.user.role.toLowerCase();
+      if (role === "admin") {
+        navigate('/admin/dashboard');  // Admin panel route
+      } else {
+        navigate('/announcements');      // Common dashboard for alumni & students
+      }
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
     } finally {
@@ -358,7 +368,7 @@ const Login = () => {
             Forgot Password?
           </button>
         </form>
-        {/* New Back to Home Button */}
+        {/* New Back to Home Button */} 
         <button
           type="button"
           onClick={() => navigate('/')}

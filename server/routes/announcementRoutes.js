@@ -1,3 +1,4 @@
+// server/routes/announcementRoutes.js
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -5,9 +6,9 @@ const { cloudinary } = require('../utils/cloudinary');
 const Announcement = require('../models/Announcement');
 const { isAlumni } = require('../middleware/authMiddleware');
 
-// 1️⃣ Corrected Multer Storage Configuration
+// Multer configuration
 const storage = multer.memoryStorage();
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
@@ -18,16 +19,13 @@ const upload = multer({
   }
 });
 
-// 2️⃣ Create a POST route to handle achievement creation
-router.post('/add', isAlumni, upload.single('image'), async (req, res) => {
+// POST /api/announcements/achievement
+// Alumni can create an achievement; status defaults to 'pending'
+router.post('/achievement', isAlumni, upload.single('image'), async (req, res) => {
   try {
-    const { type, title, description, name } = req.body;
-    console.log("🟢 Request Body:", req.body);
-    console.log("🟢 Received file:", req.file);
-
+    const { title, description, name } = req.body;
     let imageUrl = '';
     if (req.file) {
-      // 3️⃣ Corrected Cloudinary Image Upload
       const uploadResult = await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           { folder: "achievements" },
@@ -38,55 +36,34 @@ router.post('/add', isAlumni, upload.single('image'), async (req, res) => {
         );
         uploadStream.end(req.file.buffer);
       });
-
-      console.log("🟢 Cloudinary Upload Response:", uploadResult);
       imageUrl = uploadResult.secure_url;
     }
-
-    // 4️⃣ Save Achievement to Database
+    
     const newAnnouncement = new Announcement({
-      type,
+      type: 'achievement',
       title,
       description,
       imageUrl,
-      name
+      name, // Alumni's name should be provided by frontend
+      // status defaults to 'pending' as per the model definition
     });
-
+    
     const savedAnnouncement = await newAnnouncement.save();
-    console.log("🟢 Announcement Saved to DB:", savedAnnouncement);
-
-    res.status(201).json({ message: 'Achievement created successfully', data: savedAnnouncement });
+    res.status(201).json({ message: 'Achievement created, pending approval', data: savedAnnouncement });
   } catch (err) {
     console.error("❌ Error creating achievement:", err);
     res.status(500).json({ error: 'Failed to create achievement' });
   }
 });
 
-// Get all announcements
+// GET /api/announcements
+// Return only approved announcements for normal users
 router.get('/', async (req, res) => {
   try {
-    const announcements = await Announcement.find().sort({ createdAt: -1 });
+    const announcements = await Announcement.find({ status: 'approved' }).sort({ createdAt: -1 });
     res.json(announcements);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// Delete an announcement
-router.delete('/:id', async (req, res) => {
-  try {
-    const announcement = await Announcement.findById(req.params.id);
-    if (!announcement) return res.status(404).json({ error: 'Not found' });
-
-    // Delete from Cloudinary
-    if (announcement.imageUrl) {
-      const imagePublicId = announcement.imageUrl.split('/').pop().split('.')[0];
-      await cloudinary.uploader.destroy(`achievements/${imagePublicId}`);
-    }
-
-    await Announcement.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Announcement deleted' });
-  } catch (error) {
+    console.error("❌ Error fetching announcements:", error);
     res.status(500).json({ error: 'Server error' });
   }
 });
