@@ -11,33 +11,6 @@ const authenticateUser = async (req, res, next) => {
   next();
 };
 
-// Middleware to check user permissions for post
-const checkPostPermissions = async (req, res, next) => {
-  try {
-    const post = await ForumPost.findById(req.params.postId);
-    
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-    // Check if user is admin or post author
-    const isAdmin = req.user.role === 'admin';
-    const isAuthor = post.authorId.toString() === req.user._id.toString();
-
-    if (isAdmin || isAuthor) {
-      req.post = post;
-      next();
-    } else {
-      return res.status(403).json({ message: 'Not authorized to modify this post' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-
-
-
-
 // ✅ GET all posts (including votes)
 router.get("/posts", async (req, res) => {
   try {
@@ -250,37 +223,44 @@ router.get("/posts/:postId/replies", async (req, res) => {
   }
 });
 
-
-// // Update Post Route
-// router.put("/posts/:postId", isAuthenticated, async (req, res) => {
-//   try {
-//     const { postId } = req.params;
-//     const { title, content } = req.body;
-//     const user = req.user;
-
-//     const post = await ForumPost.findById(postId);
+// Middleware to check user permissions for post
+const checkPostPermissions = async (req, res, next) => {
+  try {
+    const post = await ForumPost.findById(req.params.postId);
     
-//     if (!post) {
-//       return res.status(404).json({ message: "Post not found" });
-//     }
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
 
-//     // Ensure only the author can edit
-//     if (post.authorId.toString() !== user.id) {
-//       return res.status(403).json({ message: "Not authorized to edit this post" });
-//     }
+    // Modify logic to allow only author to edit, but allow both admin and author to delete
+    const isAdmin = req.user.role === 'admin';
+    const isAuthor = post.authorId.toString() === req.user._id.toString();
 
-//     post.title = title;
-//     post.content = content;
-//     post.updatedAt = new Date(); // Add an updatedAt timestamp
+    // Check if the route is for editing or deleting
+    const isEditRoute = req.method === 'PUT';
+    const isDeleteRoute = req.method === 'DELETE';
 
-//     await post.save();
-    
-//     res.json(post);
-//   } catch (error) {
-//     console.error("❌ Error updating post:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
+    if (isEditRoute) {
+      // Only allow author to edit, not admin
+      if (isAuthor) {
+        req.post = post;
+        next();
+      } else {
+        return res.status(403).json({ message: 'Not authorized to edit this post' });
+      }
+    } else if (isDeleteRoute) {
+      // Allow both admin and author to delete
+      if (isAdmin || isAuthor) {
+        req.post = post;
+        next();
+      } else {
+        return res.status(403).json({ message: 'Not authorized to delete this post' });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 
 // Update post route
 router.put("/posts/:postId", authenticateUser, checkPostPermissions, async (req, res) => {
@@ -304,32 +284,6 @@ router.put("/posts/:postId", authenticateUser, checkPostPermissions, async (req,
   }
 });
 
-// // Delete Post Route
-// router.delete("/posts/:postId", isAuthenticated, async (req, res) => {
-//   try {
-//     const { postId } = req.params;
-//     const user = req.user;
-
-//     const post = await ForumPost.findById(postId);
-    
-//     if (!post) {
-//       return res.status(404).json({ message: "Post not found" });
-//     }
-
-//     // Ensure only the author can delete
-//     if (post.authorId.toString() !== user.id) {
-//       return res.status(403).json({ message: "Not authorized to delete this post" });
-//     }
-
-//     await ForumPost.findByIdAndDelete(postId);
-    
-//     res.json({ message: "Post deleted successfully" });
-//   } catch (error) {
-//     console.error("❌ Error deleting post:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
 // Delete post route
 router.delete("/posts/:postId", authenticateUser, checkPostPermissions, async (req, res) => {
   try {
@@ -342,7 +296,7 @@ router.delete("/posts/:postId", authenticateUser, checkPostPermissions, async (r
   }
 });
 
-// Similar middleware can be applied to reply routes
+// Middleware to check reply permissions
 const checkReplyPermissions = async (req, res, next) => {
   try {
     const post = await ForumPost.findById(req.params.postId);
@@ -357,59 +311,39 @@ const checkReplyPermissions = async (req, res, next) => {
       return res.status(404).json({ message: 'Reply not found' });
     }
 
+    // Check if the route is for editing or deleting
+    const isEditRoute = req.method === 'PUT';
+    const isDeleteRoute = req.method === 'DELETE';
+
     // Check if user is admin or reply author
     const isAdmin = req.user.role === 'admin';
     const isAuthor = reply.userId.toString() === req.user._id.toString();
 
-    if (isAdmin || isAuthor) {
-      req.post = post;
-      req.reply = reply;
-      next();
-    } else {
-      return res.status(403).json({ message: 'Not authorized to modify this reply' });
+    if (isEditRoute) {
+      // Only allow author to edit, not admin
+      if (isAuthor) {
+        req.post = post;
+        req.reply = reply;
+        next();
+      } else {
+        return res.status(403).json({ message: 'Not authorized to edit this reply' });
+      }
+    } else if (isDeleteRoute) {
+      // Allow both admin and author to delete
+      if (isAdmin || isAuthor) {
+        req.post = post;
+        req.reply = reply;
+        next();
+      } else {
+        return res.status(403).json({ message: 'Not authorized to delete this reply' });
+      }
     }
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-
-// // Update Reply Route
-// router.put("/posts/:postId/replies/:replyId", isAuthenticated, async (req, res) => {
-//   try {
-//     const { postId, replyId } = req.params;
-//     const { content } = req.body;
-//     const user = req.user;
-
-//     const post = await ForumPost.findById(postId);
-    
-//     if (!post) {
-//       return res.status(404).json({ message: "Post not found" });
-//     }
-
-//     const reply = post.replies.id(replyId);
-    
-//     if (!reply) {
-//       return res.status(404).json({ message: "Reply not found" });
-//     }
-
-//     // Ensure only the reply author can edit
-//     if (reply.userId.toString() !== user.id) {
-//       return res.status(403).json({ message: "Not authorized to edit this reply" });
-//     }
-
-//     reply.content = content;
-//     reply.updatedAt = new Date(); // Add an updatedAt timestamp
-
-//     await post.save();
-    
-//     res.json(post.replies);
-//   } catch (error) {
-//     console.error("❌ Error updating reply:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
+// Update Reply Route
 router.put('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
   try {
     const { content } = req.body;
@@ -429,40 +363,6 @@ router.put('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermis
   }
 });
 
-
-// // Delete Reply Route
-// router.delete("/posts/:postId/replies/:replyId", isAuthenticated, async (req, res) => {
-//   try {
-//     const { postId, replyId } = req.params;
-//     const user = req.user;
-
-//     const post = await ForumPost.findById(postId);
-    
-//     if (!post) {
-//       return res.status(404).json({ message: "Post not found" });
-//     }
-
-//     const replyIndex = post.replies.findIndex(reply => reply._id.toString() === replyId);
-    
-//     if (replyIndex === -1) {
-//       return res.status(404).json({ message: "Reply not found" });
-//     }
-
-//     // Ensure only the reply author can delete
-//     if (post.replies[replyIndex].userId.toString() !== user.id) {
-//       return res.status(403).json({ message: "Not authorized to delete this reply" });
-//     }
-
-//     post.replies.splice(replyIndex, 1);
-//     await post.save();
-    
-//     res.json(post.replies);
-//   } catch (error) {
-//     console.error("❌ Error deleting reply:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
 // Delete reply route
 router.delete('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
   try {
@@ -478,8 +378,5 @@ router.delete('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPer
     res.status(500).json({ message: 'Error deleting reply', error: error.message });
   }
 });
-
-
-
 
 module.exports = router;
