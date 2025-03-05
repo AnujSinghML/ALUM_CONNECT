@@ -96,6 +96,10 @@ const Navbar = ({ userProfile }) => {
                     <h3 className="text-xl font-semibold text-gray-800">
                       {userProfile?.name}
                     </h3>
+                    {/* Add this in the profile section of dropdown */}
+<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+  {userProfile?.role || 'Student'}
+</span>
                     <p className="text-gray-500">{userProfile?.email}</p>
                   </div>
                 </div>
