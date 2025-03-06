@@ -6,7 +6,7 @@ const User = require('../models/users');
 // GET /api/alumni - fetch alumni profiles with optional filters and pagination
 router.get('/', async (req, res) => {
   try {
-    const { batch, branch, currentCompany, location, page, limit } = req.query;
+    const { batch, branch, currentCompany, location, name, page, limit } = req.query;
     // Base filter: only alumni
     const filter = { role: 'alumni' };
 
@@ -21,6 +21,10 @@ router.get('/', async (req, res) => {
     }
     if (location) {
       filter.location = { $regex: location, $options: 'i' };
+    }
+    if (name) {
+      // Add regex filter for name search
+      filter.name = { $regex: name, $options: 'i' };
     }
 
     // Pagination: default to page 1 and limit 10 if not provided
@@ -45,5 +49,26 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+router.get('/suggestions', async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (!name) return res.json([]);
+    
+    // Find alumni whose names match the input (case-insensitive) and limit results
+    const suggestions = await User.find({ 
+      role: 'alumni', 
+      name: { $regex: name, $options: 'i' } 
+    })
+    .limit(5)
+    .select('name'); // Only need the name for suggestions
+
+    res.json(suggestions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+module.exports = router;
 
 module.exports = router;

@@ -1,18 +1,3 @@
-// // import React from 'react';
-// // import Layout from '../components/common/Layout';
-
-// // const ComponentName = () => {
-// //   return (
-// //     <Layout>
-// //       <div className="bg-white rounded-lg shadow-sm p-6">
-// //         <h1 className="text-2xl font-bold text-gray-800 mb-6">Sasta Reddit</h1>
-// //         {/* Component content here */}
-// //       </div>
-// //     </Layout>
-// //   );
-// // };
-
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/common/Navbar";

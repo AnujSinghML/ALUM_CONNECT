@@ -1,7 +1,7 @@
-// client/src/routes/AllJobs.jsx
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/common/Layout';
 import JobCard from '../../components/network/JobCard';
+import Pagination from '../../components/common/Pagination';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -13,30 +13,13 @@ const AllJobs = () => {
   const [tag, setTag] = useState('');
   const [keyword, setKeyword] = useState('');
 
+  // Jobs and pagination state
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [currentUser, setCurrentUser] = useState(null);
-
-  // Get current user on component mount
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        console.log("Fetching current user...");
-    
-        const response = await axios.get(`${import.meta.env.VITE_backend_URL}/auth/profile`, {
-          withCredentials: true // ✅ This ensures the session cookie is sent
-        });
-    
-        console.log("Fetched User Data:", response.data);
-        setCurrentUser(response.data);
-      } catch (err) {
-        console.error('Error fetching current user:', err);
-      }
-    };
-    
-    fetchCurrentUser();
-  }, []);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 8; // Number of jobs per page
 
   // Modified fetch function accepts an optional filters object
   const fetchFilteredJobs = async (pageNum = 1, filters = {}) => {
@@ -56,12 +39,17 @@ const AllJobs = () => {
       
       // Always filter for active jobs only
       queryParams.append('status', 'active');
+      
+      // Add pagination parameters
+      queryParams.append('page', pageNum);
+      queryParams.append('limit', limit);
 
-      // Build URL with query parameters
       const url = `${import.meta.env.VITE_backend_URL}/api/jobs/filter?${queryParams.toString()}`;
-
       const response = await axios.get(url);
-      setJobs(response.data);
+      // Expecting response.data to have: { data, total, page, pages }
+      setJobs(response.data.data);
+      setPage(response.data.page);
+      setTotalPages(response.data.pages);
       setLoading(false);
     } catch (err) {
       setError('Error fetching jobs');
@@ -76,7 +64,7 @@ const AllJobs = () => {
 
   const handleFilterSubmit = (e) => {
     e.preventDefault();
-    fetchFilteredJobs();
+    fetchFilteredJobs(1);
   };
 
   const handleClearFilters = () => {
@@ -94,22 +82,10 @@ const AllJobs = () => {
     });
   };
 
-  // Function to handle job status change
-  const handleStatusChange = async (jobId, newStatus) => {
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_backend_URL}/api/jobs/${jobId}/status`, 
-        { status: newStatus },
-        { withCredentials: true }  // ✅ Ensure session cookies are sent
-      );
-  
-      fetchFilteredJobs(); // Refresh the job list
-    } catch (err) {
-      alert('Error updating job status');
-      console.error('Error:', err);
-    }
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    fetchFilteredJobs(newPage);
   };
-  
 
   return (
     <Layout>
@@ -127,9 +103,7 @@ const AllJobs = () => {
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">All Job Opportunities</h1>
-          <p className="text-gray-600">
-            Explore all available job opportunities.
-          </p>
+          <p className="text-gray-600">Explore all available job opportunities.</p>
         </div>
 
         {/* Filter Form */}
@@ -170,7 +144,6 @@ const AllJobs = () => {
           <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
             Filter
           </button>
-          {/* Clear All Filters Button */}
           <button
             type="button"
             onClick={handleClearFilters}
@@ -189,16 +162,14 @@ const AllJobs = () => {
             <p className="text-lg text-gray-600">No jobs found matching your criteria.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {jobs.map((job, index) => (
-              <JobCard 
-                key={job.jobId}
-                {...job}
-                currentUserEmail={currentUser?.email}
-                onStatusChange={handleStatusChange}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {jobs.map((job) => (
+                <JobCard key={job.jobId} {...job} />
+              ))}
+            </div>
+            <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
+          </>
         )}
       </div>
     </Layout>

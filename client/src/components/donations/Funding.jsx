@@ -3,28 +3,49 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const FundingCard = ({ title, description, amount, authorName, tags }) => (
-  <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
-    <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
-    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{description}</p>
-    <div className="flex justify-between items-center mb-3">
-      <span className="text-blue-600 font-medium">₹{amount}</span>
-      <span className="text-gray-500 text-sm">{authorName}</span>
-    </div>
-    <div className="flex flex-wrap gap-2">
-      {tags.map((tag, index) => (
-        <span 
-          key={index}
-          className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
-        >
-          {tag}
-        </span>
-      ))}
-    </div>
-  </div>
-);
+const FundingCard = ({ title, description, amount, authorName, tags, details }) => {
+  const [expanded, setExpanded] = useState(false);
 
-const Funding = ({ preview = false }) => {
+  return (
+    <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+      <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
+      
+      {/* Conditionally apply line clamp if not expanded */}
+      <p className={`text-gray-600 text-sm mb-3 ${expanded ? '' : 'line-clamp-2'}`}>
+        {description}
+      </p>
+      
+      {/* Optionally display extra details when expanded */}
+      {expanded && details && (
+        <p className="text-gray-600 text-sm mb-3">{details}</p>
+      )}
+
+      <button 
+        onClick={() => setExpanded(!expanded)}
+        className="text-blue-600 text-sm mb-3 focus:outline-none"
+      >
+        {expanded ? 'Show Less' : 'Show More'}
+      </button>
+
+      <div className="flex justify-between items-center mb-3">
+        <span className="text-blue-600 font-medium">₹{amount}</span>
+        <span className="text-gray-500 text-sm">{authorName}</span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag, index) => (
+          <span 
+            key={index}
+            className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Funding = ({ preview = false, filter }) => {
   const navigate = useNavigate();
 
   const [opportunities, setOpportunities] = useState([]);
@@ -34,7 +55,15 @@ const Funding = ({ preview = false }) => {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_backend_URL}/api/opportunities`);
+        let url = `${import.meta.env.VITE_backend_URL}/api/opportunities`;
+        // Append filter query params if provided and not in preview mode
+        if (filter && !preview) {
+          const queryParams = new URLSearchParams();
+          if (filter.category) queryParams.append('category', filter.category);
+          if (filter.search) queryParams.append('search', filter.search);
+          url += '?' + queryParams.toString();
+        }
+        const response = await axios.get(url);
         setOpportunities(response.data);
         setLoading(false);
       } catch (err) {
@@ -44,21 +73,17 @@ const Funding = ({ preview = false }) => {
     };
 
     fetchOpportunities();
-  }, []);
+  }, [filter, preview]); // re-run if filter changes
 
-  // Display loading state
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // Display error state
   if (error) {
     return <div className="text-red-600">{error}</div>;
   }
 
-
-  
-  // Show only 2 items in preview mode
+  // In preview mode, show only 2 items.
   const displayedRequests = preview ? opportunities.slice(0, 2) : opportunities;
  
   return (
@@ -92,6 +117,7 @@ const Funding = ({ preview = false }) => {
         <div className="space-y-4">
           <div className="grid gap-4">
             {displayedRequests.map((request, index) => (
+              // Pass details along for extra information on expand
               <FundingCard key={index} {...request} />
             ))}
           </div>

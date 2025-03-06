@@ -80,10 +80,10 @@ router.post("/createJob", isAuthenticated, isAlumni, async (req, res) => {
 });
 // Filter jobs by criteria
 // server/routes/jobRoutes.js - updated filter endpoint
-
+// GET /api/jobs/filter - filter jobs with pagination
 router.get('/filter', async (req, res) => {
   try {
-    const { employmentType, location, tag, keyword, status } = req.query;
+    const { employmentType, location, tag, keyword, status, page, limit } = req.query;
     const filter = {};
 
     if (employmentType) {
@@ -101,14 +101,24 @@ router.get('/filter', async (req, res) => {
         { description: { $regex: keyword, $options: 'i' } }
       ];
     }
-    // Add status filter if provided
     if (status) {
       filter.status = status;
     }
 
-    const jobs = await Job.find(filter).sort({ createdAt: -1 });
-    
-    // Attach author details to each job
+    // Default to page 1 and limit 10 if not provided
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 10;
+    const skip = (pageNum - 1) * limitNum;
+
+    // Get total count for pagination metadata
+    const total = await Job.countDocuments(filter);
+    // Fetch jobs using skip and limit
+    const jobs = await Job.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum);
+
+    // Optionally, attach author details if needed
     const jobsWithAuthors = await Promise.all(
       jobs.map(async (job) => {
         const author = await User.findOne({ email: job.authorEmail });
@@ -120,11 +130,17 @@ router.get('/filter', async (req, res) => {
       })
     );
 
-    res.json(jobsWithAuthors);
+    res.json({
+      data: jobsWithAuthors,
+      total,
+      page: pageNum,
+      pages: Math.ceil(total / limitNum)
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 // Get job by ID
 router.get('/:jobId', async (req, res) => {
   try {
@@ -184,3 +200,5 @@ router.patch('/:jobId/status', isAuthenticated, async (req, res) => {
 
 
 module.exports = router;
+
+

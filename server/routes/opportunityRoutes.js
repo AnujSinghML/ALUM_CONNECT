@@ -5,10 +5,21 @@ const Opportunity = require('../models/opportunity');
 const User = require('../models/users');
 const { isAuthenticated } = require('../middleware/isAuthenticated');
 
-// Get all opportunities
+// Get all opportunities + filters
 router.get('/', async (req, res) => {
   try {
-    const opportunities = await Opportunity.find()
+    const filter = {};
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+    if (req.query.search) {
+      filter.$or = [
+        { title: { $regex: req.query.search, $options: 'i' } },
+        { description: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
+    
+    const opportunities = await Opportunity.find(filter)
       .sort({ createdAt: -1 });
     
     // Fetch author details for each opportunity
