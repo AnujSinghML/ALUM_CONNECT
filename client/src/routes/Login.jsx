@@ -1,17 +1,15 @@
-// client/src/pages/Login.jsx (or wherever your Login component is located)
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff, UserCircle, X } from 'lucide-react';
-import { useUser } from '../context/UserContext'; // adjust the path as needed
+import { useUser } from '../context/UserContext';
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div 
-        className="absolute inset-0 bg-black/50" 
+        className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
       <div className="relative bg-white rounded-lg w-full max-w-md p-6 m-4 z-10">
@@ -28,13 +26,18 @@ const Modal = ({ isOpen, onClose, children }) => {
 };
 
 const Login = () => {
-  const [formData, setFormData] = useState({ role: 'admin', email: '', password: '' });
+  const navigate = useNavigate();
+  const { setUser } = useUser();
+
+  const [formData, setFormData] = useState({
+    role: 'admin',
+    email: '',
+    password: ''
+  });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
-  const { setUser } = useUser();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,25 +48,23 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_backend_URL}/auth/login`,
         formData,
         { withCredentials: true }
       );
-      console.log("API Response:", res.data);
-      
-      // Store user data in localStorage and update context
-      localStorage.setItem("cachedUserProfile", JSON.stringify(res.data.user));
+      console.log('API Response:', res.data);
+
+      localStorage.setItem('cachedUserProfile', JSON.stringify(res.data.user));
       setUser(res.data.user);
-      
-      // Redirect based on user role
+
       const role = res.data.user.role.toLowerCase();
-      if (role === "admin") {
-        navigate('/admin/dashboard');  // Admin panel route
+      if (role === 'admin') {
+        navigate('/admin/announcements');
       } else {
-        navigate('/announcements');      // Common dashboard for alumni & students
+        navigate('/announcements');
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
@@ -99,9 +100,9 @@ const Login = () => {
                 onChange={handleChange}
                 className="block w-full rounded-lg border border-gray-300 px-4 py-2.5 pr-8 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
               >
+                <option value="admin">Admin</option>
                 <option value="alumni">Alumni</option>
                 <option value="student">Student</option>
-                <option value="admin">Admin</option>
               </select>
               <UserCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
             </div>
@@ -129,7 +130,7 @@ const Login = () => {
               <input
                 id="password"
                 name="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 required
                 value={formData.password}
                 onChange={handleChange}
@@ -141,11 +142,7 @@ const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
           </div>
@@ -179,7 +176,6 @@ const Login = () => {
             Forgot Password?
           </button>
         </form>
-        {/* New Back to Home Button */} 
         <button
           type="button"
           onClick={() => navigate('/')}
