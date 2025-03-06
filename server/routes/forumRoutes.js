@@ -114,39 +114,129 @@ router.post("/posts/:postId/vote", isAuthenticated, async (req, res) => {
   }
 });
 
+// router.post("/posts/:postId/replies", isAuthenticated, async (req, res) => {
+//   try {
+//     const { postId } = req.params;
+//     const { content } = req.body;
+//     const user = req.user; // Make sure req.user exists (authentication middleware)
+
+//     if (!content || !user) {
+//       return res.status(400).json({ message: "Reply content is required" });
+//     }
+
+//     const post = await ForumPost.findById(postId);
+//     if (!post) {
+//       return res.status(404).json({ message: "Post not found" });
+//     }
+
+//     const reply = {
+//       userId: user._id,
+//       username: user.name,
+//       content,
+//       createdAt: new Date(),
+//       votes: [], // Initialize empty votes array
+//       postId: postId, // Add postId to the reply
+//     };
+
+//     post.replies.push(reply);
+//     await post.save();
+
+//     res.status(201).json(post.replies);
+//   } catch (error) {
+//     console.error("❌ Error saving reply:", error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
+
+// Modified route to create a threaded reply
+
+
 router.post("/posts/:postId/replies", isAuthenticated, async (req, res) => {
   try {
-    const { postId } = req.params;
-    const { content } = req.body;
-    const user = req.user; // Make sure req.user exists (authentication middleware)
-
-    if (!content || !user) {
+      const { postId } = req.params;
+      const { content, parentReplyId } = req.body;
+      const user = req.user;
+  
+      if (!content || !user) {
       return res.status(400).json({ message: "Reply content is required" });
-    }
-
-    const post = await ForumPost.findById(postId);
-    if (!post) {
+      }
+  
+      const post = await ForumPost.findById(postId);
+      if (!post) {
       return res.status(404).json({ message: "Post not found" });
-    }
-
-    const reply = {
+      }
+  
+      // Determine reply level
+      let level = 0;
+      if (parentReplyId) {
+      const parentReply = post.replies.id(parentReplyId);
+      if (parentReply) {
+          level = parentReply.level + 1;
+      }
+      }
+  
+      const reply = {
       userId: user._id,
       username: user.name,
       content,
       createdAt: new Date(),
-      votes: [], // Initialize empty votes array
-      postId: postId, // Add postId to the reply
-    };
-
-    post.replies.push(reply);
-    await post.save();
-
-    res.status(201).json(post.replies);
+      votes: [],
+      postId: postId,
+      parentReplyId: parentReplyId || null,
+      level: level
+      };
+  
+      post.replies.push(reply);
+      await post.save();
+  
+      // Return organized threaded replies
+      // First, convert replies to plain objects with calculated properties
+      const allReplies = post.replies.map(reply => ({
+      ...reply.toObject(),
+      voteCount: reply.voteCount,
+      postId: post._id,
+      childReplies: []
+      }));
+  
+      // Organize into threads
+      const threadsMap = new Map();
+      const rootReplies = [];
+  
+      // First pass: create a map of all replies
+      allReplies.forEach(reply => {
+      threadsMap.set(reply._id.toString(), reply);
+      });
+  
+      // Second pass: build the hierarchy
+      allReplies.forEach(reply => {
+      if (!reply.parentReplyId) {
+          rootReplies.push(reply);
+      } else {
+          const parentId = reply.parentReplyId.toString();
+          const parent = threadsMap.get(parentId);
+          if (parent) {
+          parent.childReplies.push(reply);
+          } else {
+          rootReplies.push(reply);
+          }
+      }
+      });
+  
+      // Sort replies by newest first
+      rootReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      // Sort children
+      rootReplies.forEach(function sortChildren(reply) {
+      reply.childReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      reply.childReplies.forEach(sortChildren);
+      });
+  
+      res.status(201).json(rootReplies);
   } catch (error) {
-    console.error("❌ Error saving reply:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+      console.error("❌ Error saving reply:", error);
+      res.status(500).json({ message: "Internal Server Error" });
   }
-});
+  });
 
 router.post("/posts/:postId/replies/:replyId/vote", isAuthenticated, async (req, res) => {
   try {
@@ -199,7 +289,30 @@ router.post("/posts/:postId/replies/:replyId/vote", isAuthenticated, async (req,
   }
 });
 
-// Update the replies fetching route to ensure vote count is included
+// // Update the replies fetching route to ensure vote count is included
+// router.get("/posts/:postId/replies", async (req, res) => {
+//   try {
+//     const { postId } = req.params;
+//     const post = await ForumPost.findById(postId);
+
+//     if (!post) {
+//       return res.status(404).json({ message: "Post not found" });
+//     }
+
+//     // Map replies to include voteCount
+//     const repliesWithVotes = post.replies.map(reply => ({
+//       ...reply.toObject(),
+//       voteCount: reply.voteCount,
+//       postId: post._id
+//     }));
+
+//     res.json(repliesWithVotes);
+//   } catch (error) {
+//     console.error("❌ Error fetching replies:", error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
+
 router.get("/posts/:postId/replies", async (req, res) => {
   try {
     const { postId } = req.params;
@@ -209,14 +322,51 @@ router.get("/posts/:postId/replies", async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Map replies to include voteCount
-    const repliesWithVotes = post.replies.map(reply => ({
+    // Convert replies to objects with vote counts
+    const allReplies = post.replies.map(reply => ({
       ...reply.toObject(),
       voteCount: reply.voteCount,
       postId: post._id
     }));
 
-    res.json(repliesWithVotes);
+    // Organize replies into threads
+    const threadsMap = new Map();
+    const rootReplies = [];
+
+    // First pass: create a map of all replies
+    allReplies.forEach(reply => {
+      reply.childReplies = [];
+      threadsMap.set(reply._id.toString(), reply);
+    });
+
+    // Second pass: build the hierarchy
+    allReplies.forEach(reply => {
+      if (!reply.parentReplyId) {
+        // This is a root level reply
+        rootReplies.push(reply);
+      } else {
+        // This is a child reply
+        const parentId = reply.parentReplyId.toString();
+        const parent = threadsMap.get(parentId);
+        if (parent) {
+          parent.childReplies.push(reply);
+        } else {
+          // Parent not found, treat as root reply
+          rootReplies.push(reply);
+        }
+      }
+    });
+
+    // Sort root replies by newest first
+    rootReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    // Sort children by newest first within their parent threads
+    rootReplies.forEach(function sortChildren(reply) {
+      reply.childReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      reply.childReplies.forEach(sortChildren);
+    });
+
+    res.json(rootReplies);
   } catch (error) {
     console.error("❌ Error fetching replies:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -343,41 +493,183 @@ const checkReplyPermissions = async (req, res, next) => {
   }
 };
 
-// Update Reply Route
+// // Update Reply Route
+// router.put('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
+//   try {
+//     const { content } = req.body;
+
+//     // Find the post and update the specific reply
+//     const post = await ForumPost.findById(req.params.postId);
+//     const reply = post.replies.id(req.params.replyId);
+    
+//     reply.content = content;
+//     reply.updatedAt = new Date();
+    
+//     await post.save();
+
+//     res.json(post.replies);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error updating reply', error: error.message });
+//   }
+// });
+
+// Update the existing reply update route to maintain threading
 router.put('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
   try {
-    const { content } = req.body;
-
-    // Find the post and update the specific reply
-    const post = await ForumPost.findById(req.params.postId);
-    const reply = post.replies.id(req.params.replyId);
-    
-    reply.content = content;
-    reply.updatedAt = new Date();
-    
-    await post.save();
-
-    res.json(post.replies);
+      const { content } = req.body;
+  
+      // Find the post and update the specific reply
+      const post = await ForumPost.findById(req.params.postId);
+      const reply = post.replies.id(req.params.replyId);
+      
+      reply.content = content;
+      reply.updatedAt = new Date();
+      
+      await post.save();
+  
+      // Return threaded replies
+      // Use the same approach as the GET route to organize replies into threads
+      const allReplies = post.replies.map(reply => ({
+      ...reply.toObject(),
+      voteCount: reply.voteCount,
+      postId: post._id,
+      childReplies: []
+      }));
+  
+      const threadsMap = new Map();
+      const rootReplies = [];
+  
+      allReplies.forEach(reply => {
+      threadsMap.set(reply._id.toString(), reply);
+      });
+  
+      allReplies.forEach(reply => {
+      if (!reply.parentReplyId) {
+          rootReplies.push(reply);
+      } else {
+          const parentId = reply.parentReplyId.toString();
+          const parent = threadsMap.get(parentId);
+          if (parent) {
+          parent.childReplies.push(reply);
+          } else {
+          rootReplies.push(reply);
+          }
+      }
+      });
+  
+      rootReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      rootReplies.forEach(function sortChildren(reply) {
+      reply.childReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      reply.childReplies.forEach(sortChildren);
+      });
+  
+      res.json(rootReplies);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating reply', error: error.message });
+      res.status(500).json({ message: 'Error updating reply', error: error.message });
   }
-});
+  });
 
-// Delete reply route
+// // Delete reply route
+// router.delete('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
+//   try {
+//     const post = await ForumPost.findById(req.params.postId);
+    
+//     // Remove the specific reply
+//     post.replies.pull(req.params.replyId);
+    
+//     await post.save();
+
+//     res.json(post.replies);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error deleting reply', error: error.message });
+//   }
+// });
+
+// Update the existing reply delete route to maintain threading
 router.delete('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
   try {
-    const post = await ForumPost.findById(req.params.postId);
-    
-    // Remove the specific reply
-    post.replies.pull(req.params.replyId);
-    
-    await post.save();
-
-    res.json(post.replies);
+      const post = await ForumPost.findById(req.params.postId);
+      
+      // Find the reply to be deleted
+      const replyToDelete = post.replies.id(req.params.replyId);
+      
+      if (replyToDelete) {
+      // Option 1: Delete the reply and all its children
+      const deleteReplyAndChildren = (replyId) => {
+          // Get all direct children
+          const childIds = post.replies
+          .filter(r => r.parentReplyId && r.parentReplyId.toString() === replyId.toString())
+          .map(r => r._id);
+          
+          // Recursively delete all children
+          childIds.forEach(childId => deleteReplyAndChildren(childId));
+          
+          // Delete the reply itself
+          post.replies.pull(replyId);
+      };
+      
+      // Start deletion from the target reply
+      deleteReplyAndChildren(req.params.replyId);
+      
+      // Option 2: Keep children but make them root level replies
+      // This approach would move all direct children to be root level replies
+      /*
+      post.replies.forEach(reply => {
+          if (reply.parentReplyId && reply.parentReplyId.toString() === req.params.replyId.toString()) {
+          reply.parentReplyId = null;
+          reply.level = 0;
+          }
+      });
+      
+      // Then delete the reply
+      post.replies.pull(req.params.replyId);
+      */
+      
+      await post.save();
+  
+      // Return threaded replies using the same approach as other routes
+      const allReplies = post.replies.map(reply => ({
+          ...reply.toObject(),
+          voteCount: reply.voteCount,
+          postId: post._id,
+          childReplies: []
+      }));
+  
+      const threadsMap = new Map();
+      const rootReplies = [];
+  
+      allReplies.forEach(reply => {
+          threadsMap.set(reply._id.toString(), reply);
+      });
+  
+      allReplies.forEach(reply => {
+          if (!reply.parentReplyId) {
+          rootReplies.push(reply);
+          } else {
+          const parentId = reply.parentReplyId.toString();
+          const parent = threadsMap.get(parentId);
+          if (parent) {
+              parent.childReplies.push(reply);
+          } else {
+              rootReplies.push(reply);
+          }
+          }
+      });
+  
+      rootReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      rootReplies.forEach(function sortChildren(reply) {
+          reply.childReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          reply.childReplies.forEach(sortChildren);
+      });
+  
+      res.json(rootReplies);
+      } else {
+      res.status(404).json({ message: 'Reply not found' });
+      }
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting reply', error: error.message });
+      res.status(500).json({ message: 'Error deleting reply', error: error.message });
   }
-});
+  });
 
 // Add search route to your Express router
 router.get("/search", async (req, res) => {
