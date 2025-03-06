@@ -49,7 +49,7 @@ const Sidebar = () => {
     <div className="fixed left-0 top-16 h-screen w-64 bg-white border-r border-gray-200 px-4 py-6">
       <div className="space-y-2">
         {menuItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname.startsWith(item.path);
           const Icon = item.icon;
 
           return (
