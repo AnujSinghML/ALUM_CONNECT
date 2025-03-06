@@ -139,7 +139,7 @@ const AllAlumni = () => {
           <h1 className="text-3xl font-bold text-gray-800 mb-4">All Alumni</h1>
           <p className="text-gray-600 mb-4">Explore all our distinguished alumni profiles.</p>
           
-          {/* Name Search Bar with live suggestions and clear cross button */}
+          {/* Name Search Bar with live suggestions and clear cross button - auto */}
           <div className="relative mb-4 w-64">
             <label className="block text-gray-700 text-sm">Search by Name:</label>
             <div className="relative">
