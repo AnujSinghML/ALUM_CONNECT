@@ -11,7 +11,7 @@ const FundingOpportunities = () => {
   const [filter, setFilter] = useState({ category: '', search: '' });
   const [appliedFilter, setAppliedFilter] = useState({});
 
-  // Handle change in filter inputs
+  // Handle change in filter inputs added
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilter(prev => ({ ...prev, [name]: value }));
