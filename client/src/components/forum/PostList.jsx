@@ -1,3 +1,4 @@
+// client\src\components\forum\PostList.jsx
 import React from "react";
 import PostItem from "./PostItem";
 
