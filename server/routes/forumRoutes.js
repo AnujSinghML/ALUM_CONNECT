@@ -114,42 +114,6 @@ router.post("/posts/:postId/vote", isAuthenticated, async (req, res) => {
   }
 });
 
-// router.post("/posts/:postId/replies", isAuthenticated, async (req, res) => {
-//   try {
-//     const { postId } = req.params;
-//     const { content } = req.body;
-//     const user = req.user; // Make sure req.user exists (authentication middleware)
-
-//     if (!content || !user) {
-//       return res.status(400).json({ message: "Reply content is required" });
-//     }
-
-//     const post = await ForumPost.findById(postId);
-//     if (!post) {
-//       return res.status(404).json({ message: "Post not found" });
-//     }
-
-//     const reply = {
-//       userId: user._id,
-//       username: user.name,
-//       content,
-//       createdAt: new Date(),
-//       votes: [], // Initialize empty votes array
-//       postId: postId, // Add postId to the reply
-//     };
-
-//     post.replies.push(reply);
-//     await post.save();
-
-//     res.status(201).json(post.replies);
-//   } catch (error) {
-//     console.error("❌ Error saving reply:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
-// Modified route to create a threaded reply
-
 
 router.post("/posts/:postId/replies", isAuthenticated, async (req, res) => {
   try {
@@ -289,29 +253,6 @@ router.post("/posts/:postId/replies/:replyId/vote", isAuthenticated, async (req,
   }
 });
 
-// // Update the replies fetching route to ensure vote count is included
-// router.get("/posts/:postId/replies", async (req, res) => {
-//   try {
-//     const { postId } = req.params;
-//     const post = await ForumPost.findById(postId);
-
-//     if (!post) {
-//       return res.status(404).json({ message: "Post not found" });
-//     }
-
-//     // Map replies to include voteCount
-//     const repliesWithVotes = post.replies.map(reply => ({
-//       ...reply.toObject(),
-//       voteCount: reply.voteCount,
-//       postId: post._id
-//     }));
-
-//     res.json(repliesWithVotes);
-//   } catch (error) {
-//     console.error("❌ Error fetching replies:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
 
 router.get("/posts/:postId/replies", async (req, res) => {
   try {
@@ -493,26 +434,6 @@ const checkReplyPermissions = async (req, res, next) => {
   }
 };
 
-// // Update Reply Route
-// router.put('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
-//   try {
-//     const { content } = req.body;
-
-//     // Find the post and update the specific reply
-//     const post = await ForumPost.findById(req.params.postId);
-//     const reply = post.replies.id(req.params.replyId);
-    
-//     reply.content = content;
-//     reply.updatedAt = new Date();
-    
-//     await post.save();
-
-//     res.json(post.replies);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error updating reply', error: error.message });
-//   }
-// });
-
 // Update the existing reply update route to maintain threading
 router.put('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
   try {
@@ -569,21 +490,6 @@ router.put('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermis
   }
   });
 
-// // Delete reply route
-// router.delete('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
-//   try {
-//     const post = await ForumPost.findById(req.params.postId);
-    
-//     // Remove the specific reply
-//     post.replies.pull(req.params.replyId);
-    
-//     await post.save();
-
-//     res.json(post.replies);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error deleting reply', error: error.message });
-//   }
-// });
 
 // Update the existing reply delete route to maintain threading
 router.delete('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPermissions, async (req, res) => {
@@ -610,20 +516,6 @@ router.delete('/posts/:postId/replies/:replyId', authenticateUser, checkReplyPer
       
       // Start deletion from the target reply
       deleteReplyAndChildren(req.params.replyId);
-      
-      // Option 2: Keep children but make them root level replies
-      // This approach would move all direct children to be root level replies
-      /*
-      post.replies.forEach(reply => {
-          if (reply.parentReplyId && reply.parentReplyId.toString() === req.params.replyId.toString()) {
-          reply.parentReplyId = null;
-          reply.level = 0;
-          }
-      });
-      
-      // Then delete the reply
-      post.replies.pull(req.params.replyId);
-      */
       
       await post.save();
   

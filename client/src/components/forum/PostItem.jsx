@@ -11,6 +11,7 @@ const PostItem = ({ post, user, setPosts }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(post.title);
   const [editContent, setEditContent] = useState(post.content);
+  const [localVoteCount, setLocalVoteCount] = useState(post.voteCount || 0);
 
   // Modify the canModifyPost logic to prevent admin from editing
   const canModifyPost = user && (
@@ -136,7 +137,12 @@ const PostItem = ({ post, user, setPosts }) => {
               )}
             </div>
             <div className="flex items-center space-x-2">
-              <VoteButtons post={post} user={user} setPosts={setPosts} />
+            <VoteButtons 
+  post={{...post, voteCount: localVoteCount}}
+  user={user} 
+  setPosts={setPosts}
+  setLocalVoteCount={setLocalVoteCount}
+/>
               {canModifyPost && (
                 <button 
                   onClick={() => setIsEditing(true)}
