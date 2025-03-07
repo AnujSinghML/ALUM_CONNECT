@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// Enhanced CreatePostForm with Success Confirmation
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const CreatePostForm = ({ user, setPosts }) => {
@@ -6,10 +7,23 @@ const CreatePostForm = ({ user, setPosts }) => {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  // Clear success message after 5 seconds
+  useEffect(() => {
+    let timer;
+    if (successMessage) {
+      timer = setTimeout(() => {
+        setSuccessMessage("");
+      }, 5000);
+    }
+    return () => clearTimeout(timer);
+  }, [successMessage]);
 
   const handleCreatePost = async () => {
-    // Reset previous errors
+    // Reset previous messages
     setError("");
+    setSuccessMessage("");
 
     // Validate inputs
     if (!user) {
@@ -53,6 +67,9 @@ const CreatePostForm = ({ user, setPosts }) => {
       // Prepend the new post to the list
       setPosts((prev) => [response.data, ...prev]);
       
+      // Show success message
+      setSuccessMessage("Post created successfully!");
+      
       // Clear form
       setTitle("");
       setContent("");
@@ -70,8 +87,20 @@ const CreatePostForm = ({ user, setPosts }) => {
       <h2 className="text-xl font-bold mb-4 text-gray-800">Create a New Post</h2>
       
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-4">
-          {error}
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-4 flex items-start">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
+      
+      {successMessage && (
+        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md mb-4 flex items-start">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          <span>{successMessage}</span>
         </div>
       )}
       
