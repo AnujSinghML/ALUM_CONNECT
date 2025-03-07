@@ -52,6 +52,8 @@ app.use('/api/opportunities', require('./routes/opportunityRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
 app.use('/api/alumni', require('./routes/alumniRoutes'));
 app.use("/api/forum", require("./routes/forumRoutes"));
+app.use('/api/jobs/admin', require('./routes/adminJobRoutes'));
+
 
 
 // Error handling
