@@ -14,6 +14,7 @@ const updateProfile = async (req, res) => {
     // List of allowed fields for general updates
     const allowedUpdates = [
       'location',
+      'personalEmail',
       'currentCompany',
       'currentCompanyRole',
       'socialLinks'

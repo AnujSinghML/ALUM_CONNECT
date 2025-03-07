@@ -95,19 +95,16 @@ const Profile = () => {
       </Layout>
     );
   }
-
+  
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto space-y-8">
-          {/* Profile Card */}
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
-            {/* Header background with modern gradient */}
             <div className="relative h-35 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 overflow-hidden">
               <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)]" style={{ backgroundSize: '24px 24px' }}></div>
             </div>
 
-            {/* Profile Content */}
             <div className="relative px-8 py-10 -mt-27">
               <div className="relative z-10">
                 <ProfileHeader 
@@ -128,6 +125,24 @@ const Profile = () => {
                       </div>
                     </div>
                   )}
+
+                  {/* New Personal Email Section */}
+                  {profile.personalEmail && (
+  <div className="flex items-center space-x-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200">
+    <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+      <Mail className="w-5 h-5 text-blue-600" />
+    </div>
+    <div className="min-w-0 flex-1">
+      <p className="text-sm font-medium text-gray-500">Personal Email</p>
+      <p 
+        className="text-sm font-semibold text-gray-900 truncate"
+        title={profile.personalEmail} // Added tooltip
+      >
+        {profile.personalEmail}
+      </p>
+    </div>
+  </div>
+)}
                   
                   {profile.location && (
                     <div className="flex items-center space-x-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200">
@@ -168,7 +183,7 @@ const Profile = () => {
                   )}
                 </div>
 
-                {/* Social Links with modern cards */}
+                {/* Rest of the components remain the same */}
                 <div className="mt-8">
                   {profile.socialLinks && (
                     <div className="bg-gray-50 rounded-2xl p-6">
@@ -181,18 +196,12 @@ const Profile = () => {
                   )}
                 </div>
 
-                {/* Profile Sections with modern design */}
                 <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm">
                   <ProfileSections profile={profile} />
                 </div>
-
-                
-                
               </div>
             </div>
           </div>
-
-          
         </div>
       </div>
     </Layout>

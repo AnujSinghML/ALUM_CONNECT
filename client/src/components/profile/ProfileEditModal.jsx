@@ -7,6 +7,7 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onSubmit }) => {
     location: '',
     currentCompany: '',
     currentCompanyRole: '',
+    personalEmail: '',
     socialLinks: {
       linkedin: '',
       github: '',
@@ -24,6 +25,7 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onSubmit }) => {
         location: profile.location || '',
         currentCompany: profile.currentCompany || '',
         currentCompanyRole: profile.currentCompanyRole || '',
+        personalEmail: profile.personalEmail || '',
         socialLinks: {
           linkedin: profile.socialLinks?.linkedin || '',
           github: profile.socialLinks?.github || '',
@@ -65,6 +67,9 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onSubmit }) => {
     if (!formData.location) {
       newErrors.location = 'Location is required';
     }
+    if (formData.personalEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.personalEmail)) {
+      newErrors.personalEmail = 'Please enter a valid email address';
+    }
 
     if (tab === 'password') {
       if (!formData.currentPassword) {
@@ -92,6 +97,7 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onSubmit }) => {
       location: formData.location,
       currentCompany: formData.currentCompany || null,
       currentCompanyRole: formData.currentCompanyRole || null,
+      personalEmail: formData.personalEmail || null,
       socialLinks: formData.socialLinks
     };
 
@@ -144,6 +150,24 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onSubmit }) => {
                 />
                 {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
               </div>
+
+              <div>
+                   <label className="block text-sm font-medium text-gray-700">Personal Email</label>
+                    <input
+                     type="email"
+                     name="personalEmail"
+                     value={formData.personalEmail}
+                     onChange={handleInputChange}
+                     placeholder="your@personal-email.com"
+                     className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                   />
+                   {errors.personalEmail && (
+                     <p className="text-red-500 text-sm mt-1">{errors.personalEmail}</p>
+                   )}
+                   <p className="text-sm text-gray-500 mt-1">
+                     This email will be displayed on your profile alongside your primary email
+                   </p>
+                 </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Current Company</label>

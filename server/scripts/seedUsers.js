@@ -21,12 +21,13 @@ const users = [
       instagram: 'https://www.instagram.com/glockholm',
       github: 'https://github.com/AnujSinghML',
       x: 'https://x.com/anujsingh_08?t=iZX1epaBvzYhjavy1_nIIw&s=09'
-    }
+    },
+    personalEmail: 'anujsanjaysinghwork@gmail.com'
   },
   {
     name: 'Vasu Parashar',
     email: 'bt22csd021@iiitn.ac.in',
-    password: 'vasu123', 
+    password: 'vasu123!', 
     role: 'student',
     dob: new Date('2004-08-18'),
     branch: 'Computer Science - Data Science',
@@ -40,7 +41,8 @@ const users = [
       instagram: 'https://www.instagram.com/vashuprashar',
       github: 'https://github.com/vashuprashar',
       x: null
-    }
+    },
+    personalEmail: null
   },
   {
     name: 'Amit Yadav',
@@ -55,11 +57,12 @@ const users = [
     batch: '2020',
     homeTown: 'Haryana',
     socialLinks: {
-      linkedin: '',
-      instagram: '',
+      linkedin: 'https://www.linkedin.com',
+      instagram: 'https://www.instagram.com',
       github: '',
-      x: null
-    }
+      x: 'https://x.com/'
+    },
+    personalEmail: null
   },
   {
     name: 'Admin1',
@@ -74,10 +77,11 @@ const users = [
     homeTown: 'Delhi',
     socialLinks: {
       linkedin: '',
-      instagram: '',
+      instagram: 'https://www.instagram.com',
       github: '',
-      x: ''
-    }
+      x: 'https://x.com/'
+    },
+    personalEmail: null
   },
   // Add additional alumni/users here as needed...
   {
@@ -93,11 +97,12 @@ const users = [
     batch: '2020',
     homeTown: 'Mumbai',
     socialLinks: {
-      linkedin: '',
-      instagram: '',
-      github: '',
+      linkedin: 'https://www.linkedin.com',
+      instagram: 'https://www.instagram.com',
+      github: 'https://github.com/',
       x: null
-    }
+    },
+    personalEmail: null
   },
   {
     name: 'Simran Ahuja',
@@ -113,10 +118,11 @@ const users = [
     homeTown: 'Delhi',
     socialLinks: {
       linkedin: '',
-      instagram: '',
-      github: '',
+      instagram: 'https://www.instagram.com',
+      github: 'https://github.com/',
       x: null
-    }
+    },
+    personalEmail: null
   },
   {
     name: 'Rudransh Singh',
@@ -131,11 +137,12 @@ const users = [
     batch: '2019',
     homeTown: 'Lucknow',
     socialLinks: {
-      linkedin: '',
-      instagram: '',
-      github: '',
+      linkedin: 'https://www.linkedin.com/',
+      instagram: 'https://www.instagram.com',
+      github: 'https://github.com/',
       x: null
-    }
+    },
+    personalEmail: null
   },
   {
     name: 'Rashmi Singhania',
@@ -150,11 +157,12 @@ const users = [
     batch: '2019',
     homeTown: 'Hyderabad',
     socialLinks: {
-      linkedin: '',
-      instagram: '',
-      github: '',
+      linkedin: 'https://www.linkedin.com/',
+      instagram: 'https://www.instagram.com',
+      github: 'https://github.com/',
       x: null
-    }
+    },
+    personalEmail: null
   },
   {
     name: 'Amir Shaikh',
@@ -173,30 +181,42 @@ const users = [
       instagram: 'https://www.instagram.com/',
       github: 'https://github.com/',
       x: 'https://x.com/'
-    }
+    },
+    personalEmail: null
   },
 ];
 
+
 const seedUsers = async () => {
   try {
+    // Connect to MongoDB
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB...');
-
-    // Instead of deleting, we check for existence and add new entries only.
+    
+    // Step 1: Delete all existing user documents
+    await User.deleteMany({});
+    console.log('All existing users deleted');
+    
+    // Step 2: Create each user individually to trigger the pre-save hook
+    // that will hash the passwords automatically
     for (const userData of users) {
-      const existingUser = await User.findOne({ email: userData.email });
-      if (!existingUser) {
-        await User.create(userData);
-        console.log(`Added user: ${userData.email}`);
-      } else {
-        console.log(`User already exists: ${userData.email}`);
-      }
+      const user = new User(userData);
+      await user.save();
+      console.log(`Added user: ${userData.email}`);
     }
-
+    
+    console.log(`${users.length} users successfully added to the database`);
+    
+    // Close the database connection
     await mongoose.connection.close();
     console.log('Database connection closed');
+    
   } catch (error) {
     console.error('Error seeding database:', error);
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.connection.close();
+      console.log('Database connection closed after error');
+    }
     process.exit(1);
   }
 };

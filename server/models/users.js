@@ -34,6 +34,19 @@ const UserSchema = new mongoose.Schema({
     instagram: { type: String, default: null },
     github: { type: String, default: null },
     x: { type: String, default: null }  // Changed from twitter to x to match your data
+  },
+  personalEmail: { 
+    type: String, 
+    lowercase: true, 
+    trim: true,
+    validate: {
+      validator: function(v) {
+        // Allow null or valid email
+        return v === null || /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+      },
+      message: props => `${props.value} is not a valid personal email!`
+    },
+    default: null // Default to null if not provided
   }
 }, { timestamps: true });
 

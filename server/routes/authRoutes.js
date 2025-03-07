@@ -58,6 +58,7 @@ router.get("/profile", (req, res) => {
       github: socialLinks.github || null,
       x: socialLinks.x || socialLinks.twitter || null,
     },
+    personalEmail: req.user.personalEmail,
     isActive: req.user.isActive,
     lastLogin: req.user.lastLogin,
   });
