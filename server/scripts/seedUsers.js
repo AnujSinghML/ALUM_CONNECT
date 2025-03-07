@@ -83,6 +83,26 @@ const users = [
     },
     personalEmail: null
   },
+  {
+    name: 'Parth Chatter',
+    email: 'bt22cse109@iiitn.ac.in',
+    password: 'parth123', 
+    role: 'student',
+    dob: new Date('2004-12-06'),
+    branch: 'Computer Science',
+    currentCompany: null,
+    currentCompanyRole: '',
+    location: 'Nagpur',
+    batch: '2022',
+    homeTown: 'Indore,MP',
+    socialLinks: {
+      linkedin: 'https://www.linkedin.com/in/parthchatter',
+      instagram: 'https://www.instagram.com/vashuprashar',
+      github: 'https://github.com/parthh6',
+      x: null
+    },
+    personalEmail: null
+  },
   // Add additional alumni/users here as needed...
   {
     name: 'Ashok Tripathi',
@@ -186,6 +206,44 @@ const users = [
   },
 ];
 
+//friends:
+
+
+// const seedUsers = async () => {
+//   try {
+//     // Connect to MongoDB
+//     await mongoose.connect(process.env.MONGO_URI);
+//     console.log('Connected to MongoDB...');
+    
+//     // Step 1: Delete all existing user documents
+//     await User.deleteMany({});
+//     console.log('All existing users deleted');
+    
+//     // Step 2: Create each user individually to trigger the pre-save hook
+//     // that will hash the passwords automatically
+//     for (const userData of users) {
+//       const user = new User(userData);
+//       await user.save();
+//       console.log(`Added user: ${userData.email}`);
+//     }
+    
+//     console.log(`${users.length} users successfully added to the database`);
+    
+//     // Close the database connection
+//     await mongoose.connection.close();
+//     console.log('Database connection closed');
+    
+//   } catch (error) {
+//     console.error('Error seeding database:', error);
+//     if (mongoose.connection.readyState === 1) {
+//       await mongoose.connection.close();
+//       console.log('Database connection closed after error');
+//     }
+//     process.exit(1);
+//   }
+// };
+
+// Run seeder
 
 const seedUsers = async () => {
   try {
@@ -193,23 +251,37 @@ const seedUsers = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB...');
     
-    // Step 1: Delete all existing user documents
-    await User.deleteMany({});
-    console.log('All existing users deleted');
+    // Keep track of operations
+    let addedCount = 0;
+    let skippedCount = 0;
     
-    // Step 2: Create each user individually to trigger the pre-save hook
-    // that will hash the passwords automatically
+    // Process each user in the seed data
     for (const userData of users) {
+      // Check if user already exists
+      const existingUser = await User.findOne({ email: userData.email });
+      
+      if (existingUser) {
+        console.log(`Skipped existing user: ${userData.email}`);
+        skippedCount++;
+        continue; // Skip to next user
+      }
+
+      // Create new user if doesn't exist
       const user = new User(userData);
       await user.save();
-      console.log(`Added user: ${userData.email}`);
+      console.log(`Added new user: ${userData.email}`);
+      addedCount++;
     }
     
-    console.log(`${users.length} users successfully added to the database`);
+    // Log summary
+    console.log('\nSeeding Summary:');
+    console.log(`✅ New users added: ${addedCount}`);
+    console.log(`⏭️ Existing users skipped: ${skippedCount}`);
+    console.log(`📊 Total users processed: ${users.length}`);
     
     // Close the database connection
     await mongoose.connection.close();
-    console.log('Database connection closed');
+    console.log('\nDatabase connection closed');
     
   } catch (error) {
     console.error('Error seeding database:', error);
@@ -221,5 +293,4 @@ const seedUsers = async () => {
   }
 };
 
-// Run seeder
 seedUsers();

@@ -2,9 +2,10 @@
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
+const { ensureInstitutionalEmail } = require('../middleware/roleMiddleware');
 
 // ✅ POST /auth/login
-router.post("/login", (req, res, next) => {
+router.post("/login",ensureInstitutionalEmail, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
     if (!user) return res.status(400).json({ error: info.message });
@@ -93,5 +94,48 @@ router.post("/logout", (req, res, next) => {
     next(error);
   }
 });
+
+// Google Auth Routes
+router.get('/google',
+  passport.authenticate('google', { 
+    scope: ['profile', 'email'],
+    prompt: 'select_account'
+  })
+);
+
+router.get('/google/callback',
+  (req, res, next) => {
+    passport.authenticate('google', (err, user, info) => {
+      if (err) {
+        return res.redirect(`${process.env.FRONTEND_URL}/login?error=${encodeURIComponent('Authentication failed. Please try again.')}`);
+      }
+
+      if (!user) {
+        let errorMessage = 'Authentication failed.';
+        
+        // Customize error message based on info
+        if (info && info.message) {
+          if (info.message.includes('@iiitn.ac.in')) {
+            errorMessage = 'Please use your IIIT Nagpur email (@iiitn.ac.in) to sign in.';
+          } else if (info.message.includes('not registered')) {
+            errorMessage = 'This email is not registered in our system. Please contact the administrator.';
+          }
+        }
+
+        return res.redirect(`${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(errorMessage)}`);
+      }
+
+      req.logIn(user, (err) => {
+        if (err) {
+          return res.redirect(`${process.env.FRONTEND_URL}/login?error=${encodeURIComponent('Login failed. Please try again.')}`);
+        }
+
+        const role = user.role.toLowerCase();
+        const redirectPath = role === 'admin' ? '/admin/announcements' : '/announcements';
+        return res.redirect(`${process.env.FRONTEND_URL}${redirectPath}`);
+      });
+    })(req, res, next);
+  }
+);
 
 module.exports = router;
