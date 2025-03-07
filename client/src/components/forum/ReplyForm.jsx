@@ -11,13 +11,21 @@ const ReplyForm = ({
 }) => {
   const [replyContent, setReplyContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(""); // Added error state
 
   const handleReplySubmit = async (e) => {
     e.preventDefault();
     
-    if (!replyContent.trim()) return;
+    // Reset previous errors
+    setError("");
+    
+    if (!replyContent.trim()){
+      setError("Reply content cannot be empty.");
+      return;
+    }
+    
     if (!user) {
-      alert("You must be logged in to reply");
+      setError("You must be logged in to reply.");
       return;
     }
     
@@ -35,6 +43,7 @@ const ReplyForm = ({
       );
       setReplies(response.data);
       setReplyContent("");
+      setError(""); // Clear any error messages on success
       
       // If this is a nested reply form, close it after submission
       if (onCancel) {
@@ -42,7 +51,7 @@ const ReplyForm = ({
       }
     } catch (error) {
       console.error("❌ Error posting reply:", error);
-      alert("Failed to post reply. Please try again.");
+      setError(error.response?.data?.message || "Failed to post reply. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -51,6 +60,13 @@ const ReplyForm = ({
   return (
     <form onSubmit={handleReplySubmit} className={isNested ? "" : "mt-4 border-t border-gray-100 pt-4"}>
       <div className="space-y-3">
+        {/* Display error message similar to the CreatePostForm */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-2">
+            {error}
+          </div>
+        )}
+        
         <textarea
           className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all"
           placeholder="Write your reply..."
@@ -77,7 +93,7 @@ const ReplyForm = ({
                 ? "bg-blue-400 cursor-not-allowed" 
                 : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             }`}
-            disabled={isSubmitting || !replyContent.trim()}
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Posting..." : "Post Reply"}
           </button>
