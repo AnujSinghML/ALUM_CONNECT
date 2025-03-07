@@ -1,5 +1,5 @@
-// client/src/components/network/JobCard.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useUser } from '../../context/UserContext'; // Adjust the import path as needed
 
 const JobCard = ({
   title,
@@ -15,14 +15,21 @@ const JobCard = ({
   applicationUrl,
   status,
   jobId,
-  currentUserEmail,
   onStatusChange
 }) => {
   const [expanded, setExpanded] = useState(false);
+  const { user, loading } = useUser(); // Use the user context
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+
+  useEffect(() => {
+    if (!loading && user) {
+      setCurrentUserEmail(user.email);
+    }
+  }, [loading, user]);
 
   // Debug logs to confirm correct values
-  console.log('Current User Email:', currentUserEmail);
-  console.log('Author Email:', authorEmail);
+  // console.log('Current User Email:', currentUserEmail);
+  // console.log('Author Email:', authorEmail);
 
   // If you want a case-insensitive comparison:
   const isAuthor = currentUserEmail?.toLowerCase() === authorEmail?.toLowerCase();
@@ -37,6 +44,11 @@ const JobCard = ({
       </React.Fragment>
     ));
   };
+
+  // Show a loading state if user data is still being fetched
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">

@@ -204,10 +204,191 @@ const users = [
     },
     personalEmail: null
   },
-];
+
 
 //friends:
+{
+  name: 'Raj Gupta',
+  email: 'bt22cse105@iiitn.ac.in',
+  password: 'rajx123!', 
+  role: 'student',
+  dob: new Date('2003-09-16'),
+  branch: 'Computer Science and Engineering',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Shahdol',
+  socialLinks: {
+    linkedin: '',
+    instagram: '',
+    github: '',
+    x: null
+  },
+  personalEmail: null
+},
+{
+  name: 'Sujay kamble',
+  email: 'bt22cse034@iiitn.ac.in',
+  password: 'sujay123!', 
+  role: 'student',
+  dob: new Date('2004-09-23'),
+  branch: 'Computer Science',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Nagpur',
+  socialLinks: {
+    linkedin: '',
+    instagram: '',
+    github: '',
+    x: null
+  },
+  personalEmail: null
+},
+{
+  name: 'Mohammad Tabish Sohail',
+  email: 'bt22cse050@iiitn.ac.in',
+  password: 'tabish123!', 
+  role: 'student',
+  dob: new Date('2003-06-01'),
+  branch: 'Computer Science',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Patna',
+  socialLinks: {
+    linkedin: null,
+    instagram: 'https://www.instagram.com/tabish._21',
+    github: null,
+    x: null
+  },
+  personalEmail: 'tabishs080@gmail.com'
+},
+{
+  name: 'keyur londhe',
+  email: 'bt22cse005@iiitn.ac.in',
+  password: 'keyur123!', 
+  role: 'student',
+  dob: new Date('2004-04-26'),
+  branch: 'Computer Science',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Sambhaji Nagar,MH',
+  socialLinks: {
+    linkedin: '',
+    instagram: '',
+    github: '',
+    x: null
+  },
+  personalEmail: null
+  },
+{
+  name: 'Sumedh sabne',
+  email: 'bt22csh020@iiitn.ac.in',
+  password: 'sumedh123!', 
+  role: 'student',
+  dob: new Date('2003-09-09'),
+  branch: 'Computer Science HCI & GT',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Nanded, MH',
+  socialLinks: {
+    linkedin: '',
+    instagram: '',
+    github: '',
+    x: null
+  },
+  personalEmail: null
+},
+{
+  name: 'Naval Makwana',
+  email: 'bt22cse018@iiitn.ac.in',
+  password: 'naval123!', 
+  role: 'student',
+  dob: new Date('2004-12-11'),
+  branch: 'Computer Science',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Mumbai,MH',
+  socialLinks: {
+    linkedin: '',
+    instagram: '',
+    github: '',
+    x: null
+  },
+  personalEmail: null
+},
+{
+  name: 'Ankush Jha',
+  email: 'bt22csh023@iiitn.ac.in',
+  password: 'ankush123!', 
+  role: 'student',
+  dob: new Date('2003-08-09'),
+  branch: 'Computer Science - HCI & GT',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Virar, MH',
+  socialLinks: {
+    linkedin: '',
+    instagram: '',
+    github: '',
+    x: null
+  },
+  personalEmail: null
+},
+{
+  name: 'Ojas Kamble',
+  email: 'bt22cse107@iiitn.ac.in',
+  password: 'ojas123!', 
+  role: 'student',
+  dob: new Date('2003-12-08'),
+  branch: 'Computer Science',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Nagpur, MH',
+  socialLinks: {
+    linkedin: null,
+    instagram: null,
+    github: null,
+    x: null
+  },
+  personalEmail: null
+},
+{
+  name: 'Parth Chatter',
+  email: 'bt22cse109@iiitn.ac.in',
+  password: 'parth123!', 
+  role: 'student',
+  dob: new Date('2004-12-06'),
+  branch: 'Computer Science',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Indore,MP',
+  socialLinks: {
+    linkedin: 'https://www.linkedin.com/in/parthchatter',
+    instagram: '',
+    github: 'https://github.com/parthh6',
+    x: null
+  },
+  personalEmail: null
+}
 
+];
 
 // const seedUsers = async () => {
 //   try {
