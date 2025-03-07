@@ -33,8 +33,10 @@ import FundingOpportunities from './routes/donation/FundingOpportunities';
 import AllJobs from './routes/network/AllJobs';
 import CreateJobOpportunity from './routes/network/CreateJobOpportunity';
 
+import AdminNetwork from './routes/network/AdminNetwork';
+
 // Dummy admin components (create these files or adjust accordingly)
-const AdminNetwork = () => <div className="p-8 text-center text-2xl font-bold">Admin Network Dashboard</div>;
+
 const AdminDiscussion = () => <div className="p-8 text-center text-2xl font-bold">Admin Discussion Dashboard</div>;
 const AdminDonations = () => <div className="p-8 text-center text-2xl font-bold">Admin Donations Dashboard</div>;
 const AdminProfile = () => <div className="p-8 text-center text-2xl font-bold">Admin Profile Dashboard</div>;

@@ -5,6 +5,7 @@ const { verifyAdmin } = require('../middleware/authMiddleware');
 
 // GET all jobs for admin
 router.get('/', verifyAdmin, async (req, res) => {
+  console.log("adminJobRoutes.js: GET /api/jobs/admin called by:", req.user ? req.user.email : 'unknown');
   try {
     const jobs = await Job.find().sort({ createdAt: -1 });
     res.json(jobs);
