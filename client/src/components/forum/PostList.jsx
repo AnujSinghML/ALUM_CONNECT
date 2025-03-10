@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import PostItem from "./PostItem";
 
-const PostList = ({ posts, user, setPosts }) => {
+const PostList = ({ posts, user, setPosts, adminMode, onDeletePost }) => {
   const [sortBy, setSortBy] = useState("latest"); // Default sort by latest
-  
+
   // Function to sort posts based on selected option
   const getSortedPosts = () => {
     if (sortBy === "upvotes") {
@@ -13,14 +13,14 @@ const PostList = ({ posts, user, setPosts }) => {
       return [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
   };
-  
+
   const sortedPosts = getSortedPosts();
 
   return (
     <div className="space-y-6">
+      {/* Sorting Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-3 gap-3">
         <h2 className="text-2xl font-bold text-gray-800">Recent Discussions</h2>
-        
         <div className="flex items-center justify-between sm:justify-end gap-4">
           <div className="flex items-center">
             <label htmlFor="sort-select" className="text-sm text-gray-600 mr-2">
@@ -52,7 +52,9 @@ const PostList = ({ posts, user, setPosts }) => {
               key={post._id} 
               post={post} 
               user={user} 
-              setPosts={setPosts} 
+              setPosts={setPosts}
+              adminMode={adminMode}
+              onDeletePost={onDeletePost}
             />
           ))}
         </div>

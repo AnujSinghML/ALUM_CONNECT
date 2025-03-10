@@ -3,51 +3,85 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const FundingCard = ({ title, description, amount, authorName, tags, details }) => {
+//
+// Single Funding Card
+// Shows name, comments, Show More toggle, amount, batch/email, and tags if needed
+//
+const FundingCard = ({ 
+  name = 'Untitled', 
+  batch = '', 
+  email = '', 
+  purpose = '', 
+  amount = 0, 
+  comments = '',
+  // Optional: if you have tags, you can pass them in an array
+  tags = []
+}) => {
   const [expanded, setExpanded] = useState(false);
 
+  // Decide how many characters to show before toggling
+  const MAX_CHAR = 100;
+  const isLong = comments.length > MAX_CHAR;
+
+  // If not expanded, clamp the text
+  const displayedComments = expanded ? comments : comments.slice(0, MAX_CHAR);
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
-      <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
-      
-      {/* Conditionally apply line clamp if not expanded */}
-      <p className={`text-gray-600 text-sm mb-3 ${expanded ? '' : 'line-clamp-2'}`}>
-        {description}
-      </p>
-      
-      {/* Optionally display extra details when expanded */}
-      {expanded && details && (
-        <p className="text-gray-600 text-sm mb-3">{details}</p>
+    <div className="border border-gray-200 rounded p-4 shadow-md hover:shadow-lg transition-shadow">
+      {/* Title / Name */}
+      <h2 className="text-lg font-semibold text-gray-800 mb-1">
+        {name}
+      </h2>
+
+      {/* Main text / comments */}
+      {comments && (
+        <p className="text-sm text-gray-600 mb-2">
+          {displayedComments}
+          {!expanded && isLong && '...'}
+        </p>
       )}
 
-      <button 
-        onClick={() => setExpanded(!expanded)}
-        className="text-blue-600 text-sm mb-3 focus:outline-none"
-      >
-        {expanded ? 'Show Less' : 'Show More'}
-      </button>
+      {/* Show More / Show Less toggle (only if text is long) */}
+      {isLong && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-blue-600 text-sm mb-2 focus:outline-none"
+        >
+          {expanded ? 'Show Less' : 'Show More'}
+        </button>
+      )}
 
-      <div className="flex justify-between items-center mb-3">
+      {/* Bottom row: amount on left, batch/email on right */}
+      <div className="flex justify-between items-center mb-2">
         <span className="text-blue-600 font-medium">₹{amount}</span>
-        <span className="text-gray-500 text-sm">{authorName}</span>
+        <span className="text-gray-500 text-sm">
+          {batch || email || 'Unknown'}
+        </span>
       </div>
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag, index) => (
-          <span 
-            key={index}
-            className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+
+      {/* If you have tags, show them below */}
+      {tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {tags.map((tag, index) => (
+            <span 
+              key={index}
+              className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
+//
+// Main Funding component
+// Fetches accepted donations from /api/donations and displays them in cards
+//
 const Funding = ({ preview = false, filter }) => {
   const navigate = useNavigate();
-
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -55,25 +89,27 @@ const Funding = ({ preview = false, filter }) => {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        let url = `${import.meta.env.VITE_backend_URL}/api/opportunities`;
-        // Append filter query params if provided and not in preview mode
+        let url = `${import.meta.env.VITE_backend_URL}/api/donations`;
+        // If you want to apply filters in non-preview mode, append query params
         if (filter && !preview) {
           const queryParams = new URLSearchParams();
           if (filter.category) queryParams.append('category', filter.category);
           if (filter.search) queryParams.append('search', filter.search);
           url += '?' + queryParams.toString();
         }
-        const response = await axios.get(url);
+
+        const response = await axios.get(url, { withCredentials: true });
         setOpportunities(response.data);
-        setLoading(false);
       } catch (err) {
-        setError('Error loading opportunities');
+        console.error('Error fetching funding opportunities:', err);
+        setError('Error loading funding opportunities');
+      } finally {
         setLoading(false);
       }
     };
 
     fetchOpportunities();
-  }, [filter, preview]); // re-run if filter changes
+  }, [filter, preview]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -83,9 +119,9 @@ const Funding = ({ preview = false, filter }) => {
     return <div className="text-red-600">{error}</div>;
   }
 
-  // In preview mode, show only 2 items.
+  // If preview mode, limit the list to 2 items
   const displayedRequests = preview ? opportunities.slice(0, 2) : opportunities;
- 
+
   return (
     <div className="h-full bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
@@ -101,7 +137,7 @@ const Funding = ({ preview = false, filter }) => {
       </div>
 
       <div className="space-y-6">
-        {/* Main Features */}
+        {/* Banner or highlight section */}
         <div className="grid grid-cols-1 gap-4">
           <div className="bg-purple-50 p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-purple-800 mb-2">
@@ -113,15 +149,25 @@ const Funding = ({ preview = false, filter }) => {
           </div>
         </div>
 
-        {/* Funding Requests */}
+        {/* Funding Cards */}
         <div className="space-y-4">
           <div className="grid gap-4">
-            {displayedRequests.map((request, index) => (
-              // Pass details along for extra information on expand
-              <FundingCard key={index} {...request} />
+            {displayedRequests.map((request) => (
+              <FundingCard
+                key={request._id}
+                // Map your donation fields to FundingCard props
+                name={request.name}
+                batch={request.batch}
+                email={request.email}
+                purpose={request.purpose}
+                amount={request.amount}
+                comments={request.comments}
+                // If you have tags, pass them in an array
+                // tags={request.tags || []}
+              />
             ))}
           </div>
-          
+
           <div className="flex justify-between items-center mt-6">
             <button
               onClick={() => navigate('/donation/create-funding-request')}

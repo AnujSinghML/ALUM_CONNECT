@@ -1,7 +1,8 @@
+// client/src/routes/AdminNetwork.jsx
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/common/Layout';
 import axios from 'axios';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, Trash2 } from 'lucide-react';
 
 const AdminNetwork = () => {
   const [jobs, setJobs] = useState([]);
@@ -13,9 +14,10 @@ const AdminNetwork = () => {
     const fetchJobs = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_backend_URL}/api/jobs/admin`, 
+          `${import.meta.env.VITE_backend_URL}/api/jobs/admin`,
           { withCredentials: true }
         );
+        console.log("Admin jobs fetched:", res.data);
         setJobs(res.data);
       } catch (err) {
         console.error('Error fetching admin jobs:', err);
@@ -27,10 +29,7 @@ const AdminNetwork = () => {
     fetchJobs();
   }, []);
 
-  // Filter to show only jobs with status === 'pending'
-  const pendingJobs = jobs.filter((job) => job.status === 'pending');
-
-  // Accept => set status to 'active'
+  // Accept: update job status to "active"
   const handleAccept = async (jobId) => {
     try {
       const res = await axios.patch(
@@ -38,7 +37,6 @@ const AdminNetwork = () => {
         { status: 'active' },
         { withCredentials: true }
       );
-      // Update local state
       setJobs((prevJobs) =>
         prevJobs.map((job) => (job._id === jobId ? res.data.data : job))
       );
@@ -48,14 +46,13 @@ const AdminNetwork = () => {
     }
   };
 
-  // Reject => delete from DB
+  // Reject: delete the job from the database
   const handleReject = async (jobId) => {
     try {
       await axios.delete(
         `${import.meta.env.VITE_backend_URL}/api/jobs/admin/${jobId}`,
         { withCredentials: true }
       );
-      // Remove from local state
       setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
     } catch (err) {
       console.error('Error rejecting job:', err);
@@ -85,65 +82,81 @@ const AdminNetwork = () => {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Pending Job Opportunities</h1>
-          <span className="text-gray-500">
-            {pendingJobs.length} {pendingJobs.length === 1 ? 'job' : 'jobs'} found
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">All Job Opportunities</h1>
+          <span className="text-gray-500 text-sm">
+            {jobs.length} {jobs.length === 1 ? 'job' : 'jobs'} found
           </span>
         </div>
 
-        {pendingJobs.length === 0 ? (
-          <p className="text-gray-600">No pending job opportunities.</p>
+        {jobs.length === 0 ? (
+          <p className="text-gray-600 text-center">No job opportunities found.</p>
         ) : (
-          // Grid layout for job cards
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {pendingJobs.map((job) => (
-              <div 
-                key={job._id} 
-                className="relative bg-white border rounded-lg shadow-sm p-5 flex flex-col justify-between"
+            {jobs.map((job) => (
+              <div
+                key={job._id}
+                className="bg-white rounded-xl shadow-md hover:shadow-xl transition-transform duration-300 transform hover:scale-105 p-6 flex flex-col justify-between"
               >
-                {/* Top section - job info */}
+                {/* Job Info */}
                 <div>
-                  {/* Possibly an icon or logo placeholder */}
-                  <div className="mb-4 h-12 w-12 bg-gray-100 rounded flex items-center justify-center">
+                  <div className="mb-4 h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center">
                     <span className="text-gray-400 text-sm">Logo</span>
                   </div>
-
-                  <h2 className="font-semibold text-lg text-gray-900 mb-1">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-1">
                     {job.title}
                   </h2>
                   <p className="text-sm text-gray-600">
                     {job.company} • {job.location}
                   </p>
-
-                  {/* Additional job info (employmentType, salary, etc.) */}
                   <div className="mt-2 text-sm text-gray-500 space-y-1">
-                    <p>Type: <span className="font-medium">{job.employmentType}</span></p>
-                    {job.salary && <p>Salary: <span className="font-medium">{job.salary}</span></p>}
+                    <p>
+                      Type: <span className="font-medium">{job.employmentType}</span>
+                    </p>
+                    {job.salary && (
+                      <p>
+                        Salary: <span className="font-medium">{job.salary}</span>
+                      </p>
+                    )}
                   </div>
-
-                  {/* Job description snippet */}
                   <p className="mt-2 text-sm text-gray-500 line-clamp-3">
                     {job.description}
                   </p>
                 </div>
 
-                {/* Bottom section - accept/reject buttons */}
-                <div className="mt-4 flex items-center gap-2">
-                  <button
-                    onClick={() => handleAccept(job._id)}
-                    className="flex items-center gap-1 px-3 py-1 rounded-md bg-green-600 text-white hover:bg-green-700 text-sm"
-                  >
-                    <CheckCircle2 size={16} />
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleReject(job._id)}
-                    className="flex items-center gap-1 px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 text-sm"
-                  >
-                    <XCircle size={16} />
-                    Reject
-                  </button>
+                {/* Job Status Badge */}
+                <div className="mt-4">
+                  <StatusBadge status={job.status} />
+                </div>
+
+                {/* Action Buttons */}
+                <div className="mt-4 flex items-center gap-3">
+                  {job.status === 'pending' ? (
+                    <>
+                      <button
+                        onClick={() => handleAccept(job._id)}
+                        className="flex items-center gap-1 px-3 py-1 rounded-md bg-green-600 text-white hover:bg-green-700 text-sm"
+                      >
+                        <CheckCircle2 size={16} />
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleReject(job._id)}
+                        className="flex items-center gap-1 px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 text-sm"
+                      >
+                        <XCircle size={16} />
+                        Reject
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => handleReject(job._id)}
+                      className="flex items-center gap-1 px-3 py-1 rounded-md bg-gray-600 text-white hover:bg-gray-700 text-sm"
+                    >
+                      <Trash2 size={16} />
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -151,6 +164,38 @@ const AdminNetwork = () => {
         )}
       </div>
     </Layout>
+  );
+};
+
+const StatusBadge = ({ status }) => {
+  let bgColor = '';
+  let textColor = '';
+  switch (status) {
+    case 'pending':
+      bgColor = 'bg-yellow-100';
+      textColor = 'text-yellow-800';
+      break;
+    case 'active':
+      bgColor = 'bg-green-100';
+      textColor = 'text-green-800';
+      break;
+    case 'filled':
+      bgColor = 'bg-blue-100';
+      textColor = 'text-blue-800';
+      break;
+    case 'expired':
+      bgColor = 'bg-red-100';
+      textColor = 'text-red-800';
+      break;
+    default:
+      bgColor = 'bg-gray-100';
+      textColor = 'text-gray-800';
+      break;
+  }
+  return (
+    <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}>
+      {status.toUpperCase()}
+    </span>
   );
 };
 

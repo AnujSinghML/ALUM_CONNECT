@@ -1,38 +1,34 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import VoteButtons from "./VoteButtons";
 import ReplyForm from "./ReplyForm";
 import ReplyList from "./ReplyList";
 import { formatDate, timeAgo, formatDateTime } from "../../utils/utils";
 
-const PostItem = ({ post, user, setPosts }) => {
+const PostItem = ({ post, user, setPosts, adminMode, onDeletePost }) => {
   const [replies, setReplies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingReplies, setIsLoadingReplies] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(post.title);
   const [editContent, setEditContent] = useState(post.content);
   const [localVoteCount, setLocalVoteCount] = useState(post.voteCount || 0);
 
-  // Modify the canModifyPost logic to prevent admin from editing
-  const canModifyPost = user && (
-    (user.id === post.authorId && user.role !== 'admin') || 
-    (user.role === 'admin' && false) // Explicitly prevent editing for admin
-  );
-
+  // Determine if the user can modify or delete the post
+  const canModifyPost = user && (user.id === post.authorId && user.role !== 'admin');
   const canDeletePost = user && (user.id === post.authorId || user.role === 'admin');
 
   useEffect(() => {
     const fetchReplies = async () => {
-      setIsLoading(true);
+      setIsLoadingReplies(true);
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_backend_URL}/api/forum/posts/${post._id}/replies`
-        );
-        setReplies(response.data);
+        const response = await fetch(`${import.meta.env.VITE_backend_URL}/api/forum/posts/${post._id}/replies`, {
+          credentials: "include"
+        });
+        const data = await response.json();
+        setReplies(data);
       } catch (error) {
-        console.error("❌ Error fetching replies:", error);
+        console.error("Error fetching replies:", error);
       } finally {
-        setIsLoading(false);
+        setIsLoadingReplies(false);
       }
     };
 
@@ -45,35 +41,27 @@ const PostItem = ({ post, user, setPosts }) => {
     }
 
     try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_backend_URL}/api/forum/posts/${post._id}`,
-        { title: editTitle, content: editContent },
-        { withCredentials: true }
-      );
-
-      setPosts((prev) => 
-        prev.map((p) => p._id === post._id ? response.data : p)
+      const response = await fetch(`${import.meta.env.VITE_backend_URL}/api/forum/posts/${post._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: editTitle, content: editContent }),
+        credentials: "include"
+      });
+      const updatedPost = await response.json();
+      setPosts((prev) =>
+        prev.map((p) => (p._id === post._id ? updatedPost : p))
       );
       setIsEditing(false);
     } catch (error) {
-      console.error("❌ Error updating post:", error);
+      console.error("Error updating post:", error);
       alert("Failed to update post. Please try again.");
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
-
-    try {
-      await axios.delete(
-        `${import.meta.env.VITE_backend_URL}/api/forum/posts/${post._id}`,
-        { withCredentials: true }
-      );
-
-      setPosts((prev) => prev.filter((p) => p._id !== post._id));
-    } catch (error) {
-      console.error("❌ Error deleting post:", error);
-      alert("Failed to delete post. Please try again.");
+  // Remove window.confirm: simply call the passed onDeletePost callback
+  const handleDelete = () => {
+    if (adminMode && onDeletePost) {
+      onDeletePost(post._id);
     }
   };
 
@@ -137,12 +125,12 @@ const PostItem = ({ post, user, setPosts }) => {
               )}
             </div>
             <div className="flex items-center space-x-2">
-            <VoteButtons 
-  post={{...post, voteCount: localVoteCount}}
-  user={user} 
-  setPosts={setPosts}
-  setLocalVoteCount={setLocalVoteCount}
-/>
+              <VoteButtons 
+                post={{...post, voteCount: localVoteCount}}
+                user={user} 
+                setPosts={setPosts}
+                setLocalVoteCount={setLocalVoteCount}
+              />
               {canModifyPost && (
                 <button 
                   onClick={() => setIsEditing(true)}
@@ -171,8 +159,7 @@ const PostItem = ({ post, user, setPosts }) => {
 
           <div className="mt-4 space-y-4">
             <ReplyForm postId={post._id} setReplies={setReplies} user={user} />
-            
-            {isLoading ? (
+            {isLoadingReplies ? (
               <div className="text-center py-3 text-gray-500">Loading replies...</div>
             ) : (
               <ReplyList 

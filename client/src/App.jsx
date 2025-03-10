@@ -1,7 +1,14 @@
+// src/App.jsx
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { UserProvider, useUser } from './context/UserContext';
+
+// Import your custom ToastProvider
 import { ToastProvider } from './components/Toast';
+
+// Also import ToastContainer from react-toastify
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Landing page components
 import Navbar from './components/landing-page/Navbar';
@@ -34,12 +41,9 @@ import AllJobs from './routes/network/AllJobs';
 import CreateJobOpportunity from './routes/network/CreateJobOpportunity';
 
 import AdminNetwork from './routes/network/AdminNetwork';
-
-// Dummy admin components (create these files or adjust accordingly)
-
-const AdminDiscussion = () => <div className="p-8 text-center text-2xl font-bold">Admin Discussion Dashboard</div>;
-const AdminDonations = () => <div className="p-8 text-center text-2xl font-bold">Admin Donations Dashboard</div>;
-const AdminProfile = () => <div className="p-8 text-center text-2xl font-bold">Admin Profile Dashboard</div>;
+import AdminDonations from './routes/AdminDonations';
+import AdminProfile from './routes/AdminProfile';
+import AdminDiscussion from './routes/AdminDiscussion';
 
 // Landing page component
 const LandingPage = () => {
@@ -69,31 +73,164 @@ const AppRoutes = () => {
       {role === 'admin' ? (
         // Admin-specific routes
         <>
-          <Route path="/admin/announcements" element={<ProtectedRoute><AdminAnnouncements /></ProtectedRoute>} />
-          <Route path="/admin/dashboard" element={<ProtectedRoute><AdminAnnouncements /></ProtectedRoute>} />
-          <Route path="/admin/create-event" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
-          <Route path="/admin/network" element={<ProtectedRoute><AdminNetwork /></ProtectedRoute>} />
-          <Route path="/admin/discussion" element={<ProtectedRoute><AdminDiscussion /></ProtectedRoute>} />
-          <Route path="/admin/donation" element={<ProtectedRoute><AdminDonations /></ProtectedRoute>} />
-          <Route path="/admin/profile" element={<ProtectedRoute><AdminProfile /></ProtectedRoute>} />
+          <Route
+            path="/admin/announcements"
+            element={
+              <ProtectedRoute>
+                <AdminAnnouncements />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminAnnouncements />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/create-event"
+            element={
+              <ProtectedRoute>
+                <CreateEvent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/network"
+            element={
+              <ProtectedRoute>
+                <AdminNetwork />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/discussion"
+            element={
+              <ProtectedRoute>
+                <AdminDiscussion />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/donation"
+            element={
+              <ProtectedRoute>
+                <AdminDonations />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/profile"
+            element={
+              <ProtectedRoute>
+                <AdminProfile />
+              </ProtectedRoute>
+            }
+          />
         </>
       ) : (
         // Routes for alumni and students
         <>
-          <Route path="/announcements" element={<ProtectedRoute><Announcement /></ProtectedRoute>} />
-          <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
-          <Route path="/discussion" element={<ProtectedRoute><Discussion /></ProtectedRoute>} />
-          <Route path="/donation" element={<ProtectedRoute><Donations /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route
+            path="/announcements"
+            element={
+              <ProtectedRoute>
+                <Announcement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/network"
+            element={
+              <ProtectedRoute>
+                <Network />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/discussion"
+            element={
+              <ProtectedRoute>
+                <Discussion />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/donation"
+            element={
+              <ProtectedRoute>
+                <Donations />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/announcements/all-events" element={<AllEvents />} />
           <Route path="/announcements/all-achievements" element={<AllAchievements />} />
-          <Route path="/create-achievement" element={<ProtectedRoute><CreateAchievement /></ProtectedRoute>} />
-          <Route path="/network/all-people" element={<ProtectedRoute><AllAlumni /></ProtectedRoute>} />
-          <Route path="/network/all-jobs" element={<ProtectedRoute><AllJobs /></ProtectedRoute>} />
-          <Route path="/network/create-job" element={<ProtectedRoute><CreateJobOpportunity /></ProtectedRoute>} />
-          <Route path="/donation/process" element={<ProtectedRoute><DonationProcess /></ProtectedRoute>} />
-          <Route path="/donation/create-funding-request" element={<ProtectedRoute><CreateFundingRequest /></ProtectedRoute>} />
-          <Route path="/donation/opportunities" element={<ProtectedRoute><FundingOpportunities /></ProtectedRoute>} />
+          <Route
+            path="/create-achievement"
+            element={
+              <ProtectedRoute>
+                <CreateAchievement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/network/all-people"
+            element={
+              <ProtectedRoute>
+                <AllAlumni />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/network/all-jobs"
+            element={
+              <ProtectedRoute>
+                <AllJobs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/network/create-job"
+            element={
+              <ProtectedRoute>
+                <CreateJobOpportunity />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/donation/process"
+            element={
+              <ProtectedRoute>
+                <DonationProcess />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/donation/create-funding-request"
+            element={
+              <ProtectedRoute>
+                <CreateFundingRequest />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/donation/opportunities"
+            element={
+              <ProtectedRoute>
+                <FundingOpportunities />
+              </ProtectedRoute>
+            }
+          />
         </>
       )}
     </Routes>
@@ -105,6 +242,18 @@ const App = () => {
     <UserProvider>
       <BrowserRouter>
         <ToastProvider>
+          {/* 
+            Include the ToastContainer from react-toastify 
+            so you can see any calls to toast.success(), toast.error(), etc.
+          */}
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+          />
           <AppRoutes />
         </ToastProvider>
       </BrowserRouter>

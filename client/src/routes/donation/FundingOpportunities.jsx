@@ -1,102 +1,113 @@
 // src/routes/FundingOpportunities.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../components/common/Layout';
-import Funding from '../../components/donations/Funding';
-import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const FundingOpportunities = () => {
   const navigate = useNavigate();
-  
-  // Filter state for category and search keyword
-  const [filter, setFilter] = useState({ category: '', search: '' });
-  const [appliedFilter, setAppliedFilter] = useState({});
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Handle change in filter inputs added
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilter(prev => ({ ...prev, [name]: value }));
-  };
+  useEffect(() => {
+    const fetchDonations = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_backend_URL}/api/donations`, 
+          { withCredentials: true }
+        );
+        setDonations(res.data);
+      } catch (err) {
+        console.error('Error fetching donations:', err);
+        setError('Failed to load donations');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDonations();
+  }, []);
 
-  // Apply filters (update appliedFilter which is passed to Funding)
-  const applyFilters = () => {
-    setAppliedFilter(filter);
-  };
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-64">
+          <p className="text-blue-600 font-medium">Loading donations...</p>
+        </div>
+      </Layout>
+    );
+  }
 
-  // Clear filters in one go
-  const clearFilters = () => {
-    setFilter({ category: '', search: '' });
-    setAppliedFilter({});
-  };
+  if (error) {
+    return (
+      <Layout>
+        <div className="text-center p-8 text-red-500">{error}</div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Back Button */}
-        <div className="flex justify-start mb-4">
-          <button 
-            type="button" 
-            onClick={() => navigate('/donation')}
-            className="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 transition"
-          >
-            ← Back
-          </button>
-        </div>
-
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">All Investment Opportunities</h1>
-          <p className="text-gray-600">
-            Explore all available investment opportunities from our college community.
+      <div className="max-w-7xl mx-auto px-4 py-10">
+        {/* Page Header */}
+        <div className="mb-10 text-center">
+          <h1 className="text-3xl font-bold text-gray-900">Funding Opportunities</h1>
+          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
+            Explore and support the innovative projects proposed by our alumni and students.
           </p>
         </div>
-        
-        {/* Filter Section */}
-        <div className="mb-6 p-4 bg-gray-100 rounded-lg">
-          <div className="flex flex-wrap gap-4 items-end">
-            <div>
-              <label className="block text-gray-700">Category:</label>
-              <select 
-                name="category" 
-                value={filter.category}
-                onChange={handleFilterChange}
-                className="mt-1 p-2 border rounded"
+
+        {donations.length === 0 ? (
+          <p className="text-gray-600 text-center">No funding opportunities available.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {donations.map((donation) => (
+              <div
+                key={donation._id}
+                className="bg-white rounded-xl shadow hover:shadow-lg transition-shadow p-6 flex flex-col"
               >
-                <option value="">All</option>
-                <option value="startup">Startup</option>
-                <option value="research">Research</option>
-                <option value="innovation">Innovation</option>
-                <option value="patent">Patent</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-gray-700">Search:</label>
-              <input 
-                type="text"
-                name="search"
-                value={filter.search}
-                onChange={handleFilterChange}
-                placeholder="Keyword..."
-                className="mt-1 p-2 border rounded"
-              />
-            </div>
-            <div className="flex gap-2">
-              <button 
-                onClick={applyFilters}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              >
-                Apply Filters
-              </button>
-              <button 
-                onClick={clearFilters}
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
-              >
-                Clear Filters
-              </button>
-            </div>
+                {/* Title / Project Name */}
+                <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                  {donation.name || 'Untitled Project'}
+                </h2>
+
+                {/* Sub-info Row (Batch & userName) */}
+                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                  <span>Batch: {donation.batch || 'N/A'}</span>
+                  {/* 3) Display userName instead of email/id */}
+                  <span>{donation.userName || 'Unknown User'}</span>
+                </div>
+
+                {/* 1) Purpose as a small inline-block pill */}
+                <span className="inline-block bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1 rounded-full mb-4 w-fit">
+                  {donation.purpose || 'General'}
+                </span>
+
+                {/* Amount */}
+                <div className="text-lg text-blue-600 font-medium mb-4">
+                  ₹{donation.amount?.toLocaleString() || 0}
+                </div>
+
+                {/* Comments / Description */}
+                {donation.comments && (
+                  <p className="text-sm text-gray-600 mb-4">
+                    {donation.comments}
+                  </p>
+                )}
+
+                {/* 2) Button -> "Contribute" route */}
+                <div className="mt-auto pt-2">
+                  <button
+                    onClick={() => navigate('/donation/contribute')}
+                    className="inline-block bg-green-600 text-white text-sm px-4 py-2 rounded hover:bg-green-700"
+                  >
+                    Contribute
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-        
-        {/* Funding component receives applied filters */}
-        <Funding preview={false} filter={appliedFilter} />
+        )}
       </div>
     </Layout>
   );

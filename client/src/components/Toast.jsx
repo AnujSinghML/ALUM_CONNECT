@@ -1,45 +1,48 @@
+// src/components/Toast.jsx
 import React, { useState, useEffect } from 'react';
+import { toast as reactToastify } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { CheckCircle, X, AlertCircle, Info } from 'lucide-react';
 
-// Types of notifications
+// Notification types
 const TYPES = {
   SUCCESS: 'success',
   ERROR: 'error',
   INFO: 'info',
 };
 
-// Toast notification context
+// Create a context for toast notifications
 export const ToastContext = React.createContext({
   showToast: () => {},
 });
 
-// Toast provider component
+// Toast Provider Component
 export const ToastProvider = ({ children }) => {
-  const [toast, setToast] = useState(null);
+  const [toastState, setToastState] = useState(null);
 
   const showToast = (message, type = TYPES.SUCCESS, duration = 2000) => {
-    setToast({ message, type, duration });
+    setToastState({ message, type, duration });
   };
 
   useEffect(() => {
-    if (toast) {
+    if (toastState) {
       const timer = setTimeout(() => {
-        setToast(null);
-      }, toast.duration);
+        setToastState(null);
+      }, toastState.duration);
       
       return () => clearTimeout(timer);
     }
-  }, [toast]);
+  }, [toastState]);
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {toastState && <Toast message={toastState.message} type={toastState.type} onClose={() => setToastState(null)} />}
     </ToastContext.Provider>
   );
 };
 
-// Hook to use the toast
+// Hook to use the toast context
 export const useToast = () => {
   const context = React.useContext(ToastContext);
   if (context === undefined) {
@@ -48,7 +51,7 @@ export const useToast = () => {
   return context;
 };
 
-// Toast component
+// Toast Component that shows the notification
 const Toast = ({ message, type, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
   
@@ -58,7 +61,7 @@ const Toast = ({ message, type, onClose }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Determine icon and colors based on type
+  // Determine styling based on the type
   const getToastStyles = () => {
     switch (type) {
       case TYPES.SUCCESS:
@@ -92,7 +95,9 @@ const Toast = ({ message, type, onClose }) => {
 
   return (
     <div 
-      className={`fixed top-4 right-4 z-50 flex items-center rounded-lg shadow-lg transition-all duration-300 ${isVisible ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-4'}`}
+      className={`fixed top-4 right-4 z-50 flex items-center rounded-lg shadow-lg transition-all duration-300 ${
+        isVisible ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-4'
+      }`}
     >
       <div className={`flex items-center ${bgColor} p-3 pr-4 rounded-lg`}>
         <div className={`${iconBg} p-1 rounded-full mr-3`}>
@@ -110,4 +115,11 @@ const Toast = ({ message, type, onClose }) => {
   );
 };
 
-export default Toast;
+// Remove the call to reactToastify.configure(); it's not available in this version
+
+// Export a named export for toast so you can import it as:
+// import { toast } from '../components/Toast';
+export const toast = reactToastify;
+
+// Also export the default (if needed)
+export default reactToastify;

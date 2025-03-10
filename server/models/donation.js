@@ -29,7 +29,7 @@ const DonationSchema = new mongoose.Schema({
   },
   purpose: {
     type: String,
-    enum: ['infrastructure', 'research', 'scholarship', 'general'],
+    enum: ['startup', 'research', 'innovation','patent', 'general'],
     required: true
   },
   comments: {

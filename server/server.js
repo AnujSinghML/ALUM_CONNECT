@@ -114,6 +114,8 @@ app.use('/api/jobs/admin', require('./routes/adminJobRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
 app.use('/api/alumni', require('./routes/alumniRoutes'));
 app.use("/api/forum", require("./routes/forumRoutes"));
+app.use('/api/donations/admin', require('./routes/adminDonationRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
 
 // 404 handler
