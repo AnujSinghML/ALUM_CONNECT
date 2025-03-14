@@ -44,9 +44,8 @@ const app = express();
 // console.log('Google Callback URL:', process.env.GOOGLE_CALLBACK_URL);
 
 
-// CORS configuration
 const corsOptions = {
-  origin: process.env.VITE_API_BASE_URL || 'http://localhost:5173' || 'http://15.206.215.46:5173' || 'http://15.206.215.46' || 'http://alumconnect.home.kg',
+  origin: "*",  // Allows all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -54,6 +53,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
 
 
 // Body parser middleware
