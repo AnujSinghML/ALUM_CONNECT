@@ -219,6 +219,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff, UserCircle, X } from 'lucide-react';
 import { useUser } from '../context/UserContext';
+import connectLogo from "../../assets/connect_logo_black.svg";
+
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;

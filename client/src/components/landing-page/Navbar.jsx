@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import connectLogo from "../../../assets/connect_logo_black.svg";
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
