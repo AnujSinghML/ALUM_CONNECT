@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
     }
   },
   password: { type: String, required: true, minlength: 8 },
-  role: { type: String, enum: ['student', 'admin', 'alumni'], default: 'student' },
+  role: { type: String, enum: ['student', 'admin', 'alumni', 'visitor'], default: 'visitor' },
   isActive: { type: Boolean, default: true },
   lastLogin: { type: Date },
   // New fields:

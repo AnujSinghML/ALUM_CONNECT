@@ -1,4 +1,4 @@
-
+// server\middleware\authMiddleware.js
 const { ensureRole } = require('./roleMiddleware');
 
 const verifyAdmin = (req, res, next) => {

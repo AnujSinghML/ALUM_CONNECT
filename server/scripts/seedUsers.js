@@ -368,6 +368,46 @@ const users = [
   personalEmail: null
 },
 {
+  name: 'visitor1',
+  email: 'visitor1@iiitn.ac.in',
+  password: 'visitor1', 
+  role: 'visitor',
+  dob: new Date('2003-12-08'),
+  branch: 'Computer Science',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Mumbai, MH',
+  batch: '2022',
+  homeTown: 'Mumbai, MH',
+  socialLinks: {
+    linkedin: 'https://www.linkedin.com/in/anujsanjaysingh/',
+    instagram: 'https://www.instagram.com',
+    github: 'https://github.com',
+    x: null
+  },
+  personalEmail: null
+},
+{
+  name: 'visitor2',
+  email: 'visitor2@iiitn.ac.in',
+  password: 'visitor2', 
+  role: 'visitor',
+  dob: new Date('2003-12-08'),
+  branch: 'Computer Science',
+  currentCompany: null,
+  currentCompanyRole: '',
+  location: 'Nagpur',
+  batch: '2022',
+  homeTown: 'Nagpur, MH',
+  socialLinks: {
+    linkedin: 'https://www.linkedin.com/in/anujsanjaysingh/',
+    instagram: 'https://www.instagram.com',
+    github: 'https://github.com',
+    x: null
+  },
+  personalEmail: null
+},
+{
   name: 'Parth Chatter',
   email: 'bt22cse109@iiitn.ac.in',
   password: 'parth123!', 
