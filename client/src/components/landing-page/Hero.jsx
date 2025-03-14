@@ -22,7 +22,7 @@ const Hero = () => {
       <main className="w-full px-4 sm:px-6 lg:px-8">
         {/* Hero Content */}
         <section className="flex flex-col items-center text-center py-20">
-          <img src="src/img/connect_logo_black.png" alt="Alum Connect Logo" className="w-40 mb-8" />
+          <img src="src/assets/connect_logo_black.png" alt="Alum Connect Logo" className="w-40 mb-8" />
           <h1 className="text-5xl font-bold text-gray-900 tracking-tight">
             Welcome to <span className="text-blue-600 block mt-2">AlumConnect</span>
           </h1>
