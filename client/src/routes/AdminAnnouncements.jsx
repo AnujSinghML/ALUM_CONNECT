@@ -184,9 +184,6 @@ const AdminAnnouncements = () => {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-6 bg-gray-50 min-h-screen">
         {/* Dashboard Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-gray-800">Announcements Manager</h1>
-        </div>
 
         {error && (
           <div className="bg-red-50 text-red-500 p-4 rounded-lg mb-6 shadow-sm border border-red-100">

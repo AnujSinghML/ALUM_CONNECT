@@ -80,14 +80,8 @@ const AdminDonations = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-10">
-        {/* Page Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Donations Dashboard</h1>
-          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
-            Manage and review all donation requests here.
-          </p>
-        </div>
-
+        
+      
         {donations.length === 0 ? (
           <p className="text-gray-600 text-center">No donation requests found.</p>
         ) : (

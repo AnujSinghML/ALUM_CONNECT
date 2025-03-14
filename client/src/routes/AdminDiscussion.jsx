@@ -155,10 +155,7 @@ const AdminDiscussion = () => {
         <Sidebar />
         <main className="flex-1 ml-64 overflow-auto h-full">
           <div className="p-8 max-w-5xl mx-auto">
-            <header className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-800">Admin Discussion Dashboard</h1>
-              <p className="text-gray-600 mt-2">Manage and moderate the discussions.</p>
-            </header>
+            
 
             {/* Search Component */}
             <div className="mb-6">

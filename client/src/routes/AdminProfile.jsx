@@ -69,10 +69,6 @@ const AdminProfile = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-12">
-        {/* Page Header */}
-        <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">
-          Admin Profile Dashboard
-        </h1>
 
         {/* Alumni Section */}
         <section>
