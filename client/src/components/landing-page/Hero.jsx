@@ -10,6 +10,7 @@ import logoIITK from "../../../assets/IITK_logo.svg";
 import logoIITKh from "../../../assets/IITKh_logo.svg";
 import logoIITD from "../../../assets/IITD_logo.svg";
 import logoIITR from "../../../assets/IITR_logo.svg";
+import connectLogo from "./../../assets/connect_logo_black.png";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -57,7 +58,7 @@ const Hero = () => {
     // Also preload the logo image
     const logoPromise = new Promise((resolve) => {
       const img = new Image();
-      img.src = "assets/connect_logo_black.png";
+      img.src = {connectLogo};
       img.onload = resolve;
       img.onerror = resolve; // Still resolve even on error
     });
@@ -81,7 +82,7 @@ const Hero = () => {
           {!imagesLoaded ? (
             <div className="w-40 h-24 mb-8 bg-gray-200 animate-pulse rounded"></div>
           ) : (
-            <img src="assets/connect_logo_black.png" alt="Alum Connect Logo" className="w-40 mb-8" />
+            <img src={connectLogo} alt="Alum Connect Logo" className="w-40 mb-8" />
           )}
           <h1 className="text-5xl font-bold text-gray-900 tracking-tight">
             Welcome to <span className="text-blue-600 block mt-2">AlumConnect</span>
