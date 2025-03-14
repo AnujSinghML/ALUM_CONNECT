@@ -46,7 +46,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.VITE_API_BASE_URL || false,
+  origin: process.env.VITE_API_BASE_URL || 'http://localhost:5173' || 'http://15.206.215.46:5173' || 'http://15.206.215.46' || 'http://alumconnect.home.kg',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
