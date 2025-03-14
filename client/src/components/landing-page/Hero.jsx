@@ -8,12 +8,12 @@ import "swiper/css/navigation";
 import "swiper/css/autoplay";
 
 const institutes = [
-  { id: 1, name: "IIIT Nagpur", logo: "src/img/IIITN_logo.svg", location: "Nagpur" },
-  { id: 2, name: "IIT Bombay", logo: "src/img/IITB_logo.svg", location: "Bombay" },
-  { id: 3, name: "IIT Kanpur", logo: "src/img/IITK_logo.svg", location: "Kanpur" },
-  { id: 4, name: "IIT Kharagpur", logo: "src/img/IIT_Kharagpur_Logo.svg", location: "Kharagpur" },
-  { id: 5, name: "IIT Delhi", logo: "src/img/IITD_logo.svg", location: "Delhi" },
-  { id: 6, name: "IIT Roorkee", logo: "src/img/Indian_Institute_of_Technology_Roorkee_Logo.svg", location: "Roorkee" },
+  { id: 1, name: "IIIT Nagpur", logo: "src/assets/IIITN_logo.svg", location: "Nagpur" },
+  { id: 2, name: "IIT Bombay", logo: "src/assets/IITB_logo.svg", location: "Bombay" },
+  { id: 3, name: "IIT Kanpur", logo: "src/assets/IITK_logo.svg", location: "Kanpur" },
+  { id: 4, name: "IIT Kharagpur", logo: "src/assets/IITKh_logo.svg", location: "Kharagpur" },
+  { id: 5, name: "IIT Delhi", logo: "src/assets/IITD_logo.svg", location: "Delhi" },
+  { id: 6, name: "IIT Roorkee", logo: "src/assets/IITR_logo.svg", location: "Roorkee" },
 ];
 
 const Hero = () => {
