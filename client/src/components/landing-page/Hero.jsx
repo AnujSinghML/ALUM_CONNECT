@@ -3,17 +3,27 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+// Import all logo assets directly
+import logoIIITN from "../assets/IIITN_logo.svg";
+import logoIITB from "../assets/IITB_logo.svg";
+import logoIITK from "../assets/IITK_logo.svg";
+import logoIITKh from "../assets/IITKh_logo.svg";
+import logoIITD from "../assets/IITD_logo.svg";
+import logoIITR from "../assets/IITR_logo.svg";
+import connectLogo from "../assets/connect_logo_black.png";
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
 
+// Use imported assets in institutes array
 const institutes = [
-  { id: 1, name: "IIIT Nagpur", logo: "assets/IIITN_logo.svg", location: "Nagpur" },
-  { id: 2, name: "IIT Bombay", logo: "assets/IITB_logo.svg", location: "Bombay" },
-  { id: 3, name: "IIT Kanpur", logo: "assets/IITK_logo.svg", location: "Kanpur" },
-  { id: 4, name: "IIT Kharagpur", logo: "assets/IITKh_logo.svg", location: "Kharagpur" },
-  { id: 5, name: "IIT Delhi", logo: "assets/IITD_logo.svg", location: "Delhi" },
-  { id: 6, name: "IIT Roorkee", logo: "assets/IITR_logo.svg", location: "Roorkee" },
+  { id: 1, name: "IIIT Nagpur", logo: logoIIITN, location: "Nagpur" },
+  { id: 2, name: "IIT Bombay", logo: logoIITB, location: "Bombay" },
+  { id: 3, name: "IIT Kanpur", logo: logoIITK, location: "Kanpur" },
+  { id: 4, name: "IIT Kharagpur", logo: logoIITKh, location: "Kharagpur" },
+  { id: 5, name: "IIT Delhi", logo: logoIITD, location: "Delhi" },
+  { id: 6, name: "IIT Roorkee", logo: logoIITR, location: "Roorkee" },
 ];
 
 const Hero = () => {
