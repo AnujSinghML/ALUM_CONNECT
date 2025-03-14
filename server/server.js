@@ -44,15 +44,29 @@ const app = express();
 // console.log('Google Callback URL:', process.env.GOOGLE_CALLBACK_URL);
 
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://15.206.215.46:5173',
+  'http://15.206.215.46',
+  'http://alumconnect.home.kg'
+];
+
 const corsOptions = {
-  origin: "*",  // Allows all origins
-  credentials: true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);  // Allow the request
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,  // Required when using cookies, authentication headers, etc.
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
+
 
 
 
