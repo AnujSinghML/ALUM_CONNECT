@@ -4,13 +4,12 @@ import { Navigation, Autoplay } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // Import all logo assets directly
-import logoIIITN from "../assets/IIITN_logo.svg";
-import logoIITB from "../assets/IITB_logo.svg";
-import logoIITK from "../assets/IITK_logo.svg";
-import logoIITKh from "../assets/IITKh_logo.svg";
-import logoIITD from "../assets/IITD_logo.svg";
-import logoIITR from "../assets/IITR_logo.svg";
-import connectLogo from "../assets/connect_logo_black.png";
+import logoIIITN from "../../../assets/IIITN_logo.svg";
+import logoIITB from "../../../assets/IITB_logo.svg";
+import logoIITK from "../../../assets/IITK_logo.svg";
+import logoIITKh from "../../../assets/IITKh_logo.svg";
+import logoIITD from "../../../assets/IITD_logo.svg";
+import logoIITR from "../../../assets/IITR_logo.svg";
 
 import "swiper/css";
 import "swiper/css/navigation";
