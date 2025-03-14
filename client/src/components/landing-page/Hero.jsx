@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -8,21 +8,72 @@ import "swiper/css/navigation";
 import "swiper/css/autoplay";
 
 const institutes = [
-  { id: 1, name: "IIIT Nagpur", logo: "src/assets/IIITN_logo.svg", location: "Nagpur" },
-  { id: 2, name: "IIT Bombay", logo: "src/assets/IITB_logo.svg", location: "Bombay" },
-  { id: 3, name: "IIT Kanpur", logo: "src/assets/IITK_logo.svg", location: "Kanpur" },
-  { id: 4, name: "IIT Kharagpur", logo: "src/assets/IITKh_logo.svg", location: "Kharagpur" },
-  { id: 5, name: "IIT Delhi", logo: "src/assets/IITD_logo.svg", location: "Delhi" },
-  { id: 6, name: "IIT Roorkee", logo: "src/assets/IITR_logo.svg", location: "Roorkee" },
+  { id: 1, name: "IIIT Nagpur", logo: "public/assets/IIITN_logo.svg", location: "Nagpur" },
+  { id: 2, name: "IIT Bombay", logo: "public/assets/IITB_logo.svg", location: "Bombay" },
+  { id: 3, name: "IIT Kanpur", logo: "public/assets/IITK_logo.svg", location: "Kanpur" },
+  { id: 4, name: "IIT Kharagpur", logo: "public/assets/IITKh_logo.svg", location: "Kharagpur" },
+  { id: 5, name: "IIT Delhi", logo: "public/assets/IITD_logo.svg", location: "Delhi" },
+  { id: 6, name: "IIT Roorkee", logo: "public/assets/IITR_logo.svg", location: "Roorkee" },
 ];
 
 const Hero = () => {
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [loadedImages, setLoadedImages] = useState({});
+  const [swiperInstance, setSwiperInstance] = useState(null);
+
+  // Track loading status of each image
+  useEffect(() => {
+    const imagePromises = institutes.map((institute) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = institute.logo;
+        img.onload = () => {
+          setLoadedImages(prev => ({
+            ...prev,
+            [institute.id]: true
+          }));
+          resolve();
+        };
+        img.onerror = () => {
+          // Still resolve even on error to not block rendering
+          setLoadedImages(prev => ({
+            ...prev,
+            [institute.id]: false
+          }));
+          resolve();
+        };
+      });
+    });
+
+    // Also preload the logo image
+    const logoPromise = new Promise((resolve) => {
+      const img = new Image();
+      img.src = "public/assets/connect_logo_black.png";
+      img.onload = resolve;
+      img.onerror = resolve; // Still resolve even on error
+    });
+
+    // Wait for all images to load
+    Promise.all([...imagePromises, logoPromise])
+      .then(() => {
+        setImagesLoaded(true);
+        // Initialize or update Swiper after images are loaded
+        if (swiperInstance) {
+          swiperInstance.update();
+        }
+      });
+  }, [swiperInstance]);
+
   return (
     <div className="relative bg-white pt-16">
       <main className="w-full px-4 sm:px-6 lg:px-8">
         {/* Hero Content */}
         <section className="flex flex-col items-center text-center py-20">
-          <img src="src/assets/connect_logo_black.png" alt="Alum Connect Logo" className="w-40 mb-8" />
+          {!imagesLoaded ? (
+            <div className="w-40 h-24 mb-8 bg-gray-200 animate-pulse rounded"></div>
+          ) : (
+            <img src="public/assets/connect_logo_black.png" alt="Alum Connect Logo" className="w-40 mb-8" />
+          )}
           <h1 className="text-5xl font-bold text-gray-900 tracking-tight">
             Welcome to <span className="text-blue-600 block mt-2">AlumConnect</span>
           </h1>
@@ -56,6 +107,8 @@ const Hero = () => {
               autoplay={{
                 delay: 3000,
                 disableOnInteraction: false,
+                // Only start autoplay when images are loaded
+                enabled: imagesLoaded,
               }}
               loop={true}
               breakpoints={{
@@ -64,16 +117,21 @@ const Hero = () => {
                 1024: { slidesPerView: 4 },
               }}
               className="!px-4"
+              onSwiper={setSwiperInstance}
             >
               {institutes.map((institute) => (
                 <SwiperSlide key={institute.id}>
                   <div className="bg-white rounded-xl shadow-xl hover:shadow-md transition-all duration-300 p-8 border border-gray-100 mb-15">
-                    <div className="h-20  flex items-center justify-center mb-6">
-                      <img 
-                        src={institute.logo} 
-                        alt={`${institute.name} logo`} 
-                        className="max-h-full w-auto object-contain"
-                      />
+                    <div className="h-20 flex items-center justify-center mb-6">
+                      {!loadedImages[institute.id] ? (
+                        <div className="w-full h-16 bg-gray-200 animate-pulse rounded"></div>
+                      ) : (
+                        <img 
+                          src={institute.logo} 
+                          alt={`${institute.name} logo`} 
+                          className="max-h-full w-auto object-contain"
+                        />
+                      )}
                     </div>
                     <div className="text-center">
                       <h3 className="text-lg font-semibold text-gray-900">{institute.name}</h3>
@@ -99,6 +157,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
-
-

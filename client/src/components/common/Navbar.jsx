@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, MessageSquare, LogOut, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import IIITNLogo from "../../assets/IIITN_logo.svg";
+import IIITNLogo from "../../../public/assets/IIITN_logo.svg";
 import { handleLogout } from '../../utils/authUtils';
 import { useUser } from '../../context/UserContext';
 

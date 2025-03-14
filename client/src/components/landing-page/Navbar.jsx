@@ -14,7 +14,7 @@ const Navbar = () => {
         <div className="logo flex items-center flex-shrink-0">
           <Link to="/" className="flex items-center">
             <img
-              src="src/assets/connect_logo_black.png"
+              src="public/assets/connect_logo_black.png"
               width="80"
               height="60"
               alt="Logo"
