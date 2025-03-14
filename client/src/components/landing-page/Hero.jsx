@@ -10,7 +10,7 @@ import logoIITK from "../../../assets/IITK_logo.svg";
 import logoIITKh from "../../../assets/IITKh_logo.svg";
 import logoIITD from "../../../assets/IITD_logo.svg";
 import logoIITR from "../../../assets/IITR_logo.svg";
-import connectLogo from "./../../assets/connect_logo_black.png";
+import connectLogo from "./../../assets/connect_logo_black.svg";
 
 import "swiper/css";
 import "swiper/css/navigation";
