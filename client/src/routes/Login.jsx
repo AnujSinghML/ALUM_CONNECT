@@ -316,7 +316,7 @@ const Login = () => {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
             <img 
-              src="public/assets/connect_logo_black.png" 
+              src="assets/connect_logo_black.png" 
               alt="AlumConnect Logo" 
               className="w-20 h-auto"
             />
