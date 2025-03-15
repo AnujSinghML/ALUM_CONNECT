@@ -63,7 +63,6 @@ const AllAlumni = () => {
       }).toString();
 
       const res = await axios.get(`${import.meta.env.VITE_backend_URL}/api/alumni?${queryParams}`);
-      // Assuming backend returns: { data: [...], pages: totalPages, ... }
       setAlumni(res.data.data);
       setTotalPages(res.data.pages);
     } catch (error) {

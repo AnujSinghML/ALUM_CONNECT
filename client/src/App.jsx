@@ -45,6 +45,9 @@ import AdminDonations from './routes/AdminDonations';
 import AdminProfile from './routes/AdminProfile';
 import AdminDiscussion from './routes/AdminDiscussion';
 
+//messaging
+import { MessageProvider } from './context/MessageContext';
+
 // Landing page component
 const LandingPage = () => {
   return (
@@ -240,6 +243,7 @@ const AppRoutes = () => {
 const App = () => {
   return (
     <UserProvider>
+       <MessageProvider>
       <BrowserRouter>
         <ToastProvider>
           {/* 
@@ -257,6 +261,7 @@ const App = () => {
           <AppRoutes />
         </ToastProvider>
       </BrowserRouter>
+      </MessageProvider>
     </UserProvider>
   );
 };
