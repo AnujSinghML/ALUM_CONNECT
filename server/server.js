@@ -52,14 +52,13 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-  // origin: (origin, callback) => {
-  //   if (!origin || allowedOrigins.includes(origin)) {
-  //     callback(null, origin);  // Allow the request
-  //   } else {
-  //     callback(new Error('Not allowed by CORS'));
-  //   }
-  // },
-  origin: true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);  // Allow the request
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,  // Required when using cookies, authentication headers, etc.
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -80,19 +79,12 @@ const sessionConfig = {
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  // cookie: {
-  //   secure: process.env.NODE_ENV === 'production',
-  //   httpOnly: true,
-  //   maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  //   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
-  // }
   cookie: {
-    secure: false,  // ✅ Allows cookies over HTTP
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
-    sameSite: 'lax'  // ✅ Works with HTTP
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
-  
 };
 
 app.use(session(sessionConfig));
