@@ -11,7 +11,8 @@ router.get('/conversations', isAuthenticated, async (req, res) => {
   try {
     // Find conversations with detailed population
     const conversations = await Conversation.find({
-      participants: req.user._id
+      participants: req.user._id,
+      deletedFor: { $ne: req.user._id } 
     })
     .populate({
       path: 'participants',
@@ -155,7 +156,7 @@ router.get('/messages/:userId', isAuthenticated, async (req, res) => {
   }
 });
 
-// Get unread message count with breakdown
+
 // Get unread message count with breakdown
 router.get('/unread', isAuthenticated, async (req, res) => {
   try {
@@ -270,6 +271,7 @@ router.post('/send', isAuthenticated, async (req, res) => {
 router.delete('/conversation/:conversationId', isAuthenticated, async (req, res) => {
   try {
     const conversationId = req.params.conversationId;
+    const userId = req.user._id;
     
     // Find the conversation
     const conversation = await Conversation.findById(conversationId);
@@ -279,21 +281,36 @@ router.delete('/conversation/:conversationId', isAuthenticated, async (req, res)
     }
 
     // Check if user is a participant
-    if (!conversation.participants.some(p => p.toString() === req.user._id.toString())) {
+    if (!conversation.participants.some(p => p.toString() === userId.toString())) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    // Soft delete: Remove user from participants
-    conversation.participants = conversation.participants.filter(
-      p => p.toString() !== req.user._id.toString()
+    // Initialize deletedFor array if it doesn't exist
+    if (!conversation.deletedFor) {
+      conversation.deletedFor = [];
+    }
+    
+    // Add current user to deletedFor if not already there
+    if (!conversation.deletedFor.includes(userId)) {
+      conversation.deletedFor.push(userId);
+    }
+    
+    // Check if all participants have deleted the conversation
+    const allDeleted = conversation.participants.every(participantId => 
+      conversation.deletedFor.some(deletedId => 
+        deletedId.toString() === participantId.toString()
+      )
     );
 
-    // If no participants left, delete the conversation completely
-    if (conversation.participants.length === 0) {
+    // If all participants have deleted, remove the conversation and messages completely
+    if (allDeleted) {
       await Conversation.findByIdAndDelete(conversationId);
       await Message.deleteMany({ conversation: conversationId });
+      console.log('All users deleted conversation, removing from database');
     } else {
+      // Otherwise just save the updated deletedFor array
       await conversation.save();
+      console.log('Marked conversation as deleted for user');
     }
 
     res.json({ message: 'Conversation deleted successfully' });
@@ -302,6 +319,5 @@ router.delete('/conversation/:conversationId', isAuthenticated, async (req, res)
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 module.exports = router;

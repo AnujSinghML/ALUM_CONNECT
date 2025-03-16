@@ -31,33 +31,34 @@ export const MessageProvider = ({ children }) => {
   });
 
   // Fetch conversations
-  const fetchConversations = async () => {
-    setLoading(prev => ({ ...prev, conversations: true }));
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_backend_URL}/api/messages/conversations`, {
-        withCredentials: true,
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
-      });
+// In your MessageContext.jsx
+const fetchConversations = async () => {
+  setLoading(prev => ({ ...prev, conversations: true }));
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_backend_URL}/api/messages/conversations`, {
+      withCredentials: true,
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    });
 
-      console.log('Conversations API Response:', response.data);
-      
-      // Ensure data is an array
-      const conversationsData = Array.isArray(response.data) 
-        ? response.data 
-        : [];
+    console.log('Conversations API Response:', response.data);
+    
+    // Ensure data is an array
+    const conversationsData = Array.isArray(response.data) 
+      ? response.data 
+      : [];
 
-      setConversations(conversationsData);
-    } catch (error) {
-      console.error('Failed to fetch conversations', error);
-      showErrorToast('Failed to fetch conversations');
-      setConversations([]);
-    } finally {
-      setLoading(prev => ({ ...prev, conversations: false }));
-    }
-  };
+    setConversations(conversationsData);
+  } catch (error) {
+    console.error('Failed to fetch conversations', error);
+    showErrorToast('Failed to fetch conversations');
+    setConversations([]);
+  } finally {
+    setLoading(prev => ({ ...prev, conversations: false }));
+  }
+};
 
 
   const fetchUnreadCount = async () => {
@@ -191,7 +192,7 @@ export const MessageProvider = ({ children }) => {
         setSendingMessage(false);
       }
     };
-  // delete entire chat
+  // Delete entire chat
   const deleteConversation = async (conversationId) => {
     try {
       await axios.delete(
@@ -208,6 +209,8 @@ export const MessageProvider = ({ children }) => {
       showErrorToast('Failed to delete conversation');
     }
   };
+
+  
   // Mark messages as read
   const markMessagesAsRead = async (conversationId, messageIds) => {
     try {
@@ -226,34 +229,7 @@ export const MessageProvider = ({ children }) => {
     }
   };
 
-  // Socket setup
-  // useEffect(() => {
-  //   if (user) {
-  //     // Connect socket
-  //     const socket = socketService.connect(user);
-
-  //     // Fetch initial data
-  //     fetchConversations();
-  //     fetchUnreadCount();
-
-  //     // Listen for new messages
-  //     const handleNewMessage = (message) => {
-  //       fetchConversations();
-  //       fetchUnreadCount();
-  //     };
-
-  //     socketService.onNewMessage(handleNewMessage);
-
-  //     // Cleanup
-  //     return () => {
-  //       // Remove listener
-  //       const currentSocket = socketService.getSocket();
-  //       if (currentSocket) {
-  //         currentSocket.off('newMessage', handleNewMessage);
-  //       }
-  //     };
-  //   }
-  // }, [user]);
+  
   useEffect(() => {
     if (user) {
       // Connect socket
