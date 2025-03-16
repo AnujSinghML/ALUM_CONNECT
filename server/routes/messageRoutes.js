@@ -156,6 +156,7 @@ router.get('/messages/:userId', isAuthenticated, async (req, res) => {
 });
 
 // Get unread message count with breakdown
+// Get unread message count with breakdown
 router.get('/unread', isAuthenticated, async (req, res) => {
   try {
     // Total unread messages count
@@ -165,7 +166,7 @@ router.get('/unread', isAuthenticated, async (req, res) => {
     });
 
     // Unread count per conversation
-    const unreadByConversation = await Message.aggregate([
+    const aggregateResult = await Message.aggregate([
       { 
         $match: { 
           recipient: req.user._id,
@@ -179,6 +180,12 @@ router.get('/unread', isAuthenticated, async (req, res) => {
         }
       }
     ]);
+    
+    // Format the result after awaiting the promise
+    const unreadByConversation = aggregateResult.map(item => ({
+      conversationId: item._id,
+      unreadCount: item.unreadCount
+    }));
 
     res.json({
       totalUnreadCount,

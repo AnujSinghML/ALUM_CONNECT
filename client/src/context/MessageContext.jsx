@@ -71,13 +71,17 @@ export const MessageProvider = ({ children }) => {
       
       setUnreadCount(response.data.totalUnreadCount || 0);
       
-      // Update unreadCount for each conversation
-      const unreadByConversationMap = new Map(response.data.unreadByConversation.map(item => [item.conversationId, item.unreadCount]));
+      // Create a map of conversation IDs to unread counts
+      const unreadMap = {};
+      response.data.unreadByConversation.forEach(item => {
+        unreadMap[item.conversationId] = item.unreadCount;
+      });
       
+      // Update conversations with their unread counts
       setConversations(prevConversations => {
         return prevConversations.map(conv => ({
           ...conv,
-          unreadCount: unreadByConversationMap.get(conv._id) || 0
+          unreadCount: unreadMap[conv._id] || 0
         }));
       });
     } catch (error) {
@@ -88,15 +92,19 @@ export const MessageProvider = ({ children }) => {
   // Modify useEffect to handle unread count
   useEffect(() => {
     if (user) {
-      // Fetch initial data
-      fetchConversations();
-      fetchUnreadCount();
-  
+      // Fetch conversations first, then unread counts
+      const fetchData = async () => {
+        await fetchConversations();
+        await fetchUnreadCount();
+      };
+      
+      fetchData();
+      
       // Set up interval to periodically check unread count
       const unreadInterval = setInterval(() => {
         fetchUnreadCount();
       }, 30000); // Check every half minute
-  
+      
       // Cleanup interval
       return () => clearInterval(unreadInterval);
     }
