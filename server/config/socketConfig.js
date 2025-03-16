@@ -9,7 +9,8 @@ module.exports = (server, sessionConfig) => {
     origin: [
       'http://localhost:5173',  // Vite dev server
       'http://localhost:3000',  // Backend server
-      process.env.VITE_API_BASE_URL  // Production frontend URL
+      process.env.VITE_API_BASE_URL,  // Production frontend URL
+      process.env.VITE_backend_URL,
     ].filter(Boolean),
     credentials: true,
     methods: ['GET', 'POST'],

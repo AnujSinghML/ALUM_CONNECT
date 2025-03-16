@@ -59,7 +59,7 @@ router.post("/createJob", isAuthenticated, isAlumni, async (req, res) => {
       authorEmail: req.user.email,
       tags: req.body.tags || [],
       status: 'pending',
-      applicationUrl: req.body.applicationUrl,
+      // applicationUrl: req.body.applicationUrl,
       applicationDeadline: req.body.applicationDeadline
     };
 

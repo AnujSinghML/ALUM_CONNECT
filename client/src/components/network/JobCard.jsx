@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useUser } from '../../context/UserContext'; // Adjust the import path as needed
+import ApplyForm from './ApplyForm'; // Import the ApplyForm component
 
 const JobCard = ({ 
   title, 
@@ -11,7 +12,6 @@ const JobCard = ({
   authorName, 
   requirements, 
   responsibilities, 
-  applicationUrl, 
   status,
   jobId, 
   _id,
@@ -20,6 +20,7 @@ const JobCard = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showApplyForm, setShowApplyForm] = useState(false); // State to toggle ApplyForm
   const { user, loading } = useUser(); // Use the user context
 
   // Use _id if jobId is not provided (for MongoDB compatibility)
@@ -151,15 +152,13 @@ const JobCard = ({
         
         <div className="flex space-x-2">
           {/* Show "Apply Now" button only if the user is NOT the author AND job is active */}
-          {applicationUrl && !isAuthor && status === 'active' && (
-            <a 
-              href={applicationUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+          {!isAuthor && status === 'active' && (
+            <button 
+              onClick={() => setShowApplyForm(!showApplyForm)}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
             >
-              Apply Now
-            </a>
+              {showApplyForm ? 'Cancel' : 'Apply Now'}
+            </button>
           )}
           
           {/* Show "Mark as Filled" button only for the author if the job is active */}
@@ -176,6 +175,9 @@ const JobCard = ({
           )}
         </div>
       </div>
+
+      {/* Conditionally render ApplyForm if Apply Now is clicked */}
+      {showApplyForm && <ApplyForm jobId={id} jobTitle={title} />}
     </div>
   );
 };
