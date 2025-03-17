@@ -54,10 +54,10 @@ const JobSchema = new mongoose.Schema({
     //expired == delete from DB 
     default: 'pending'
   },
-  applicationUrl: {
-    type: String,
-    required: false
-  },
+  // applicationUrl: {
+  //   type: String,
+  //   required: false
+  // },
   applicationDeadline: {
     type: Date,
     required: false
