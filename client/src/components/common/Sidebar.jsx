@@ -1,16 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Megaphone, Network, MessageCircle, Heart, User, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Megaphone, Network, MessageCircle, Heart, User, LogOut, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 
+// Component for sidebar menu item
 const SidebarItem = ({ icon: Icon, label, path, active, collapsed, onClick }) => {
+  // Use a direct function that only passes the path
+  const handleClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onClick(path);
+  };
+
   return (
     <button
-      onClick={(e) => {
-        e.preventDefault(); // Prevent default behavior
-        onClick(path); // Call with path parameter
-      }}
-      className={`flex items-center w-full py-4 px-5 rounded-xl text-base font-medium transition-all duration-200 group relative ${
+      onClick={handleClick}
+      className={`flex items-center w-full py-4 px-5 rounded-xl text-base font-medium transition-all duration-200 group relative cursor-pointer ${
         active 
           ? "bg-blue-500 text-white" 
           : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
@@ -31,6 +36,13 @@ const SidebarItem = ({ icon: Icon, label, path, active, collapsed, onClick }) =>
         <div className={`absolute ${collapsed ? "right-2.5" : "right-4"} top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-white`} />
       )}
 
+      {/* Arrow on hover (for non-collapsed state) */}
+      {!collapsed && !active && (
+        <div className="absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+          <ArrowRight size={16} className="text-gray-400" />
+        </div>
+      )}
+
       {/* Tooltip for collapsed state */}
       {collapsed && (
         <div className="absolute left-full ml-3 px-3 py-1.5 bg-gray-800 text-white text-sm rounded opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
@@ -46,13 +58,24 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const { user, logout } = useUser();
   const role = user?.role?.toLowerCase() || 'student';
-  const [collapsed, setCollapsed] = useState(false);
+  
+  // Use local storage to persist collapsed state
+  const [collapsed, setCollapsed] = useState(() => {
+    const savedState = localStorage.getItem('sidebar-collapsed');
+    return savedState === 'true';
+  });
+  
+  // Update local storage when collapsed state changes
+  useEffect(() => {
+    localStorage.setItem('sidebar-collapsed', String(collapsed));
+  }, [collapsed]);
   
   // Handle responsive behavior - collapse on small screens
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
         setCollapsed(true);
+        localStorage.setItem('sidebar-collapsed', 'true');
       }
     };
     
@@ -70,25 +93,49 @@ const Sidebar = () => {
   useEffect(() => {
     document.body.style.setProperty('--sidebar-width', collapsed ? '100px' : '320px');
     
-    // Add a class to the body for global layout adjustments
+    // Update body classes for layout adjustments
     if (collapsed) {
       document.body.classList.add('sidebar-collapsed');
       document.body.classList.remove('sidebar-expanded');
+      
+      // Also update any parent elements
+      const layoutElement = document.querySelector('.has-sidebar');
+      if (layoutElement) {
+        layoutElement.classList.add('sidebar-collapsed');
+        layoutElement.classList.remove('sidebar-expanded');
+      }
     } else {
       document.body.classList.add('sidebar-expanded');
       document.body.classList.remove('sidebar-collapsed');
+      
+      // Also update any parent elements
+      const layoutElement = document.querySelector('.has-sidebar');
+      if (layoutElement) {
+        layoutElement.classList.add('sidebar-expanded');
+        layoutElement.classList.remove('sidebar-collapsed');
+      }
+    }
+    
+    // Update main content margin
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.style.marginLeft = collapsed ? '100px' : '320px';
+      mainContent.style.transition = 'margin-left 0.3s ease';
     }
   }, [collapsed]);
 
-  // Navigation handler - explicitly preserves collapsed state
+  // Simple navigation that doesn't affect sidebar state
   const handleNavigation = useCallback((path) => {
-    // Only navigate, don't toggle sidebar state
+    // Use navigate without changing collapsed state
     navigate(path);
   }, [navigate]);
 
   // Logout handler
   const handleLogout = useCallback((e) => {
-    e && e.preventDefault(); // Prevent default if event is passed
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (logout) {
       logout();
       navigate('/login');
@@ -124,11 +171,17 @@ const Sidebar = () => {
     },
   ];
 
+  // Toggle sidebar without side effects
+  const toggleSidebar = useCallback(() => {
+    setCollapsed(prev => !prev);
+  }, []);
+
   return (
     <aside 
       className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 shadow-sm z-30 transition-all duration-300 ease-in-out ${
         collapsed ? "w-[100px]" : "w-[320px]"
       }`}
+      id="sidebar"
     >
       <div className="flex flex-col h-full">
         {/* Navigation */}
@@ -167,7 +220,7 @@ const Sidebar = () => {
           {/* Logout button */}
           <button 
             onClick={handleLogout}
-            className={`flex items-center w-full py-3 px-4 text-base text-red-500 hover:bg-red-50 rounded-xl transition-all ${
+            className={`flex items-center w-full py-3 px-4 text-base text-red-500 hover:bg-red-50 rounded-xl transition-all group cursor-pointer ${
               collapsed ? "justify-center" : ""
             }`}
           >
@@ -184,8 +237,8 @@ const Sidebar = () => {
           
           {/* Collapse/Expand button */}
           <button
-            onClick={() => setCollapsed(!collapsed)}
-            className={`flex items-center justify-center w-12 h-12 mx-auto mt-4 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all`}
+            onClick={toggleSidebar}
+            className={`flex items-center justify-center w-12 h-12 mx-auto mt-4 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all cursor-pointer`}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? (

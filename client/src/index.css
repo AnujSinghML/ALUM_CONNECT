@@ -1,14 +1,8 @@
-/* ===============================
-   Tailwind + Swiper imports
-=============================== */
 @import "tailwindcss";
 @import 'swiper/css';
 @import 'swiper/css/navigation';
 @import 'swiper/css/autoplay';
 
-/* ===============================
-   Root Variables
-=============================== */
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -21,12 +15,11 @@
   --ring: 221.2 83.2% 53.3%;
   --radius: 0.5rem;
 
-  /* For expanded/collapsed sidebar widths */
+  /* Sidebar widths */
   --sidebar-width-expanded: 240px;
   --sidebar-width-collapsed: 70px;
 }
 
-/* Basic reset */
 html,
 body {
   margin: 0;
@@ -36,9 +29,7 @@ body {
   min-height: 100vh;
 }
 
-/* ===============================
-   SWIPER CUSTOM STYLES (older)
-=============================== */
+/* Swiper Custom Styles */
 .institute-swiper {
   padding: 1rem 0;
   overflow: visible !important;
@@ -75,11 +66,8 @@ body {
   height: auto !important;
 }
 
-/* ===============================
-   SIDEBAR MARGIN-LEFT LOGIC
-   Only apply if .has-sidebar is on <body>
-=============================== */
-/* By default, .sidebar-expanded => margin-left: 240px */
+/* Sidebar layout adjustments */
+/* These rules only apply if a parent has the "has-sidebar" class */
 .has-sidebar.sidebar-expanded main,
 .has-sidebar.sidebar-expanded .main-content {
   margin-left: var(--sidebar-width-expanded);
@@ -87,7 +75,6 @@ body {
   transition: margin-left 0.3s ease-in-out;
 }
 
-/* If collapsed => margin-left: 70px */
 .has-sidebar.sidebar-collapsed main,
 .has-sidebar.sidebar-collapsed .main-content {
   margin-left: var(--sidebar-width-collapsed);
@@ -95,7 +82,7 @@ body {
   transition: margin-left 0.3s ease-in-out;
 }
 
-/* If you have a default if .sidebar-expanded / .sidebar-collapsed not set yet: */
+/* If the layout is wrapped with .has-sidebar but no expanded/collapsed class yet, default to expanded */
 .has-sidebar main,
 .has-sidebar .main-content {
   margin-left: var(--sidebar-width-expanded);
@@ -103,22 +90,15 @@ body {
   transition: margin-left 0.3s ease-in-out;
 }
 
-/* If your layout references #main-content specifically: */
+/* If referencing #main-content directly */
 #main-content {
   transition: margin-left 0.3s ease;
 }
 
-/* ===============================
-   Optional fade-in animation
-=============================== */
+/* Fade-in animation */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .animate-fade-in {
