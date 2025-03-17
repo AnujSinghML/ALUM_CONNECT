@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, MessageSquare, LogOut, User, Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import IIITNLogo from "../../../assets/IIITN_logo.svg";
 import { toast } from 'react-toastify';
-
-// Import images and utilities
-import IIITNLogo from "../../img/IIITN_logo.svg";
 import { handleLogout } from '../../utils/authUtils';
 
 // Import context and components

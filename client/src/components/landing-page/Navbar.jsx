@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import connectLogo from "../../../assets/connect_logo_black.svg";
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +16,7 @@ const Navbar = () => {
         <div className="logo flex items-center flex-shrink-0">
           <Link to="/" className="flex items-center">
             <img
-              src="src/img/connect_logo_black.png"
+              src={connectLogo}
               width="80"
               height="60"
               alt="Logo"

@@ -38,15 +38,35 @@ const app = express();
 app.use(helmet());
 app.use(compression());
 
-// CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://15.206.215.46:5173',
+  'http://15.206.215.46',
+  'http://alumconnect.home.kg'
+  process.env.VITE_API_BASE_URL,
+  process.env.VITE_backend_URL,
+];
+
 const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    process.env.VITE_API_BASE_URL,
-    process.env.VITE_backend_URL,
-    ].filter(Boolean),
-  credentials: true,
+// <<<<<<< main
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);  // Allow the request
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,  // Required when using cookies, authentication headers, etc.
+// =======
+//   origin: [
+//     'http://localhost:5173',
+//     'http://localhost:3000',
+//     process.env.VITE_API_BASE_URL,
+//     process.env.VITE_backend_URL,
+//     ].filter(Boolean),
+//   credentials: true,
+// >>>>>>> main
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
     'Content-Type', 
@@ -153,6 +173,28 @@ const io = initializeSocketIO(server, sessionConfig);
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  // console.log(`Server URL: http://localhost:${PORT}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+    process.exit(0);
+  });
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 

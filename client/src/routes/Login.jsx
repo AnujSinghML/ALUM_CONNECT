@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff, UserCircle, X } from 'lucide-react';
 import { useUser } from '../context/UserContext';
+import connectLogo from "../../assets/connect_logo_black.svg";
 import { useSidebarLayout } from '../hooks/useSidebarLayout'; 
 
 const Modal = ({ isOpen, onClose, children }) => {
@@ -101,7 +102,7 @@ const Login = () => {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
             <img 
-              src="src/img/connect_logo_black.png" 
+              src={connectLogo} 
               alt="AlumConnect Logo" 
               className="w-20 h-auto"
             />
