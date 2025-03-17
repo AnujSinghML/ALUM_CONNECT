@@ -43,29 +43,32 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://15.206.215.46:5173',
   'http://15.206.215.46',
-  'http://alumconnect.home.kg'
+  'http://alumconnect.home.kg',
   process.env.VITE_API_BASE_URL,
-  process.env.VITE_backend_URL,
+  process.env.VITE_backend_URL
 ];
 
 const corsOptions = {
 // <<<<<<< main
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, origin);  // Allow the request
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,  // Required when using cookies, authentication headers, etc.
+  // origin: (origin, callback) => {
+  //   if (!origin || allowedOrigins.includes(origin)) {
+  //     callback(null, origin);  // Allow the request
+  //   } else {
+  //     callback(new Error('Not allowed by CORS'));
+  //   }
+  // },
+  // credentials: true,  // Required when using cookies, authentication headers, etc.
 // =======
-//   origin: [
-//     'http://localhost:5173',
-//     'http://localhost:3000',
-//     process.env.VITE_API_BASE_URL,
-//     process.env.VITE_backend_URL,
-//     ].filter(Boolean),
-//   credentials: true,
+  origin: [
+    'http://localhost:5173',
+  'http://localhost:3000',
+  'http://15.206.215.46:5173',
+  'http://15.206.215.46',
+  'http://alumconnect.home.kg',
+  process.env.VITE_API_BASE_URL,
+  process.env.VITE_backend_URL
+    ].filter(Boolean),
+  credentials: true,
 // >>>>>>> main
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
