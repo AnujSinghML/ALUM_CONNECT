@@ -1,11 +1,14 @@
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const connectDB = require('./config/db');
 const passport = require('passport');
 const dotenv = require('dotenv');
 const cors = require('cors'); 
-const errorHandler = require('./middleware/errorHandler');
+const helmet = require('helmet');
+const compression = require('compression');
+const http = require('http');
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -31,27 +34,22 @@ connectDB();
 
 const app = express();
 
-// Logging middleware
-// app.use((req, res, next) => {
-//   console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
-//   next();
-// });
-
-// Configuration logging
-// console.log('Starting server with configuration:');
-// console.log('Environment:', process.env.NODE_ENV || 'development');
-// console.log('Frontend URL:', process.env.VITE_API_BASE_URL);
-// console.log('Google Callback URL:', process.env.GOOGLE_CALLBACK_URL);
-
+// Security Middleware
+app.use(helmet());
+app.use(compression());
 
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:3000',
   'http://15.206.215.46:5173',
   'http://15.206.215.46',
   'http://alumconnect.home.kg'
+  process.env.VITE_API_BASE_URL,
+  process.env.VITE_backend_URL,
 ];
 
 const corsOptions = {
+// <<<<<<< main
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, origin);  // Allow the request
@@ -60,33 +58,52 @@ const corsOptions = {
     }
   },
   credentials: true,  // Required when using cookies, authentication headers, etc.
+// =======
+//   origin: [
+//     'http://localhost:5173',
+//     'http://localhost:3000',
+//     process.env.VITE_API_BASE_URL,
+//     process.env.VITE_backend_URL,
+//     ].filter(Boolean),
+//   credentials: true,
+// >>>>>>> main
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'Cookie', 
+    'X-Requested-With',
+    'Pragma',
+    'Cache-Control' 
+  ],
   optionsSuccessStatus: 200
 };
-
 app.use(cors(corsOptions));
 
-
-
-
 // Body parser middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Session configuration
 const sessionConfig = {
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    collectionName: 'sessions',
+    autoRemove: 'interval',
+    autoRemoveInterval: 10
+  }),
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    maxAge: 24 * 60 * 60 * 1000,
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
 };
 
+// Apply session middleware
 app.use(session(sessionConfig));
 
 // Passport initialization
@@ -94,73 +111,67 @@ app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);
 
-// Health check
-app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'ok',
-    environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Auth state check
-app.get('/auth/check', (req, res) => {
-  res.json({ 
-    isAuthenticated: req.isAuthenticated(),
-    user: req.user ? {
-      id: req.user.id,
-      email: req.user.email,
-      role: req.user.role
-    } : null
-  });
+// Logging Middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  next();
 });
 
 // Routes
-app.use('/auth', require('./routes/authRoutes'));
-app.use('/api/profile', require('./routes/profileRoutes'));
-app.use('/api/announcements', require('./routes/announcementRoutes'));
-app.use('/api/admin/announcements', require('./routes/adminAnnouncementRoutes'));
-app.use('/api/donations', require('./routes/donationRoutes'));
-app.use('/api/opportunities', require('./routes/opportunityRoutes'));
-app.use('/api/jobs/admin', require('./routes/adminJobRoutes'));
-app.use('/api/jobs', require('./routes/jobRoutes'));
-app.use('/api/alumni', require('./routes/alumniRoutes'));
-app.use("/api/forum", require("./routes/forumRoutes"));
-app.use('/api/donations/admin', require('./routes/adminDonationRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
+const routes = [
+  { path: '/auth', router: require('./routes/authRoutes') },
+  { path: '/api/profile', router: require('./routes/profileRoutes') },
+  { path: '/api/announcements', router: require('./routes/announcementRoutes') },
+  { path: '/api/admin/announcements', router: require('./routes/adminAnnouncementRoutes') },
+  { path: '/api/donations', router: require('./routes/donationRoutes') },
+  { path: '/api/opportunities', router: require('./routes/opportunityRoutes') },
+  { path: '/api/jobs/admin', router: require('./routes/adminJobRoutes') },
+  { path: '/api/jobs', router: require('./routes/jobRoutes') },
+  { path: '/api/applications', router: require('./routes/applicationRoutes') }, // ✅ Integrated applicationRoutes
+  { path: '/api/alumni', router: require('./routes/alumniRoutes') },
+  { path: '/api/forum', router: require('./routes/forumRoutes') },
+  { path: '/api/donations/admin', router: require('./routes/adminDonationRoutes') },
+  { path: '/api/users', router: require('./routes/userRoutes') },
+  { path: '/api/messages', router: require('./routes/messageRoutes') }
+];
 
+// Apply routes
+routes.forEach(route => {
+  app.use(route.path, route.router);
+});
 
 // 404 handler
 app.use((req, res, next) => {
-  console.log(`404 Not Found: ${req.method} ${req.url}`);
-  res.status(404).json({ 
-    error: 'Not Found',
-    path: req.url,
-    method: req.method
-  });
+  const error = new Error(`Not Found - ${req.originalUrl}`);
+  error.status = 404;
+  next(error);
 });
 
-// Error handling
+// Global Error Handler
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  console.error('Stack:', err.stack);
-  
-  if (err.name === 'UnauthorizedError') {
-    return res.status(401).json({ error: 'Unauthorized access' });
-  }
-  
+  console.error('Global Error Handler:', {
+    message: err.message,
+    stack: err.stack,
+    status: err.status || 500
+  });
+
   res.status(err.status || 500).json({
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error',
-    path: req.url,
-    method: req.method
+    error: process.env.NODE_ENV === 'development' 
+      ? err.message 
+      : 'An unexpected error occurred'
   });
 });
 
-app.use(errorHandler);
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize Socket.IO
+const initializeSocketIO = require('./config/socketConfig');
+const io = initializeSocketIO(server, sessionConfig);
 
 // Start server
 const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
   // console.log(`Server URL: http://localhost:${PORT}`);
@@ -184,6 +195,7 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   process.exit(1);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
-module.exports = app;
+module.exports = { app, server, io };

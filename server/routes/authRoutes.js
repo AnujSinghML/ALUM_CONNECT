@@ -3,6 +3,7 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 const { ensureInstitutionalEmail } = require('../middleware/roleMiddleware');
+const { isAuthenticated } = require('../middleware/isAuthenticated');
 
 // ✅ POST /auth/login
 router.post("/login",ensureInstitutionalEmail, (req, res, next) => {
@@ -94,7 +95,18 @@ router.post("/logout", (req, res, next) => {
     next(error);
   }
 });
-
+// In authRoutes.js
+router.get('/check', (req, res) => {
+  res.json({ 
+    isAuthenticated: req.isAuthenticated(),
+    user: req.isAuthenticated() ? {
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role
+    } : null
+  });
+});
 // Google Auth Routes
 router.get('/google',
   passport.authenticate('google', { 
@@ -137,5 +149,56 @@ router.get('/google/callback',
     })(req, res, next);
   }
 );
+
+router.get('/debug-auth', (req, res) => {
+  // console.log('Debug Auth Route Called');
+  // console.log('Session:', req.session);
+  // console.log('User:', req.user);
+  // console.log('Is Authenticated:', req.isAuthenticated());
+
+  res.json({
+    isAuthenticated: req.isAuthenticated(),
+    user: req.user ? {
+      id: req.user.id,
+      email: req.user.email,
+      role: req.user.role
+    } : null,
+    sessionDetails: {
+      passport: req.session?.passport,
+      exists: !!req.session
+    }
+  });
+});
+// Protected route
+router.get('/protected', isAuthenticated, (req, res) => {
+  res.json({ 
+    message: 'Access granted to protected route',
+    user: {
+      id: req.user.id,
+      email: req.user.email,
+      role: req.user.role
+    }
+  });
+});
+// Detailed authentication check route
+router.get('/check', (req, res) => {
+  console.log('===== AUTH CHECK ROUTE =====');
+  console.log('Session:', req.session);
+  console.log('Passport User:', req.session?.passport?.user);
+  console.log('Current User:', req.user);
+
+  res.json({ 
+    isAuthenticated: !!req.user,
+    user: req.user ? {
+      id: req.user.id,
+      email: req.user.email,
+      role: req.user.role
+    } : null,
+    sessionDetails: {
+      passport: req.session?.passport,
+      exists: !!req.session
+    }
+  });
+});
 
 module.exports = router;

@@ -3,12 +3,15 @@ import Layout from '../../components/common/Layout';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Calendar, MapPin } from 'lucide-react';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const AllEvents = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  useSidebarLayout(true);
 
   useEffect(() => {
     const fetchEvents = async () => {

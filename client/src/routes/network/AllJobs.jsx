@@ -4,6 +4,7 @@ import JobCard from '../../components/network/JobCard';
 import Pagination from '../../components/common/Pagination';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const AllJobs = () => {
   const navigate = useNavigate();
@@ -57,6 +58,8 @@ const AllJobs = () => {
     }
   };
 
+  useSidebarLayout(true);
+
   // Initial fetch on component mount
   useEffect(() => {
     fetchFilteredJobs();
@@ -85,6 +88,52 @@ const AllJobs = () => {
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) return;
     fetchFilteredJobs(newPage);
+  };
+
+  // Add status change handler (similar to the one in Jobs.jsx)
+  const handleStatusChange = async (jobId, newStatus) => {
+    try {
+      // Show loading state
+      setLoading(true);
+      
+      console.log("Updating job:", jobId, "to status:", newStatus); // Debug log
+      
+      // Make API call to update job status
+      const response = await axios.patch(
+        `${import.meta.env.VITE_backend_URL}/api/jobs/${jobId}/status`,
+        { status: newStatus },
+        { withCredentials: true }
+      );
+      
+      console.log("Update response:", response.data); // Debug log
+      
+      // Update the local state - remove the job that was marked as filled
+      // since we're only showing active jobs
+      if (newStatus === 'filled') {
+        setJobs(prevJobs => prevJobs.filter(job => 
+          job._id !== jobId && job.id !== jobId && job.jobId !== jobId
+        ));
+      } else {
+        // Or update its status if needed
+        setJobs(prevJobs => 
+          prevJobs.map(job => 
+            (job._id === jobId || job.id === jobId || job.jobId === jobId)
+              ? { ...job, status: newStatus } 
+              : job
+          )
+        );
+      }
+      
+      // Show success message
+      alert("Job status updated successfully!");
+      
+    } catch (err) {
+      console.error("Error updating job status:", err);
+      setError("Failed to update job status");
+      alert("Error updating job status. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -165,7 +214,11 @@ const AllJobs = () => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {jobs.map((job) => (
-                <JobCard key={job.jobId} {...job} />
+                <JobCard 
+                  key={job._id || job.jobId || Math.random().toString()}
+                  {...job}
+                  onStatusChange={handleStatusChange} // Add this line!
+                />
               ))}
             </div>
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />

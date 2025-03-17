@@ -3,12 +3,13 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../components/common/Layout';
 import axios from 'axios';
 import { CheckCircle2, XCircle, Trash2 } from 'lucide-react';
+import { useSidebarLayout } from '../hooks/useSidebarLayout'; 
 
 const AdminDonations = () => {
   const [donations, setDonations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
+  useSidebarLayout(true);
   // Fetch donation requests from admin endpoint
   useEffect(() => {
     const fetchDonations = async () => {

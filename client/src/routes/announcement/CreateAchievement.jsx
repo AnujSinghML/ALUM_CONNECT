@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../../components/common/Layout';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const CreateAchievement = () => {
   const [user, setUser] = useState(null);
@@ -12,6 +13,8 @@ const CreateAchievement = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  useSidebarLayout(true);
+  
   useEffect(() => {
     const fetchProfile = async () => {
       try {

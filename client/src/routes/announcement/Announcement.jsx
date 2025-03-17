@@ -3,6 +3,7 @@ import axios from 'axios';
 import Layout from '../../components/common/Layout';
 import { ArrowRight, Calendar, MapPin, PlusCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const Announcement = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const Announcement = () => {
 
   // Alumni ke liye 'Add Achievement' button dikhane ka state
   const [isAlumni, setIsAlumni] = useState(false);
+
+  useSidebarLayout(true);
 
   useEffect(() => {
     const fetchAnnouncements = async () => {

@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../../components/common/Layout';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const FundingOpportunities = () => {
   const navigate = useNavigate();
   const [donations, setDonations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  useSidebarLayout(true);
 
   useEffect(() => {
     const fetchDonations = async () => {

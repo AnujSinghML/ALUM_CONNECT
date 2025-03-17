@@ -3,8 +3,10 @@ import React from 'react';
 import Layout from '../../components/common/Layout';
 import Donation from '../../components/donations/Donation';
 import Funding from '../../components/donations/Funding';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const Donations = () => {
+  useSidebarLayout(true);
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-8">

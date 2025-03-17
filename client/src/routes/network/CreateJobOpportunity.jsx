@@ -13,7 +13,7 @@ const CreateJobOpportunity = () => {
     employmentType: '',
     requirements: '',
     responsibilities: '',
-    applicationUrl: '',
+    // applicationUrl: '',
     applicationDeadline: ''
   });
 
@@ -169,7 +169,7 @@ const CreateJobOpportunity = () => {
               required
             />
           </div>
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Application URL</label>
             <input
               type="url"
@@ -177,7 +177,7 @@ const CreateJobOpportunity = () => {
               value={jobData.applicationUrl}
               onChange={(e) => setJobData({ ...jobData, applicationUrl: e.target.value })}
             />
-          </div>
+          </div> */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Application Deadline</label>
             <input

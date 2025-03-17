@@ -7,6 +7,7 @@ import SocialLinks from '../components/profile/SocialLinks';
 import ProfileSections from '../components/profile/ProfileSections';
 import ActivitySection from '../components/profile/ActivitySection';
 import { Mail, MapPin, Calendar, Phone, User, Clock } from 'lucide-react';
+import { useSidebarLayout } from '../hooks/useSidebarLayout'; 
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -30,6 +31,8 @@ const Profile = () => {
       }
     }
   };
+
+  useSidebarLayout(true);
 
   useEffect(() => {
     fetchProfile();

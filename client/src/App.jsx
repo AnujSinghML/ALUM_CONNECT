@@ -39,11 +39,16 @@ import FundingOpportunities from './routes/donation/FundingOpportunities';
 // New Job-related routes
 import AllJobs from './routes/network/AllJobs';
 import CreateJobOpportunity from './routes/network/CreateJobOpportunity';
+import JobCard from './components/network/JobCard';
+import ApplyForm from './components/network/ApplyForm';
 
 import AdminNetwork from './routes/network/AdminNetwork';
 import AdminDonations from './routes/AdminDonations';
 import AdminProfile from './routes/AdminProfile';
 import AdminDiscussion from './routes/AdminDiscussion';
+
+// Messaging
+import { MessageProvider } from './context/MessageContext';
 
 // Landing page component
 const LandingPage = () => {
@@ -69,6 +74,8 @@ const AppRoutes = () => {
       {/* Public Routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/jobs" element={<JobCard />} />
+      <Route path="/apply/:jobId" element={<ApplyForm />} />
 
       {role === 'admin' ? (
         // Admin-specific routes
@@ -240,23 +247,22 @@ const AppRoutes = () => {
 const App = () => {
   return (
     <UserProvider>
-      <BrowserRouter>
-        <ToastProvider>
-          {/* 
-            Include the ToastContainer from react-toastify 
-            so you can see any calls to toast.success(), toast.error(), etc.
-          */}
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar
-            newestOnTop
-            closeOnClick
-            pauseOnHover
-          />
-          <AppRoutes />
-        </ToastProvider>
-      </BrowserRouter>
+      <MessageProvider>
+        <BrowserRouter>
+          <ToastProvider>
+            {/* ToastContainer for notifications */}
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar
+              newestOnTop
+              closeOnClick
+              pauseOnHover
+            />
+            <AppRoutes />
+          </ToastProvider>
+        </BrowserRouter>
+      </MessageProvider>
     </UserProvider>
   );
 };

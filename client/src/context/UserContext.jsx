@@ -52,16 +52,27 @@ export const UserProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
+      // Only attempt to fetch user if there's a session
       const response = await axios.get(
-        `${import.meta.env.VITE_backend_URL}/auth/profile`, 
+        `${import.meta.env.VITE_backend_URL}/auth/check`, 
         { withCredentials: true }
       );
-      setUser(response.data);
-      setError(null);
+
+      if (response.data.isAuthenticated) {
+        setUser(response.data.user);
+        setError(null);
+        
+        // Optional: Cache user data
+        localStorage.setItem('cachedUserProfile', JSON.stringify(response.data.user));
+      } else {
+        setUser(null);
+        localStorage.removeItem('cachedUserProfile');
+      }
     } catch (error) {
-      console.error('Error fetching user:', error);
-      setError(error.response?.data?.error || 'Failed to fetch user profile');
+      console.error('Error checking authentication:', error);
+      setError(error.response?.data?.error || 'Failed to check authentication');
       setUser(null);
+      localStorage.removeItem('cachedUserProfile');
     } finally {
       setLoading(false);
     }
@@ -71,19 +82,20 @@ export const UserProvider = ({ children }) => {
   const handleGoogleLogin = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_backend_URL}/auth/profile`,
+        `${import.meta.env.VITE_backend_URL}/auth/check`,
         { withCredentials: true }
       );
       
-      if (response.data) {
-        setUser(response.data);
-        localStorage.setItem('cachedUserProfile', JSON.stringify(response.data));
+      if (response.data.isAuthenticated) {
+        setUser(response.data.user);
+        localStorage.setItem('cachedUserProfile', JSON.stringify(response.data.user));
         setError(null);
       }
     } catch (error) {
       console.error('Failed to get user profile:', error);
       setError(error.response?.data?.error || 'Failed to authenticate with Google');
       setUser(null);
+      localStorage.removeItem('cachedUserProfile');
     }
   };
 
@@ -105,15 +117,31 @@ export const UserProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Try to get user from cached profile first
-    const cachedProfile = localStorage.getItem('cachedUserProfile');
-    if (cachedProfile) {
-      setUser(JSON.parse(cachedProfile));
-      setLoading(false);
-    }
-    
-    // Then fetch fresh data
-    fetchUser();
+    // Conditional authentication check
+    const checkAuthentication = async () => {
+      // Check if there's a cached profile
+      const cachedProfile = localStorage.getItem('cachedUserProfile');
+      
+      if (cachedProfile) {
+        try {
+          // Validate cached profile
+          const parsedProfile = JSON.parse(cachedProfile);
+          
+          // Optional: You can add additional validation here
+          if (parsedProfile && parsedProfile.id) {
+            setUser(parsedProfile);
+          }
+        } catch (parseError) {
+          console.error('Failed to parse cached profile', parseError);
+          localStorage.removeItem('cachedUserProfile');
+        }
+      }
+
+      // Always attempt to verify authentication
+      await fetchUser();
+    };
+
+    checkAuthentication();
   }, []);
 
   const value = {

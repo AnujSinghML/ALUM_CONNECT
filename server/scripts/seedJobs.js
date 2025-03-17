@@ -17,7 +17,7 @@ const jobs = [
     authorEmail: 'bt19cse002@iiitn.ac.in',
     tags: ['React', 'JavaScript', 'Frontend', 'UI/UX'],
     status: 'active',
-    applicationUrl: 'https://techinnovate.careers/frontend-dev',
+    // applicationUrl: 'https://techinnovate.careers/frontend-dev',
     applicationDeadline: new Date('2025-03-30')
   },
   {
@@ -32,7 +32,7 @@ const jobs = [
     authorEmail: 'bt18cse001@iiitn.ac.in',
     tags: ['Machine Learning', 'AI', 'Python', 'PyTorch'],
     status: 'active',
-    applicationUrl: 'https://datamind.ai/careers/ml-engineer',
+    // applicationUrl: 'https://datamind.ai/careers/ml-engineer',
     applicationDeadline: new Date('2025-04-15')
   },
   {
@@ -47,7 +47,7 @@ const jobs = [
     authorEmail: 'bt22cse113@iiitn.ac.in',
     tags: ['Internship', 'Cybersecurity', 'Research', 'Student'],
     status: 'active',
-    applicationUrl: 'https://research.iiitn.ac.in/internships',
+    // applicationUrl: 'https://research.iiitn.ac.in/internships',
     applicationDeadline: new Date('2025-05-01')
   },
   {
@@ -62,7 +62,7 @@ const jobs = [
     authorEmail: 'bt19cse001@iiitn.ac.in',
     tags: ['Data Science', 'Finance', 'Statistics', 'Python'],
     status: 'active',
-    applicationUrl: 'https://fintechsolutions.in/careers/data-scientist',
+    // applicationUrl: 'https://fintechsolutions.in/careers/data-scientist',
     applicationDeadline: new Date('2025-03-15')
   },
   {
@@ -77,7 +77,7 @@ const jobs = [
     authorEmail: 'bt20ece001@iiitn.ac.in',
     tags: ['Backend', 'Node.js', 'MongoDB', 'API'],
     status: 'active',
-    applicationUrl: 'https://oceangate.com/careers',
+    // applicationUrl: 'https://oceangate.com/careers',
     applicationDeadline: new Date('2025-04-10')
   },
   {
@@ -92,7 +92,7 @@ const jobs = [
     authorEmail: 'bt20cse002@iiitn.ac.in',
     tags: ['DevOps', 'Docker', 'Kubernetes', 'CI/CD'],
     status: 'active',
-    applicationUrl: 'https://cloudnativesystems.io/careers/devops',
+    // applicationUrl: 'https://cloudnativesystems.io/careers/devops',
     applicationDeadline: new Date('2025-03-25')
   },
   {
@@ -107,7 +107,7 @@ const jobs = [
     authorEmail: 'bt20cse001@iiitn.ac.in',
     tags: ['UI/UX', 'Design', 'Figma', 'User Research'],
     status: 'active',
-    applicationUrl: 'https://creativepixels.design/careers',
+    // applicationUrl: 'https://creativepixels.design/careers',
     applicationDeadline: new Date('2025-04-05')
   },
   {
@@ -122,7 +122,7 @@ const jobs = [
     authorEmail: 'bt20cse002@iiitn.ac.in',
     tags: ['Part-time', 'Web Development', 'WordPress', 'Remote'],
     // status: '',
-    applicationUrl: 'https://edutechstartups.in/jobs',
+    // applicationUrl: 'https://edutechstartups.in/jobs',
     applicationDeadline: new Date('2025-03-20')
   }
 ];
