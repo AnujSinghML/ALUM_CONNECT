@@ -6,6 +6,7 @@ import PostList from "../components/forum/PostList";
 import CreatePostForm from "../components/forum/CreatePostForm";
 import ErrorMessage from "../components/common/ErrorMessage";
 import SearchBar from "../components/forum/SearchBar"; // New component
+import { useSidebarLayout } from '../hooks/useSidebarLayout'; 
 
 const Discussion = () => {
   const [posts, setPosts] = useState([]);
@@ -14,6 +15,8 @@ const Discussion = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(""); // Track search query
+
+  useSidebarLayout(true);
 
   // Fetch current user data
   useEffect(() => {

@@ -4,6 +4,7 @@ import ProfileCard from '../../components/network/ProfileCard';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from '../../components/common/Pagination';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const AllAlumni = () => {
   // Search state
@@ -24,6 +25,8 @@ const AllAlumni = () => {
 
   const navigate = useNavigate();
   const limit = 10; // Profiles per page
+
+  useSidebarLayout(true);
 
   // Fetch alumni whenever page changes
   useEffect(() => {

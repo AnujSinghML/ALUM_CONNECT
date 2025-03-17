@@ -4,6 +4,7 @@ import JobCard from '../../components/network/JobCard';
 import Pagination from '../../components/common/Pagination';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const AllJobs = () => {
   const navigate = useNavigate();
@@ -56,6 +57,8 @@ const AllJobs = () => {
       setLoading(false);
     }
   };
+
+  useSidebarLayout(true);
 
   // Initial fetch on component mount
   useEffect(() => {

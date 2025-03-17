@@ -1,8 +1,14 @@
+/* ===============================
+   Tailwind + Swiper imports
+=============================== */
 @import "tailwindcss";
 @import 'swiper/css';
 @import 'swiper/css/navigation';
 @import 'swiper/css/autoplay';
 
+/* ===============================
+   Root Variables
+=============================== */
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -14,44 +20,97 @@
   --input: 214.3 31.8% 91.4%;
   --ring: 221.2 83.2% 53.3%;
   --radius: 0.5rem;
-  --sidebar-width: 240px;
-  --sidebar-width: 240px;
+
+  /* For expanded/collapsed sidebar widths */
+  --sidebar-width-expanded: 240px;
+  --sidebar-width-collapsed: 70px;
 }
 
+/* Basic reset */
+html,
 body {
   margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   min-width: 320px;
   min-height: 100vh;
 }
 
-html,
-body {
-  overflow-x: hidden;
-  margin: 0;
-  padding: 0;
+/* ===============================
+   SWIPER CUSTOM STYLES (older)
+=============================== */
+.institute-swiper {
+  padding: 1rem 0;
+  overflow: visible !important;
 }
 
-/* Sidebar layout adjustments */
-main,
-.main-content {
-  margin-left: var(--sidebar-width);
+.swiper-button-prev,
+.swiper-button-next {
+  width: 40px !important;
+  height: 40px !important;
+  background: white !important;
+  border-radius: 50% !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  display: none;
+}
+
+.swiper-button-prev {
+  left: 0 !important;
+}
+
+.swiper-button-next {
+  right: 0 !important;
+}
+
+.swiper-button-disabled {
+  opacity: 0 !important;
+  cursor: not-allowed !important;
+}
+
+.swiper-slide {
+  height: auto !important;
+}
+
+/* ===============================
+   SIDEBAR MARGIN-LEFT LOGIC
+   Only apply if .has-sidebar is on <body>
+=============================== */
+/* By default, .sidebar-expanded => margin-left: 240px */
+.has-sidebar.sidebar-expanded main,
+.has-sidebar.sidebar-expanded .main-content {
+  margin-left: var(--sidebar-width-expanded);
+  width: calc(100% - var(--sidebar-width-expanded));
   transition: margin-left 0.3s ease-in-out;
-  width: calc(100% - var(--sidebar-width));
 }
 
-.sidebar-collapsed main,
-.sidebar-collapsed .main-content {
-  margin-left: 70px;
-  width: calc(100% - 70px);
+/* If collapsed => margin-left: 70px */
+.has-sidebar.sidebar-collapsed main,
+.has-sidebar.sidebar-collapsed .main-content {
+  margin-left: var(--sidebar-width-collapsed);
+  width: calc(100% - var(--sidebar-width-collapsed));
+  transition: margin-left 0.3s ease-in-out;
 }
 
-.sidebar-expanded main,
-.sidebar-expanded .main-content {
-  margin-left: 240px;
-  width: calc(100% - 240px);
+/* If you have a default if .sidebar-expanded / .sidebar-collapsed not set yet: */
+.has-sidebar main,
+.has-sidebar .main-content {
+  margin-left: var(--sidebar-width-expanded);
+  width: calc(100% - var(--sidebar-width-expanded));
+  transition: margin-left 0.3s ease-in-out;
 }
 
-/* Animations */
+/* If your layout references #main-content specifically: */
+#main-content {
+  transition: margin-left 0.3s ease;
+}
+
+/* ===============================
+   Optional fade-in animation
+=============================== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -64,37 +123,4 @@ main,
 
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
-}
-
-/* Swiper Custom Styles */
-.swiper-button-prev,
-.swiper-button-next {
-  color: #fff;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 50%;
-  padding: 10px;
-  width: 40px;
-  height: 40px;
-  margin-top: -20px;
-}
-
-.swiper-button-prev:after,
-.swiper-button-next:after {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.swiper-pagination-bullet {
-  background: #fff;
-  opacity: 0.8;
-}
-
-.swiper-pagination-bullet-active {
-  background: #fff;
-  opacity: 1;
-}
-
-#main-content {
-  margin-left: var(--sidebar-width);
-  transition: margin-left 0.3s ease;
 }

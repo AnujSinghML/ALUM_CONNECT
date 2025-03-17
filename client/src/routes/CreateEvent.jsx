@@ -4,6 +4,7 @@ import axios from 'axios';
 import Layout from '../components/common/Layout';
 import { PlusCircle, ArrowLeft } from 'lucide-react';
 import { useToast } from '../components/Toast';
+import { useSidebarLayout } from '../hooks/useSidebarLayout'; 
 
 const CreateEvent = () => {
   const navigate = useNavigate();

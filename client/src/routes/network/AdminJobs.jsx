@@ -3,6 +3,7 @@ import Layout from '../../components/common/Layout';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, CheckCircle2, XCircle } from 'lucide-react';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const AdminJobs = () => {
   const navigate = useNavigate();
@@ -25,6 +26,8 @@ const AdminJobs = () => {
       setLoading(false);
     }
   };
+
+  useSidebarLayout(true);
 
   useEffect(() => {
     fetchJobs();

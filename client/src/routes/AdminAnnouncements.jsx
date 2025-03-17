@@ -4,7 +4,7 @@ import axios from 'axios';
 import Layout from '../components/common/Layout';
 import { PlusCircle, Trash2, CheckCircle2, XCircle, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '../components/Toast';
-
+import { useSidebarLayout } from '../hooks/useSidebarLayout';
 const AdminAnnouncements = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -22,9 +22,13 @@ const AdminAnnouncements = () => {
   // Check if user is actually admin
   const [isAdmin, setIsAdmin] = useState(false);
 
+  useSidebarLayout(true);
+
   // ----------------------------------
   // Fetch user role & announcements
   // ----------------------------------
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {

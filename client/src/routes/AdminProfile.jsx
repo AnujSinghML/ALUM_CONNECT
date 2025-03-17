@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/common/Layout';
 import axios from 'axios';
+import { useSidebarLayout } from '../hooks/useSidebarLayout'; 
 
 const AdminProfile = () => {
   const [alumni, setAlumni] = useState([]);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
+  useSidebarLayout(true);
   // Fetch all users from /api/users
   const fetchUsers = async () => {
     try {

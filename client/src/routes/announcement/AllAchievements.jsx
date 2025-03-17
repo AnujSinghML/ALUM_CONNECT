@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../../components/common/Layout';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useSidebarLayout } from '../../hooks/useSidebarLayout';
 
 const AllAchievements = () => {
   const [achievements, setAchievements] = useState([]);
@@ -13,6 +14,8 @@ const AllAchievements = () => {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   // console.log("Logged in user:", user); // Debug: Dekho user ka data aur role
+
+  useSidebarLayout(true);
 
   useEffect(() => {
     const fetchAchievements = async () => {

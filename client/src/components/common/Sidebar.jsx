@@ -122,7 +122,7 @@ const Sidebar = () => {
 
   return (
     <aside 
-      className={`fixed left-0 top-18 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 shadow-sm z-30 transition-all duration-300 ease-in-out ${
+      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 shadow-sm z-30 transition-all duration-300 ease-in-out ${
         collapsed ? "w-[70px]" : "w-[240px]"
       }`}
     >
