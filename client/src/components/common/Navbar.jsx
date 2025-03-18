@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, MessageSquare, LogOut, User, Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import IIITNLogo from "../../../assets/IIITN_logo.svg";
 import { toast } from 'react-toastify';
+
+// Import images and utilities
+import IIITNLogo from "../../../assets/IIITN_logo.svg";
 import { handleLogout } from '../../utils/authUtils';
 
 // Import context and components
@@ -89,11 +91,11 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-white backdrop-blur-md bg-opacity-95 border-b border-gray-100 px-6 py-3 flex justify-between items-center fixed top-0 w-full z-50 shadow-sm">
+      <nav className="bg-white backdrop-blur-md bg-opacity-95 border-b border-gray-100 px-6 py-4 flex justify-between items-center fixed top-0 w-full z-50 shadow-sm">
         {/* Left side - Logo and College Name */}
         <div className="flex items-center space-x-3">
           <div className="bg-white p-1.5 rounded-lg shadow-sm">
-            <img src={IIITNLogo} alt="IIIT-Nagpur Logo" className="w-8 h-8" />
+            <img src={IIITNLogo} alt="IIIT-Nagpur Logo" className="w-9 h-9" />
           </div>
           <div className="flex flex-col">
             <span className="text-blue-600 font-semibold text-lg leading-tight">
@@ -108,9 +110,9 @@ const Navbar = () => {
         {/* Right side - Notifications, DMs, Profile */}
         <div className="flex items-center">
           {/* Notifications */}
-          <button className="p-2 mx-1 hover:bg-gray-50 rounded-xl relative transition-all duration-200 cursor-pointer">
-            <Bell className="w-5 h-5 text-gray-600" />
-            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-medium">
+          <button className="p-2 mx-1.5 hover:bg-gray-50 rounded-xl relative transition-all duration-200 cursor-pointer">
+            <Bell className="w-7 h-7 text-gray-600" />
+            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium">
               3
             </span>
           </button>
@@ -118,11 +120,11 @@ const Navbar = () => {
           {/* Messages */}
           <button 
             onClick={toggleMessagePopup} 
-            className="p-2 mx-1 hover:bg-gray-50 rounded-xl relative transition-all duration-200 cursor-pointer"
+            className="p-2 mx-1.5 hover:bg-gray-50 rounded-xl relative transition-all duration-200 cursor-pointer"
           >
-            <MessageSquare className="w-5 h-5 text-gray-600" />
+            <MessageSquare className="w-7 h-7 text-gray-600" />
             {unreadCount > 0 && (
-              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-medium">
+              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium">
                 {unreadCount}
               </span>
             )}
@@ -135,18 +137,18 @@ const Navbar = () => {
               className="flex items-center space-x-2 p-1.5 hover:bg-gray-50 rounded-xl transition-all duration-200 cursor-pointer"
             >
               {loading ? (
-                <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+                <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
               ) : (
                 <img
-                  src={getAvatarUrl(32)}
+                  src={getAvatarUrl(40)}
                   alt="Profile"
-                  className="w-8 h-8 rounded-full ring-1 ring-blue-100"
+                  className="w-10 h-10 rounded-full ring-1 ring-blue-100"
                 />
               )}
               {!isSmallScreen && (
                 <div className="flex items-center">
                   <span className="text-sm font-medium text-gray-700 mr-1">{user?.name?.split(' ')[0] || 'User'}</span>
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
                 </div>
@@ -196,7 +198,7 @@ const Navbar = () => {
                     }}
                     className="flex items-center space-x-3 w-full px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
                   >
-                    <User className="w-4 h-4" />
+                    <User className="w-5 h-5" />
                     <span className="font-medium text-sm">My Profile</span>
                   </button>
                   
@@ -204,7 +206,7 @@ const Navbar = () => {
                     onClick={logoutUser}
                     className="flex items-center space-x-3 w-full px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 mt-1"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-5 h-5" />
                     <span className="font-medium text-sm">Logout</span>
                   </button>
                 </div>
