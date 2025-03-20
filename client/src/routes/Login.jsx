@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff, UserCircle, X } from 'lucide-react';
@@ -31,6 +31,12 @@ const Login = () => {
   const navigate = useNavigate();
   const { setUser, handleGoogleLogin } = useUser();
 
+  // Visitor credentials
+  const visitorCredentials = [
+    { name: 'visitor1', email: 'visitor1@iiitn.ac.in', password: 'visitor1' },
+    { name: 'visitor2', email: 'visitor2@iiitn.ac.in', password: 'visitor2' }
+  ];
+
   const [formData, setFormData] = useState({
     role: 'admin',
     email: '',
@@ -40,6 +46,10 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [previousValues, setPreviousValues] = useState({
+    email: '',
+    password: ''
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,6 +82,8 @@ const Login = () => {
       const role = res.data.user.role.toLowerCase();
       if (role === 'admin') {
         navigate('/admin/announcements');
+      } else if (role === 'visitor') {
+        navigate('/announcements');
       } else {
         navigate('/announcements');
       }
@@ -85,6 +97,48 @@ const Login = () => {
   const handleGoogleLoginClick = () => {
     window.location.href = `${import.meta.env.VITE_backend_URL}/auth/google`;
   };
+
+  const handleRoleChange = (e) => {
+    const newRole = e.target.value;
+    const oldRole = formData.role;
+    
+    if (oldRole === 'visitor' && newRole !== 'visitor') {
+      // Switching from visitor to another role - restore previous values
+      setFormData({
+        role: newRole,
+        email: previousValues.email,
+        password: previousValues.password
+      });
+    } else if (oldRole !== 'visitor' && newRole === 'visitor') {
+      // Switching to visitor - save current values and set visitor credentials
+      setPreviousValues({
+        email: formData.email,
+        password: formData.password
+      });
+      
+      const randomVisitor = visitorCredentials[
+        Math.floor(Math.random() * visitorCredentials.length)
+      ];
+      
+      setFormData({
+        role: 'visitor',
+        email: randomVisitor.email.trim(),
+        password: randomVisitor.password.trim()
+      });
+    } else {
+      // Just update the role
+      setFormData(prev => ({
+        ...prev,
+        role: newRole
+      }));
+    }
+    
+    // Hide the password field when role changes to visitor
+    if (newRole === 'visitor') {
+      setShowPassword(false);
+    }
+  };
+
   useEffect(() => {
     // Get error from URL if any
     const urlParams = new URLSearchParams(window.location.search);
@@ -121,12 +175,13 @@ const Login = () => {
                 id="role"
                 name="role"
                 value={formData.role}
-                onChange={handleChange}
+                onChange={handleRoleChange}
                 className="block w-full rounded-lg border border-gray-300 px-4 py-2.5 pr-8 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
               >
                 <option value="admin">Admin</option>
                 <option value="alumni">Alumni</option>
                 <option value="student">Student</option>
+                <option value="visitor">Visitor</option>
               </select>
               <UserCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
             </div>
@@ -145,6 +200,7 @@ const Login = () => {
               onChange={handleChange}
               placeholder="Enter your email"
               className="block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              disabled={formData.role === 'visitor'}
             />
           </div>
 
@@ -162,14 +218,17 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="Enter your password"
                 className="block w-full rounded-lg border border-gray-300 px-4 py-2.5 pr-10 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                disabled={formData.role === 'visitor'}
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
+              {formData.role !== 'visitor' && (
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              )}
             </div>
           </div>
 
