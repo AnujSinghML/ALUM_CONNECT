@@ -53,7 +53,7 @@ const fetchConversations = async () => {
     setConversations(conversationsData);
   } catch (error) {
     console.error('Failed to fetch conversations', error);
-    showErrorToast('Failed to fetch conversations');
+    // showErrorToast('Failed to fetch conversations');
     setConversations([]);
   } finally {
     setLoading(prev => ({ ...prev, conversations: false }));
