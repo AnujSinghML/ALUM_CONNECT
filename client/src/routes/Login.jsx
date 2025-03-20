@@ -163,6 +163,11 @@ const Login = () => {
           </div>
           <h2 className="text-2xl font-bold text-blue-700 mb-2">Welcome Back</h2>
           <p className="text-gray-500">Please sign in to continue</p>
+          
+          {/* Added visitor access note */}
+          <div className="mt-3 py-2 px-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800 font-medium">
+            NOTE:- For Visitor Access, Select Visitor Role From the Drop Down.
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
