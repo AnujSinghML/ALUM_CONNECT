@@ -23,7 +23,23 @@ const UserSchema = new mongoose.Schema({
   lastLogin: { type: Date },
   // New fields:
   dob: { type: Date },
-  branch: { type: String },
+  branch: {
+    type: String,
+    enum: [
+      'Computer Science',
+      'Computer Science - AI/ML',
+      'Computer Science - DSA',
+      'Computer Science - HCI & GT',
+      'Electronics and Communication Engineering',
+      'Electronics and Communication Engineering - IOT'
+    ],
+    required: true
+  },
+  branchCode: {
+    type: String,
+    enum: ['CSE', 'CSA', 'CSD', 'CSH', 'ECE', 'ECI'],
+    required: true
+  },
   currentCompany: { type: String, default: null},
   currentCompanyRole: { type: String, default: null },
   location: { type: String },

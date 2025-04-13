@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
       filter.batch = batch;
     }
     if (branch) {
-      filter.branch = { $regex: branch, $options: 'i' };
+      filter.branchCode = branch;
     }
     if (currentCompany) {
       filter.currentCompany = { $regex: currentCompany, $options: 'i' };
