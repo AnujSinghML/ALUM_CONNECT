@@ -59,6 +59,12 @@ const Navbar = () => {
     }
   };
 
+  // Navigate to profile function
+  const goToProfile = () => {
+    navigate('/profile');
+    setShowProfileMenu(false);
+  };
+
   // Toggle message popup
   const toggleMessagePopup = () => {
     setIsMessagePopupOpen(!isMessagePopupOpen);
@@ -102,7 +108,7 @@ const Navbar = () => {
               {isSmallScreen ? "IIIT-N" : "IIIT Nagpur"}
             </span>
             {!isSmallScreen && (
-              <span className="text-gray-500 text-xs">Indian Institute of Information Technology</span>
+              <span className="text-gray-500 text-xs">Indian Institute of Information Technology, Nagpur</span>
             )}
           </div>
         </div>
@@ -111,7 +117,7 @@ const Navbar = () => {
         <div className="flex items-center">
           {/* Notifications */}
           <button className="p-2 mx-1.5 hover:bg-gray-50 rounded-xl relative transition-all duration-200 cursor-pointer">
-            <Bell className="w-7 h-7 text-gray-600" />
+            <Bell className="w-8 h-8 text-gray-600" />
             <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium">
               3
             </span>
@@ -122,7 +128,7 @@ const Navbar = () => {
             onClick={toggleMessagePopup} 
             className="p-2 mx-1.5 hover:bg-gray-50 rounded-xl relative transition-all duration-200 cursor-pointer"
           >
-            <MessageSquare className="w-7 h-7 text-gray-600" />
+            <MessageSquare className="w-8 h-8 text-gray-600" />
             {unreadCount > 0 && (
               <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium">
                 {unreadCount}
@@ -192,13 +198,10 @@ const Navbar = () => {
                 {/* Profile Menu Options */}
                 <div className="px-2 py-2">
                   <button
-                    onClick={() => {
-                      navigate('/profile');
-                      setShowProfileMenu(false);
-                    }}
+                    onClick={goToProfile}
                     className="flex items-center space-x-3 w-full px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
                   >
-                    <User className="w-5 h-5" />
+                    <User className="w-6 h-6" />
                     <span className="font-medium text-sm">My Profile</span>
                   </button>
                   
@@ -206,7 +209,7 @@ const Navbar = () => {
                     onClick={logoutUser}
                     className="flex items-center space-x-3 w-full px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 mt-1"
                   >
-                    <LogOut className="w-5 h-5" />
+                    <LogOut className="w-6 h-6" />
                     <span className="font-medium text-sm">Logout</span>
                   </button>
                 </div>
