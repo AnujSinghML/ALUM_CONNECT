@@ -77,7 +77,7 @@ const Profile = () => {
     return (
       <Layout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-          <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full backdrop-blur-sm bg-white/90">
+          <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full backdrop-blur-sm">
             <div className="text-red-500 mb-6 flex items-center justify-center">
               <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">

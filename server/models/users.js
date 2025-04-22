@@ -21,7 +21,9 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, enum: ['student', 'admin', 'alumni', 'visitor'], default: 'visitor' },
   isActive: { type: Boolean, default: true },
   lastLogin: { type: Date },
-  // New fields:
+  // Profile image field
+  profileImage: { type: String, default: null },
+  // Other fields:
   dob: { type: Date },
   branch: { type: String },
   currentCompany: { type: String, default: null},
@@ -29,11 +31,11 @@ const UserSchema = new mongoose.Schema({
   location: { type: String },
   batch: { type: String },
   homeTown: { type: String },
-  socialLinks: {  // Changed from socialLinks to socialLinks
+  socialLinks: {
     linkedin: { type: String, default: null },
     instagram: { type: String, default: null },
     github: { type: String, default: null },
-    x: { type: String, default: null }  // Changed from twitter to x to match your data
+    x: { type: String, default: null }
   },
   personalEmail: { 
     type: String, 

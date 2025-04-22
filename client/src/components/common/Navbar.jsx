@@ -145,11 +145,14 @@ const Navbar = () => {
               {loading ? (
                 <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
               ) : (
-                <img
-                  src={getAvatarUrl(40)}
-                  alt="Profile"
-                  className="w-10 h-10 rounded-full ring-1 ring-blue-100"
-                />
+                // Display profile image if available, otherwise use avatar
+                <div className="w-10 h-10 rounded-full ring-1 ring-blue-100 overflow-hidden">
+                  <img
+                    src={user?.profileImage || getAvatarUrl(40)}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               )}
               {!isSmallScreen && (
                 <div className="flex items-center">
@@ -175,11 +178,14 @@ const Navbar = () => {
                     </div>
                   ) : (
                     <div className="flex items-center space-x-3">
-                      <img
-                        src={getAvatarUrl(48)}
-                        alt="Profile"
-                        className="w-12 h-12 rounded-full ring-2 ring-blue-100"
-                      />
+                      {/* Display profile image if available, otherwise use avatar */}
+                      <div className="w-12 h-12 rounded-full ring-2 ring-blue-100 overflow-hidden">
+                        <img
+                          src={user?.profileImage || getAvatarUrl(48)}
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                       <div className="flex-1">
                         <h3 className="text-base font-semibold text-gray-800 truncate">
                           {user?.name || 'User'}
