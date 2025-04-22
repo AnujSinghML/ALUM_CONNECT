@@ -26,6 +26,7 @@ router.post("/login",ensureInstitutionalEmail, (req, res, next) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          profileImage: user.profileImage, // Include profile image URL
         },
       });
     });
@@ -63,22 +64,9 @@ router.get("/profile", (req, res) => {
     personalEmail: req.user.personalEmail,
     isActive: req.user.isActive,
     lastLogin: req.user.lastLogin,
+    profileImage: req.user.profileImage, // Make sure to include profile image URL
   });
 });
-
-// // ✅ GET /auth/me → Fetch logged-in user
-// router.get("/me", (req, res) => {
-//   if (!req.user) {
-//     return res.status(401).json({ error: "Unauthorized" });
-//   }
-
-//   res.json({
-//     id: req.user.id,
-//     name: req.user.name,
-//     email: req.user.email,
-//     role: req.user.role,
-//   });
-// });
 
 // ✅ POST /auth/logout
 router.post("/logout", (req, res, next) => {
@@ -95,18 +83,7 @@ router.post("/logout", (req, res, next) => {
     next(error);
   }
 });
-// In authRoutes.js
-router.get('/check', (req, res) => {
-  res.json({ 
-    isAuthenticated: req.isAuthenticated(),
-    user: req.isAuthenticated() ? {
-      id: req.user.id,
-      name: req.user.name,
-      email: req.user.email,
-      role: req.user.role
-    } : null
-  });
-});
+
 // Google Auth Routes
 router.get('/google',
   passport.authenticate('google', { 
@@ -151,17 +128,13 @@ router.get('/google/callback',
 );
 
 router.get('/debug-auth', (req, res) => {
-  // console.log('Debug Auth Route Called');
-  // console.log('Session:', req.session);
-  // console.log('User:', req.user);
-  // console.log('Is Authenticated:', req.isAuthenticated());
-
   res.json({
     isAuthenticated: req.isAuthenticated(),
     user: req.user ? {
       id: req.user.id,
       email: req.user.email,
-      role: req.user.role
+      role: req.user.role,
+      profileImage: req.user.profileImage, // Include profile image URL
     } : null,
     sessionDetails: {
       passport: req.session?.passport,
@@ -169,6 +142,7 @@ router.get('/debug-auth', (req, res) => {
     }
   });
 });
+
 // Protected route
 router.get('/protected', isAuthenticated, (req, res) => {
   res.json({ 
@@ -176,29 +150,39 @@ router.get('/protected', isAuthenticated, (req, res) => {
     user: {
       id: req.user.id,
       email: req.user.email,
-      role: req.user.role
+      role: req.user.role,
+      profileImage: req.user.profileImage, // Include profile image URL
     }
   });
 });
-// Detailed authentication check route
-router.get('/check', (req, res) => {
-  console.log('===== AUTH CHECK ROUTE =====');
-  console.log('Session:', req.session);
-  console.log('Passport User:', req.session?.passport?.user);
-  console.log('Current User:', req.user);
 
-  res.json({ 
-    isAuthenticated: !!req.user,
-    user: req.user ? {
-      id: req.user.id,
-      email: req.user.email,
-      role: req.user.role
-    } : null,
-    sessionDetails: {
-      passport: req.session?.passport,
-      exists: !!req.session
+// FIXED: Auth check route now includes complete user data including profileImage
+router.get('/check', (req, res) => {
+  try {
+    if (req.isAuthenticated() && req.user) {
+      // Convert the user document to a plain object if it's a Mongoose document
+      const userObj = req.user.toObject ? req.user.toObject() : req.user;
+      
+      // Remove sensitive data like password
+      const { password, __v, ...safeUserData } = userObj;
+      
+      return res.json({
+        isAuthenticated: true,
+        user: safeUserData  // Return complete user object including profileImage
+      });
+    } else {
+      return res.json({
+        isAuthenticated: false,
+        user: null
+      });
     }
-  });
+  } catch (error) {
+    console.error('Auth check error:', error);
+    res.status(500).json({
+      isAuthenticated: false,
+      error: 'Server error during authentication check'
+    });
+  }
 });
 
 module.exports = router;

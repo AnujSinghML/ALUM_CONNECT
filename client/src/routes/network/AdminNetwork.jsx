@@ -2,14 +2,25 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/common/Layout';
 import axios from 'axios';
-import { CheckCircle2, XCircle, Trash2 } from 'lucide-react';
+import { CheckCircle2, XCircle, Trash2, Filter, PlusCircle } from 'lucide-react';
 import { useSidebarLayout } from '../../hooks/useSidebarLayout';
+import { useNavigate } from 'react-router-dom';
 
 const AdminNetwork = () => {
   const [jobs, setJobs] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [filters, setFilters] = useState({
+    type: '',
+    location: '',
+    status: '',
+    keyword: ''
+  });
+  const navigate = useNavigate();
+
   useSidebarLayout(true);
+
   // Fetch all jobs from the admin endpoint
   useEffect(() => {
     const fetchJobs = async () => {
@@ -20,6 +31,7 @@ const AdminNetwork = () => {
         );
         console.log("Admin jobs fetched:", res.data);
         setJobs(res.data);
+        setFilteredJobs(res.data);
       } catch (err) {
         console.error('Error fetching admin jobs:', err);
         setError('Failed to load admin network data');
@@ -30,6 +42,70 @@ const AdminNetwork = () => {
     fetchJobs();
   }, []);
 
+  // Apply filters
+  useEffect(() => {
+    if (jobs.length) {
+      applyFilters();
+    }
+  }, [filters, jobs]);
+
+  const applyFilters = () => {
+    let result = [...jobs];
+    
+    // Apply type filter
+    if (filters.type) {
+      result = result.filter(job => 
+        job.employmentType.toLowerCase() === filters.type.toLowerCase()
+      );
+    }
+    
+    // Apply location filter
+    if (filters.location) {
+      result = result.filter(job => 
+        job.location.toLowerCase().includes(filters.location.toLowerCase())
+      );
+    }
+    
+    // Apply status filter
+    if (filters.status) {
+      result = result.filter(job => 
+        job.status === filters.status
+      );
+    }
+    
+    // Apply keyword search
+    if (filters.keyword) {
+      const keyword = filters.keyword.toLowerCase();
+      result = result.filter(job => 
+        job.title.toLowerCase().includes(keyword) ||
+        job.company.toLowerCase().includes(keyword) ||
+        job.description.toLowerCase().includes(keyword)
+      );
+    }
+    
+    setFilteredJobs(result);
+  };
+
+  // Handle filter application
+  const handleFilterApply = () => {
+    applyFilters();
+  };
+
+  // Reset all filters
+  const resetFilters = () => {
+    setFilters({
+      type: '',
+      location: '',
+      status: '',
+      keyword: ''
+    });
+  };
+
+  // Navigate to Create Job Page
+  const navigateToCreateJob = () => {
+    navigate('/admin/create-job');
+  };
+
   // Accept: update job status to "active"
   const handleAccept = async (jobId) => {
     try {
@@ -38,8 +114,12 @@ const AdminNetwork = () => {
         { status: 'active' },
         { withCredentials: true }
       );
-      setJobs((prevJobs) =>
-        prevJobs.map((job) => (job._id === jobId ? res.data.data : job))
+      const updatedJobs = jobs.map((job) => 
+        job._id === jobId ? res.data.data : job
+      );
+      setJobs(updatedJobs);
+      setFilteredJobs(prev => 
+        prev.map((job) => job._id === jobId ? res.data.data : job)
       );
     } catch (err) {
       console.error('Error accepting job:', err);
@@ -54,7 +134,9 @@ const AdminNetwork = () => {
         `${import.meta.env.VITE_backend_URL}/api/jobs/admin/${jobId}`,
         { withCredentials: true }
       );
-      setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+      const updatedJobs = jobs.filter((job) => job._id !== jobId);
+      setJobs(updatedJobs);
+      setFilteredJobs(prev => prev.filter((job) => job._id !== jobId));
     } catch (err) {
       console.error('Error rejecting job:', err);
       setError('Failed to reject job.');
@@ -83,18 +165,44 @@ const AdminNetwork = () => {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Admin Network</h1>
+            <span className="text-gray-500 text-sm">
+              {filteredJobs.length} {filteredJobs.length === 1 ? 'job' : 'jobs'} found
+            </span>
+          </div>
           
-          <span className="text-gray-500 text-sm">
-            {jobs.length} {jobs.length === 1 ? 'job' : 'jobs'} found
-          </span>
+          <button
+            onClick={navigateToCreateJob}
+            className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+          >
+            <PlusCircle size={18} />
+            Add New Job Opportunity
+          </button>
         </div>
 
-        {jobs.length === 0 ? (
-          <p className="text-gray-600 text-center">No job opportunities found.</p>
+        {/* Filters */}
+        <JobFilters 
+          filters={filters}
+          setFilters={setFilters}
+          handleFilterApply={handleFilterApply}
+          resetFilters={resetFilters}
+        />
+
+        {filteredJobs.length === 0 ? (
+          <div className="bg-white rounded-xl shadow p-8 text-center">
+            <p className="text-gray-600 mb-4">No job opportunities found.</p>
+            <button 
+              onClick={navigateToCreateJob}
+              className="text-blue-600 font-medium hover:underline"
+            >
+              Create your first job opportunity
+            </button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {jobs.map((job) => (
+            {filteredJobs.map((job) => (
               <div
                 key={job._id}
                 className="bg-white rounded-xl shadow-md hover:shadow-xl transition-transform duration-300 transform hover:scale-105 p-6 flex flex-col justify-between"
@@ -165,6 +273,101 @@ const AdminNetwork = () => {
         )}
       </div>
     </Layout>
+  );
+};
+
+// Filter component for AdminNetwork.jsx
+const JobFilters = ({ filters, setFilters, handleFilterApply, resetFilters }) => {
+  // Job types for dropdown
+  const jobTypes = ['Full-time', 'Part-time', 'Contract', 'Internship', 'Remote'];
+  
+  // Job statuses for dropdown
+  const jobStatuses = ['pending', 'active', 'filled', 'expired'];
+  
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+  };
+  
+  return (
+    <div className="mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        {/* Job Type Filter */}
+        <div>
+          <select
+            name="type"
+            value={filters.type}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Types</option>
+            {jobTypes.map(type => (
+              <option key={type} value={type.toLowerCase()}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        {/* Location Filter */}
+        <div>
+          <input
+            type="text"
+            name="location"
+            value={filters.location}
+            onChange={handleChange}
+            placeholder="Location"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        
+        {/* Status Filter */}
+        <div>
+          <select
+            name="status"
+            value={filters.status}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Statuses</option>
+            {jobStatuses.map(status => (
+              <option key={status} value={status}>
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        {/* Keyword Search */}
+        <div>
+          <input
+            type="text"
+            name="keyword"
+            value={filters.keyword}
+            onChange={handleChange}
+            placeholder="Search keyword"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+      
+      {/* Filter Buttons */}
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={handleFilterApply}
+          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        >
+          Filter
+        </button>
+        <button
+          onClick={resetFilters}
+          className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition"
+        >
+          Clear All Filters
+        </button>
+      </div>
+    </div>
   );
 };
 
