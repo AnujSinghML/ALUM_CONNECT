@@ -57,14 +57,26 @@ const ApplyForm = ({ jobId }) => {
     };
 
     try {
+      // const response = await fetch(
+      //   `${import.meta.env.VITE_backend_URL}/api/applications/${selectedJob._id}/apply`,
+      //   {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify(applicationData),
+      //   }
+      // );
       const response = await fetch(
         `${import.meta.env.VITE_backend_URL}/api/applications/${selectedJob._id}/apply`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(applicationData),
+          credentials: "include",  // Important to include credentials (cookies)
         }
       );
+      
 
       const data = await response.json();
       console.log("Application Response:", data);

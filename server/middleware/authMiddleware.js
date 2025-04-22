@@ -13,4 +13,8 @@ const isStudent = (req, res, next) => {
   return ensureRole(['student'])(req, res, next);
 };
 
-module.exports = { verifyAdmin, isAlumni, isStudent };
+const isStudentOrAlumni = (req, res, next) => {
+  return ensureRole(['student','alumni'])(req, res, next);
+};
+
+module.exports = { verifyAdmin, isAlumni, isStudent, isStudentOrAlumni };

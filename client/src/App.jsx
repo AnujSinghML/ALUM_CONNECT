@@ -41,6 +41,7 @@ import AllJobs from './routes/network/AllJobs';
 import CreateJobOpportunity from './routes/network/CreateJobOpportunity';
 import JobCard from './components/network/JobCard';
 import ApplyForm from './components/network/ApplyForm';
+import ActivityCenter from "./components/network/ActivityCenter";
 
 import AdminNetwork from './routes/network/AdminNetwork';
 import AdminDonations from './routes/AdminDonations';
@@ -214,6 +215,18 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+          
+          // In your routes definition
+          <Route
+            path="/network/activity"
+            element={
+              <ProtectedRoute>
+                <ActivityCenter />
+              </ProtectedRoute>
+            }
+          />
+          {/* <Route path="/network/activity" element={<ActivityCenter />} /> */}
+
           <Route
             path="/donation/process"
             element={
