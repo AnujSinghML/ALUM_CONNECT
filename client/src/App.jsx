@@ -46,6 +46,7 @@ import AdminNetwork from './routes/network/AdminNetwork';
 import AdminDonations from './routes/AdminDonations';
 import AdminProfile from './routes/AdminProfile';
 import AdminDiscussion from './routes/AdminDiscussion';
+import AdminCreateJob from './routes/network/AdminCreateJob';
 
 // Messaging
 import { MessageProvider } from './context/MessageContext';
@@ -136,6 +137,13 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/create-job" 
+            element={
+              <ProtectedRoute>
+                <AdminCreateJob />
+              </ProtectedRoute>
+            } />
         </>
       ) : (
         // Routes for alumni and students
