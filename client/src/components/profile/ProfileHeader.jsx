@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import LogoutButton from './LogoutButton';
 import ProfileEditModal from './ProfileEditModal';
+import ImageUpload from './ImageUpload';
 import axios from 'axios'; 
 
 const ProfileHeader = ({ profile, onProfileUpdate }) => {
@@ -32,13 +33,9 @@ const ProfileHeader = ({ profile, onProfileUpdate }) => {
     <>
       <div className="flex justify-between items-start mb-6">
         <div className="flex flex-col md:flex-row items-center md:items-end">
-          <div className="w-24 h-24 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-md">
-            <img
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name)}&background=0D8ABC&color=fff`}
-              alt={profile.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {/* Replace static avatar with ImageUpload component */}
+          <ImageUpload />
+          
           <div className="md:ml-4 mt-4 md:mt-0 text-center md:text-left">
             <h1 className="text-2xl font-bold text-white">{profile.name}</h1>
             <p className="text-white">{profile.email}</p>

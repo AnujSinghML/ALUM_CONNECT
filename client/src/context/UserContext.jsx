@@ -1,45 +1,3 @@
-// // client/src/context/UserContext.jsx
-// import React, { createContext, useState, useContext, useEffect } from 'react';
-// import axios from 'axios';
-
-// const UserContext = createContext();
-
-// export const UserProvider = ({ children }) => {
-//   const [user, setUser] = useState(null);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchUser = async () => {
-//       try {
-//         const response = await axios.get(`${import.meta.env.VITE_backend_URL}/auth/profile`, {
-//           withCredentials: true
-//         });
-//         setUser(response.data);
-//       } catch (error) {
-//         console.error('Error fetching user:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchUser();
-//   }, []);
-
-//   return (
-//     <UserContext.Provider value={{ user, setUser, loading }}>
-//       {children}
-//     </UserContext.Provider>
-//   );
-// };
-
-// export const useUser = () => {
-//   const context = useContext(UserContext);
-//   if (context === undefined) {
-//     throw new Error('useUser must be used within a UserProvider');
-//   }
-//   return context;
-// };
-// client/src/context/UserContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 
@@ -59,11 +17,18 @@ export const UserProvider = ({ children }) => {
       );
 
       if (response.data.isAuthenticated) {
-        setUser(response.data.user);
+        // Make sure we get complete user data with profileImage
+        const profileResponse = await axios.get(
+          `${import.meta.env.VITE_backend_URL}/auth/profile`,
+          { withCredentials: true }
+        );
+        
+        // Use the complete profile data that includes profileImage
+        setUser(profileResponse.data);
         setError(null);
         
-        // Optional: Cache user data
-        localStorage.setItem('cachedUserProfile', JSON.stringify(response.data.user));
+        // Cache the complete user data
+        localStorage.setItem('cachedUserProfile', JSON.stringify(profileResponse.data));
       } else {
         setUser(null);
         localStorage.removeItem('cachedUserProfile');
@@ -87,8 +52,14 @@ export const UserProvider = ({ children }) => {
       );
       
       if (response.data.isAuthenticated) {
-        setUser(response.data.user);
-        localStorage.setItem('cachedUserProfile', JSON.stringify(response.data.user));
+        // Get complete profile data
+        const profileResponse = await axios.get(
+          `${import.meta.env.VITE_backend_URL}/auth/profile`,
+          { withCredentials: true }
+        );
+        
+        setUser(profileResponse.data);
+        localStorage.setItem('cachedUserProfile', JSON.stringify(profileResponse.data));
         setError(null);
       }
     } catch (error) {
@@ -114,6 +85,16 @@ export const UserProvider = ({ children }) => {
       console.error('Logout error:', error);
       setError(error.response?.data?.error || 'Failed to logout');
     }
+  };
+
+  // Update user data (including profile image)
+  const updateUserData = (updatedData) => {
+    setUser(prev => {
+      const updated = { ...prev, ...updatedData };
+      // Update local cache
+      localStorage.setItem('cachedUserProfile', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   useEffect(() => {
@@ -151,7 +132,8 @@ export const UserProvider = ({ children }) => {
     error,
     handleGoogleLogin,
     logout,
-    refreshUser: fetchUser
+    refreshUser: fetchUser,
+    updateUserData
   };
 
   return (
