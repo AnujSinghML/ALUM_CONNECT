@@ -9,6 +9,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const http = require('http');
+const mongoose = require('mongoose');
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -115,6 +116,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
+
 // Logging Middleware
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
@@ -152,22 +163,15 @@ app.use((req, res, next) => {
 });
 
 // Global Error Handler
-app.use((err, req, res, next) => {
-  console.error('Global Error Handler:', {
-    message: err.message,
-    stack: err.stack,
-    status: err.status || 500
-  });
+app.use(require('./middleware/errorHandler'));
 
-  res.status(err.status || 500).json({
-    error: process.env.NODE_ENV === 'development' 
-      ? err.message 
-      : 'An unexpected error occurred'
-  });
-});
-
-// Create HTTP server
+// Create HTTP server with timeout configuration
 const server = http.createServer(app);
+
+// Set server timeouts to handle connection issues
+server.timeout = 30000; // 30 seconds
+server.keepAliveTimeout = 65000; // 65 seconds
+server.headersTimeout = 66000; // 66 seconds
 
 // Initialize Socket.IO
 const initializeSocketIO = require('./config/socketConfig');
